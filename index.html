@@ -24,29 +24,13 @@
       --success:   #22c55e;
       --warn:      #f97316;
 
-      --cat-skill-bg:  rgba(79,124,255,.15);
-      --cat-skill-fg:  #7aa2ff;
-      --cat-skill-bdr: rgba(79,124,255,.35);
+      --cat-skill-bg:  rgba(79,124,255,.15);  --cat-skill-fg:  #7aa2ff;  --cat-skill-bdr: rgba(79,124,255,.35);
+      --cat-style-bg:  rgba(168,85,247,.15);  --cat-style-fg:  #c084fc;  --cat-style-bdr: rgba(168,85,247,.35);
+      --cat-speed-bg:  rgba(34,197,94,.15);   --cat-speed-fg:  #4ade80;  --cat-speed-bdr: rgba(34,197,94,.35);
 
-      --cat-style-bg:  rgba(168,85,247,.15);
-      --cat-style-fg:  #c084fc;
-      --cat-style-bdr: rgba(168,85,247,.35);
-
-      --cat-speed-bg:  rgba(34,197,94,.15);
-      --cat-speed-fg:  #4ade80;
-      --cat-speed-bdr: rgba(34,197,94,.35);
-
-      --div-pic-bg:  rgba(6,182,212,.15);
-      --div-pic-fg:  #22d3ee;
-      --div-pic-bdr: rgba(6,182,212,.35);
-
-      --div-med-bg:  rgba(249,115,22,.15);
-      --div-med-fg:  #fb923c;
-      --div-med-bdr: rgba(249,115,22,.35);
-
-      --div-grd-bg:  rgba(239,68,68,.15);
-      --div-grd-fg:  #f87171;
-      --div-grd-bdr: rgba(239,68,68,.35);
+      --div-pic-bg:  rgba(6,182,212,.15);  --div-pic-fg:  #22d3ee;  --div-pic-bdr: rgba(6,182,212,.35);
+      --div-med-bg:  rgba(249,115,22,.15); --div-med-fg:  #fb923c;  --div-med-bdr: rgba(249,115,22,.35);
+      --div-grd-bg:  rgba(239,68,68,.15);  --div-grd-fg:  #f87171;  --div-grd-bdr: rgba(239,68,68,.35);
     }
 
     body {
@@ -69,715 +53,796 @@
       top: 0;
       z-index: 100;
     }
-
-    .header-icon {
-      font-size: 1.6rem;
-      line-height: 1;
-    }
-
+    .header-icon { font-size: 1.6rem; line-height: 1; }
     .header-text h1 {
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em;
       background: linear-gradient(135deg, var(--accent2), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    .header-text p {
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-top: 1px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .header-actions {
-      margin-left: auto;
-      display: flex;
-      gap: 0.5rem;
-    }
+    .header-text p { font-size: 0.7rem; color: var(--muted); margin-top: 1px; letter-spacing: .04em; text-transform: uppercase; }
+    .header-actions { margin-left: auto; display: flex; gap: .5rem; }
 
     /* ===== NAV ===== */
     nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding: 0 1rem;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 1rem;
     }
-
     nav::-webkit-scrollbar { display: none; }
-
     .nav-tab {
-      padding: 0.7rem 1.2rem;
-      cursor: pointer;
-      border: none;
-      background: none;
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      transition: color 0.18s, border-color 0.18s;
-      letter-spacing: 0.03em;
+      padding: .7rem 1.2rem; cursor: pointer; border: none; background: none;
+      color: var(--muted); font-size: .82rem; font-weight: 600; white-space: nowrap;
+      border-bottom: 2px solid transparent; transition: color .18s, border-color .18s; letter-spacing: .03em;
     }
-
     .nav-tab:hover { color: var(--text); }
-
-    .nav-tab.active {
-      color: var(--accent2);
-      border-bottom-color: var(--accent2);
-    }
+    .nav-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
 
     /* ===== MAIN ===== */
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
-    }
-
-    /* ===== VIEWS ===== */
+    main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
     .view { display: none; }
     .view.active { display: block; }
 
     /* ===== CARDS ===== */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1.25rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.1rem;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: .85rem; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; gap: .75rem; flex-wrap: wrap; }
+    .card-title { font-size: .95rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: .4rem; }
 
     /* ===== FORM ===== */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; }
+    .form-group { display: flex; flex-direction: column; gap: .3rem; }
+    label { font-size: .68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
     input, select {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      color: var(--text);
-      padding: 0.52rem 0.75rem;
-      font-size: 0.85rem;
-      width: 100%;
-      transition: border-color 0.18s, box-shadow 0.18s;
-      -webkit-appearance: none;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: .5rem;
+      color: var(--text); padding: .52rem .75rem; font-size: .85rem; width: 100%;
+      transition: border-color .18s, box-shadow .18s; -webkit-appearance: none;
     }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79,124,255,.15);
-    }
-
+    input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,124,255,.15); }
     select option { background: var(--surface2); }
-
     input[type="number"] { -moz-appearance: textfield; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .form-actions { display: flex; gap: .6rem; margin-top: 1rem; flex-wrap: wrap; }
 
-    .form-actions {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
+    /* ===== CATEGORY SCORE SELECTOR (add form) ===== */
+    .cat-scores-row {
+      display: flex; gap: .6rem; flex-wrap: wrap;
+      margin-top: .85rem; padding-top: .85rem; border-top: 1px solid var(--border);
     }
+    .cat-score-item {
+      display: flex; align-items: center; gap: .55rem;
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: .6rem; padding: .5rem .8rem;
+      flex: 1; min-width: 148px; transition: border-color .18s;
+    }
+    .cat-score-item.enabled-skill { border-color: var(--cat-skill-fg); }
+    .cat-score-item.enabled-style { border-color: var(--cat-style-fg); }
+    .cat-score-item.enabled-speed { border-color: var(--cat-speed-fg); }
+    .cat-score-item input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
+    .cat-score-item .cat-label { font-size: .78rem; font-weight: 700; flex: 1; }
+    .cat-score-item .cat-score-input { width: 68px; padding: .3rem .4rem; text-align: center; background: var(--surface3); }
+    .cat-score-item .cat-score-input:disabled { opacity: .3; cursor: not-allowed; }
 
     /* ===== BUTTONS ===== */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.52rem 1rem;
-      border-radius: 0.5rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
-      white-space: nowrap;
-      letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: .52rem 1rem; border-radius: .5rem; font-size: .82rem; font-weight: 600;
+      cursor: pointer; border: none; transition: opacity .15s, transform .1s, box-shadow .15s;
+      white-space: nowrap; letter-spacing: .02em;
     }
-
-    .btn:hover { opacity: 0.88; }
-    .btn:active { transform: scale(0.96); }
-
+    .btn:hover { opacity: .88; }
+    .btn:active { transform: scale(.96); }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { box-shadow: 0 0 0 3px rgba(79,124,255,.25); }
     .btn-danger  { background: var(--danger); color: #fff; }
     .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-warn    { background: var(--warn); color: #fff; }
-
-    .btn-sm { padding: 0.32rem 0.65rem; font-size: 0.74rem; }
+    .btn-sm { padding: .32rem .65rem; font-size: .74rem; }
 
     /* ===== TABLE ===== */
     .table-wrap { overflow-x: auto; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
     th {
-      padding: 0.65rem 0.9rem;
-      text-align: left;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
-      background: var(--surface2);
-      white-space: nowrap;
+      padding: .65rem .9rem; text-align: left; font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
+      border-bottom: 1px solid var(--border); background: var(--surface2); white-space: nowrap;
     }
-
-    th:first-child { border-radius: 0.4rem 0 0 0; }
-    th:last-child  { border-radius: 0 0.4rem 0 0; }
-
-    td {
-      padding: 0.7rem 0.9rem;
-      border-bottom: 1px solid rgba(45,63,92,.5);
-      vertical-align: middle;
-    }
-
+    td { padding: .7rem .9rem; border-bottom: 1px solid rgba(45,63,92,.5); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
-
     tr:hover td { background: rgba(255,255,255,.025); }
-
     .row-gold   td { background: rgba(245,197,66,.05) !important; }
     .row-silver td { background: rgba(176,190,197,.05) !important; }
     .row-bronze td { background: rgba(205,139,58,.05) !important; }
-
     .row-gold:hover   td { background: rgba(245,197,66,.09) !important; }
     .row-silver:hover td { background: rgba(176,190,197,.09) !important; }
     .row-bronze:hover td { background: rgba(205,139,58,.09) !important; }
 
+    /* ===== INLINE SCORE INPUT (admin table) ===== */
+    .sci {
+      width: 58px; text-align: center; padding: .22rem .3rem;
+      background: transparent; border: 1px solid transparent;
+      border-radius: .35rem; color: var(--accent2); font-weight: 700;
+      font-size: .88rem; font-variant-numeric: tabular-nums;
+      transition: background .15s, border-color .15s;
+    }
+    .sci::placeholder { color: var(--muted); font-weight: 400; font-size: .8rem; }
+    .sci:hover  { background: var(--surface2); border-color: var(--border); }
+    .sci:focus  { background: var(--surface2); border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px rgba(79,124,255,.18); }
+    .sci::-webkit-inner-spin-button, .sci::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* ===== EDITABLE SCORE (leaderboard click-to-edit) ===== */
+    .escore {
+      display: inline-flex; align-items: center; gap: 3px;
+      cursor: pointer; padding: 2px 7px; border-radius: 5px;
+      font-weight: 700; font-variant-numeric: tabular-nums;
+      transition: background .15s; border: 1px solid transparent;
+    }
+    .escore:hover { background: var(--surface2); border-color: var(--border); }
+    .escore.no-score { color: var(--muted); font-weight: 400; font-size: .8rem; }
+    .escore-pencil { font-size: .6rem; opacity: 0; transition: opacity .15s; }
+    .escore:hover .escore-pencil { opacity: 1; }
+
     /* ===== BADGES ===== */
     .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.18rem 0.55rem;
-      border-radius: 9999px;
-      font-size: 0.67rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border: 1px solid transparent;
-      white-space: nowrap;
+      display: inline-flex; align-items: center;
+      padding: .18rem .55rem; border-radius: 9999px;
+      font-size: .67rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; border: 1px solid transparent; white-space: nowrap;
     }
-
     .badge-skill  { background: var(--cat-skill-bg); color: var(--cat-skill-fg); border-color: var(--cat-skill-bdr); }
     .badge-style  { background: var(--cat-style-bg); color: var(--cat-style-fg); border-color: var(--cat-style-bdr); }
     .badge-speed  { background: var(--cat-speed-bg); color: var(--cat-speed-fg); border-color: var(--cat-speed-bdr); }
-
     .badge-piccoli { background: var(--div-pic-bg); color: var(--div-pic-fg); border-color: var(--div-pic-bdr); }
     .badge-medi    { background: var(--div-med-bg); color: var(--div-med-fg); border-color: var(--div-med-bdr); }
     .badge-grandi  { background: var(--div-grd-bg); color: var(--div-grd-fg); border-color: var(--div-grd-bdr); }
 
-    /* ===== SCORE CELL ===== */
-    .score-val {
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--accent2);
-      font-variant-numeric: tabular-nums;
-    }
+    .score-val { font-weight: 800; font-size: 1rem; color: var(--accent2); font-variant-numeric: tabular-nums; }
+    .total-val { font-weight: 900; font-size: 1rem; color: var(--text); font-variant-numeric: tabular-nums; }
 
     /* ===== DIVISION TABS ===== */
-    .div-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
+    .div-tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .div-tab {
-      padding: 0.48rem 1.1rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      border: 2px solid transparent;
-      transition: all 0.18s;
+      padding: .48rem 1.1rem; border-radius: .5rem; cursor: pointer;
+      font-size: .8rem; font-weight: 700; letter-spacing: .05em;
+      text-transform: uppercase; border: 2px solid transparent; transition: all .18s;
     }
-
     .div-tab-piccoli { background: var(--div-pic-bg); color: var(--div-pic-fg); border-color: var(--div-pic-bdr); }
-    .div-tab-piccoli.active,
-    .div-tab-piccoli:hover { background: rgba(6,182,212,.3); border-color: var(--div-pic-fg); }
-
-    .div-tab-medi { background: var(--div-med-bg); color: var(--div-med-fg); border-color: var(--div-med-bdr); }
-    .div-tab-medi.active,
-    .div-tab-medi:hover { background: rgba(249,115,22,.3); border-color: var(--div-med-fg); }
-
-    .div-tab-grandi { background: var(--div-grd-bg); color: var(--div-grd-fg); border-color: var(--div-grd-bdr); }
-    .div-tab-grandi.active,
-    .div-tab-grandi:hover { background: rgba(239,68,68,.3); border-color: var(--div-grd-fg); }
+    .div-tab-piccoli.active, .div-tab-piccoli:hover { background: rgba(6,182,212,.3); border-color: var(--div-pic-fg); }
+    .div-tab-medi    { background: var(--div-med-bg); color: var(--div-med-fg); border-color: var(--div-med-bdr); }
+    .div-tab-medi.active,    .div-tab-medi:hover    { background: rgba(249,115,22,.3); border-color: var(--div-med-fg); }
+    .div-tab-grandi  { background: var(--div-grd-bg); color: var(--div-grd-fg); border-color: var(--div-grd-bdr); }
+    .div-tab-grandi.active,  .div-tab-grandi:hover  { background: rgba(239,68,68,.3); border-color: var(--div-grd-fg); }
 
     /* ===== TEAM CARDS ===== */
     .team-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 0.85rem;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.75rem;
-      transition: border-color 0.2s, transform 0.15s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: .85rem; padding: 1rem 1.2rem; margin-bottom: .75rem;
+      transition: border-color .2s, transform .15s;
     }
-
     .team-card:hover { transform: translateY(-1px); }
-
-    .team-card-gold   { border-color: rgba(245,197,66,.5); background: rgba(245,197,66,.04); }
+    .team-card-gold   { border-color: rgba(245,197,66,.5);  background: rgba(245,197,66,.04); }
     .team-card-silver { border-color: rgba(176,190,197,.4); background: rgba(176,190,197,.03); }
-    .team-card-bronze { border-color: rgba(205,139,58,.4); background: rgba(205,139,58,.03); }
-
-    .team-card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      margin-bottom: 0.75rem;
-    }
-
+    .team-card-bronze { border-color: rgba(205,139,58,.4);  background: rgba(205,139,58,.03); }
+    .team-card-header { display: flex; align-items: center; gap: .9rem; margin-bottom: .75rem; }
     .team-rank-badge {
-      min-width: 2.4rem;
-      height: 2.4rem;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 900;
-      background: var(--surface2);
-      flex-shrink: 0;
+      min-width: 2.4rem; height: 2.4rem; border-radius: .5rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 900; background: var(--surface2); flex-shrink: 0;
     }
-
-    .rank-num {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
+    .rank-num { font-size: .9rem; font-weight: 800; color: var(--muted); }
     .team-name-cell { flex: 1; min-width: 0; }
-
-    .team-name-text {
-      font-size: 1rem;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
+    .team-name-text { font-size: 1rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .team-score-cell { text-align: right; flex-shrink: 0; }
-
-    .team-score-label {
-      font-size: 0.62rem;
-      color: var(--muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .team-score-val {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--accent2);
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* score bar */
-    .score-bar-wrap {
-      height: 3px;
-      background: var(--surface3);
-      border-radius: 2px;
-      margin-top: 4px;
-      overflow: hidden;
-    }
-
-    .score-bar { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-
-    .team-members {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      padding-left: 3.3rem;
-    }
-
+    .team-score-label { font-size: .62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+    .team-score-val { font-size: 1.5rem; font-weight: 900; color: var(--accent2); line-height: 1; font-variant-numeric: tabular-nums; }
+    .score-bar-wrap { height: 3px; background: var(--surface3); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+    .score-bar { height: 100%; border-radius: 2px; transition: width .5s ease; }
+    .team-members { display: flex; gap: .5rem; flex-wrap: wrap; padding-left: 3.3rem; }
     .member-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 0.45rem;
-      padding: 0.28rem 0.6rem;
-      font-size: 0.78rem;
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: .45rem; padding: .28rem .65rem; font-size: .78rem;
     }
-
-    .member-chip-name { font-weight: 600; }
-    .member-chip-score { font-weight: 800; color: var(--accent2); }
-    .member-chip-missing { color: var(--muted); font-style: italic; font-size: 0.73rem; }
+    .member-chip-name  { font-weight: 600; }
+    .member-chip-total { font-weight: 900; color: var(--accent2); }
+    .member-chip-scores { display: flex; gap: .3rem; margin-left: .2rem; }
+    .mcs { font-size: .72rem; font-weight: 600; padding: 1px 5px; border-radius: 3px; }
+    .mcs-skill { background: var(--cat-skill-bg); color: var(--cat-skill-fg); }
+    .mcs-style { background: var(--cat-style-bg); color: var(--cat-style-fg); }
+    .mcs-speed { background: var(--cat-speed-bg); color: var(--cat-speed-fg); }
 
     /* ===== INDIVIDUAL LEADERBOARD ===== */
-    .lb-controls {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 1.1rem;
-      flex-wrap: wrap;
-    }
-
-    .lb-controls input { flex: 1; min-width: 160px; }
-
-    .lb-controls select { width: auto; min-width: 130px; }
-
-    .ind-rank {
-      font-size: 1.05rem;
-      font-weight: 800;
-      min-width: 2rem;
-      display: inline-block;
-      text-align: center;
-    }
+    .lb-search-row { display: flex; gap: .6rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+    .lb-search-row input { flex: 1; min-width: 160px; }
+    .ind-rank { font-size: 1.05rem; font-weight: 800; min-width: 2rem; display: inline-block; text-align: center; }
 
     /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-      padding: 1rem;
+      position: fixed; inset: 0; background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px); display: flex; align-items: center;
+      justify-content: center; z-index: 500; padding: 1rem;
     }
-
     .modal-overlay.hidden { display: none; }
-
     .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      width: 100%;
-      max-width: 500px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 1rem;
+      padding: 1.5rem; width: 100%; max-width: 520px;
       box-shadow: 0 25px 60px rgba(0,0,0,.5);
     }
-
-    .modal-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 0.6rem;
-      justify-content: flex-end;
-      margin-top: 1.25rem;
-    }
+    .modal-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+    .modal-score-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .6rem; margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+    .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.25rem; }
 
     /* ===== EMPTY STATE ===== */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--muted);
-    }
-
-    .empty-state .es-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .empty-state p { font-size: 0.85rem; margin-top: 0.25rem; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state .es-icon { font-size: 2.5rem; margin-bottom: .5rem; }
+    .empty-state p { font-size: .85rem; margin-top: .25rem; }
 
     /* ===== TOAST ===== */
-    #toast-container {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      z-index: 9999;
-    }
-
+    #toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: .5rem; z-index: 9999; }
     .toast {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 0.6rem;
-      padding: 0.65rem 1rem;
-      font-size: 0.82rem;
-      font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
-      animation: toastIn 0.25s ease;
-      max-width: 280px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: .6rem;
+      padding: .65rem 1rem; font-size: .82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4); animation: toastIn .25s ease; max-width: 280px;
     }
-
     .toast.ok  { border-left: 3px solid var(--success); }
     .toast.err { border-left: 3px solid var(--danger); }
+    @keyframes toastIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    @keyframes toastIn {
-      from { transform: translateX(110%); opacity: 0; }
-      to   { transform: translateX(0);   opacity: 1; }
-    }
-
-    /* ===== ACTIONS CELL ===== */
-    .actions-cell { display: flex; gap: 0.35rem; }
-
-    /* ===== SECTION DIVIDER ===== */
-    .section-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      padding: 0.6rem 0 0.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .actions-cell { display: flex; gap: .35rem; }
 
     /* ===== PRINT ===== */
     @media print {
-      :root {
-        --bg: #fff;
-        --surface: #fff;
-        --surface2: #f4f4f4;
-        --border: #ddd;
-        --text: #111;
-        --muted: #555;
-        --accent2: #1a56db;
-      }
-
-      header .header-actions,
-      nav,
-      .btn,
-      .form-actions,
-      .actions-cell,
-      .lb-controls,
-      #toast-container,
-      .modal-overlay { display: none !important; }
-
-      header {
-        position: static;
-        background: #fff;
-        border-bottom: 2px solid #111;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
+      :root { --bg:#fff; --surface:#fff; --surface2:#f4f4f4; --border:#ddd; --text:#111; --muted:#555; --accent2:#1a56db; }
+      header .header-actions, nav, .btn, .form-actions, .actions-cell,
+      .lb-search-row, .div-tabs, #toast-container, .modal-overlay { display: none !important; }
+      header { position: static; background: #fff; border-bottom: 2px solid #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { background: #fff; }
-
       main { max-width: 100%; padding: 0; }
-
       .view { display: block !important; }
-
       #view-admin { display: none !important; }
-
-      #view-teams,
-      #view-individual { page-break-before: always; }
-
+      #view-teams, #view-individual { page-break-before: always; }
+      #division-content > div, #ind-content > div { display: block !important; }
       .team-card { break-inside: avoid; }
-
-      .badge { border: 1px solid #ccc !important; }
-
       .score-bar-wrap { display: none; }
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
-      header { padding: 0.7rem 1rem; }
+      header { padding: .7rem 1rem; }
       .header-text h1 { font-size: 1rem; }
-      main { padding: 1rem 0.85rem 2.5rem; }
+      main { padding: 1rem .85rem 2.5rem; }
       .form-grid { grid-template-columns: 1fr 1fr; }
       .team-members { padding-left: 0; }
-      th:nth-child(3), td:nth-child(3),
-      th:nth-child(5), td:nth-child(5) { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-icon">🏆</div>
-    <div class="header-text">
-      <h1>Competition Manager</h1>
-      <p>SKILL · STYLE · SPEED</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ CSV</button>
-      <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
-    </div>
-  </header>
+<header>
+  <div class="header-icon">🏆</div>
+  <div class="header-text">
+    <h1>Competition Manager</h1>
+    <p>SKILL · STYLE · SPEED</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ CSV</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
+  </div>
+</header>
 
-  <!-- NAV -->
-  <nav>
-    <button class="nav-tab active" onclick="showView('admin', this)">⚙ Admin Panel</button>
-    <button class="nav-tab" onclick="showView('teams', this)">🏅 Team Rankings</button>
-    <button class="nav-tab" onclick="showView('individual', this)">👤 Individual Rankings</button>
-  </nav>
+<nav>
+  <button class="nav-tab active" onclick="showView('admin', this)">⚙ Admin Panel</button>
+  <button class="nav-tab" onclick="showView('teams', this)">🏅 Team Rankings</button>
+  <button class="nav-tab" onclick="showView('individual', this)">👤 Individual Rankings</button>
+</nav>
 
-  <!-- MAIN -->
-  <main>
+<main>
 
-    <!-- ======= ADMIN VIEW ======= -->
-    <div id="view-admin" class="view active">
+  <!-- ===== ADMIN VIEW ===== -->
+  <div id="view-admin" class="view active">
 
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">➕ Add Competitor</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">➕ Add Competitor</div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:span 2">
+          <label>Name</label>
+          <input type="text" id="f-name" placeholder="Full name" autocomplete="off">
         </div>
-        <div class="form-grid">
-          <div class="form-group" style="grid-column: span 2;">
-            <label>Name</label>
-            <input type="text" id="f-name" placeholder="Full name" autocomplete="off">
-          </div>
-          <div class="form-group" style="grid-column: span 2;">
-            <label>Team</label>
-            <input type="text" id="f-team" placeholder="Team name" autocomplete="off" list="team-datalist">
-            <datalist id="team-datalist"></datalist>
-          </div>
-          <div class="form-group">
-            <label>Category</label>
-            <select id="f-category">
-              <option value="">Select…</option>
-              <option value="SKILL">SKILL</option>
-              <option value="STYLE">STYLE</option>
-              <option value="SPEED">SPEED</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Division</label>
-            <select id="f-division">
-              <option value="">Select…</option>
-              <option value="PICCOLI">PICCOLI</option>
-              <option value="MEDI">MEDI</option>
-              <option value="GRANDI">GRANDI</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Score</label>
-            <input type="number" id="f-score" placeholder="0" min="0" max="9999">
-          </div>
+        <div class="form-group" style="grid-column:span 2">
+          <label>Team</label>
+          <input type="text" id="f-team" placeholder="Team name" autocomplete="off" list="team-datalist">
+          <datalist id="team-datalist"></datalist>
         </div>
-        <div class="form-actions">
-          <button class="btn btn-primary" onclick="addCompetitor()">Add Competitor</button>
-          <button class="btn btn-ghost" onclick="clearAddForm()">Clear</button>
+        <div class="form-group">
+          <label>Division</label>
+          <select id="f-division">
+            <option value="">Select…</option>
+            <option value="PICCOLI">PICCOLI</option>
+            <option value="MEDI">MEDI</option>
+            <option value="GRANDI">GRANDI</option>
+          </select>
         </div>
       </div>
-
-      <div class="card" style="padding: 0; overflow: hidden;">
-        <div class="card-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); margin: 0;">
-          <div class="card-title">👥 All Competitors <span id="admin-count" style="font-size:0.78rem;color:var(--muted);font-weight:500;"></span></div>
-          <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
-            <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Clear All</button>
-            <button class="btn btn-ghost btn-sm" onclick="resetSampleData()">↺ Reset Sample</button>
-          </div>
+      <!-- Category score selectors -->
+      <div class="cat-scores-row">
+        <div class="cat-score-item" id="item-skill" onclick="toggleCat('SKILL')">
+          <input type="checkbox" id="en-skill" onclick="event.stopPropagation();toggleCat('SKILL')">
+          <span class="cat-label"><span class="badge badge-skill">SKILL</span></span>
+          <input type="number" id="f-skill" class="cat-score-input" placeholder="Score" min="0" max="9999" disabled onclick="event.stopPropagation()">
         </div>
-        <div class="table-wrap">
-          <table id="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Team</th>
-                <th>Category</th>
-                <th>Division</th>
-                <th>Score</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="admin-tbody"></tbody>
-          </table>
+        <div class="cat-score-item" id="item-style" onclick="toggleCat('STYLE')">
+          <input type="checkbox" id="en-style" onclick="event.stopPropagation();toggleCat('STYLE')">
+          <span class="cat-label"><span class="badge badge-style">STYLE</span></span>
+          <input type="number" id="f-style" class="cat-score-input" placeholder="Score" min="0" max="9999" disabled onclick="event.stopPropagation()">
         </div>
-        <div id="admin-empty" class="empty-state" style="display:none;">
-          <div class="es-icon">🏅</div>
-          <p>No competitors yet. Add one above to get started!</p>
+        <div class="cat-score-item" id="item-speed" onclick="toggleCat('SPEED')">
+          <input type="checkbox" id="en-speed" onclick="event.stopPropagation();toggleCat('SPEED')">
+          <span class="cat-label"><span class="badge badge-speed">SPEED</span></span>
+          <input type="number" id="f-speed" class="cat-score-input" placeholder="Score" min="0" max="9999" disabled onclick="event.stopPropagation()">
         </div>
       </div>
-
-    </div><!-- /view-admin -->
-
-    <!-- ======= TEAM RANKINGS VIEW ======= -->
-    <div id="view-teams" class="view">
-      <div class="div-tabs">
-        <button class="div-tab div-tab-piccoli active" onclick="showDivision('PICCOLI', this)">PICCOLI</button>
-        <button class="div-tab div-tab-medi"    onclick="showDivision('MEDI', this)">MEDI</button>
-        <button class="div-tab div-tab-grandi"  onclick="showDivision('GRANDI', this)">GRANDI</button>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addCompetitor()">Add Competitor</button>
+        <button class="btn btn-ghost" onclick="clearAddForm()">Clear</button>
       </div>
-      <div id="division-content"></div>
     </div>
 
-    <!-- ======= INDIVIDUAL RANKINGS VIEW ======= -->
-    <div id="view-individual" class="view">
-      <div class="lb-controls">
-        <input type="text" id="search-input" placeholder="🔍 Search by name or team…" oninput="renderIndividual()">
-        <select id="filter-cat" onchange="renderIndividual()">
-          <option value="">All Categories</option>
-          <option value="SKILL">SKILL</option>
-          <option value="STYLE">STYLE</option>
-          <option value="SPEED">SPEED</option>
-        </select>
-        <select id="filter-div" onchange="renderIndividual()">
-          <option value="">All Divisions</option>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="card-header" style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);margin:0">
+        <div class="card-title">👥 All Competitors <span id="admin-count" style="font-size:.78rem;color:var(--muted);font-weight:500"></span></div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Clear All</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetSampleData()">↺ Reset Sample</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Team</th>
+              <th>Division</th>
+              <th style="color:var(--cat-skill-fg)">SKILL</th>
+              <th style="color:var(--cat-style-fg)">STYLE</th>
+              <th style="color:var(--cat-speed-fg)">SPEED</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
+      <div id="admin-empty" class="empty-state" style="display:none">
+        <div class="es-icon">🏅</div>
+        <p>No competitors yet. Add one above!</p>
+      </div>
+    </div>
+
+  </div><!-- /view-admin -->
+
+  <!-- ===== TEAM RANKINGS VIEW ===== -->
+  <div id="view-teams" class="view">
+    <div class="div-tabs">
+      <button class="div-tab div-tab-piccoli active" onclick="showTeamDiv('PICCOLI',this)">PICCOLI</button>
+      <button class="div-tab div-tab-medi"    onclick="showTeamDiv('MEDI',this)">MEDI</button>
+      <button class="div-tab div-tab-grandi"  onclick="showTeamDiv('GRANDI',this)">GRANDI</button>
+    </div>
+    <div id="division-content"></div>
+  </div>
+
+  <!-- ===== INDIVIDUAL RANKINGS VIEW ===== -->
+  <div id="view-individual" class="view">
+    <div class="div-tabs">
+      <button class="div-tab div-tab-piccoli active" onclick="showIndDiv('PICCOLI',this)">PICCOLI</button>
+      <button class="div-tab div-tab-medi"    onclick="showIndDiv('MEDI',this)">MEDI</button>
+      <button class="div-tab div-tab-grandi"  onclick="showIndDiv('GRANDI',this)">GRANDI</button>
+    </div>
+    <div class="lb-search-row">
+      <input type="text" id="ind-search" placeholder="🔍 Search by name or team…" oninput="renderIndividual()">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ind-search').value='';renderIndividual()">✕ Clear</button>
+    </div>
+    <div id="ind-content"></div>
+  </div>
+
+</main>
+
+<!-- EDIT MODAL -->
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-title">✏️ Edit Competitor</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:span 2">
+        <label>Name</label>
+        <input type="text" id="edit-name" autocomplete="off">
+      </div>
+      <div class="form-group" style="grid-column:span 2">
+        <label>Team</label>
+        <input type="text" id="edit-team" autocomplete="off" list="team-datalist">
+      </div>
+      <div class="form-group">
+        <label>Division</label>
+        <select id="edit-division">
           <option value="PICCOLI">PICCOLI</option>
           <option value="MEDI">MEDI</option>
           <option value="GRANDI">GRANDI</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="clearIndividualFilters()">✕ Clear</button>
       </div>
+    </div>
+    <div class="modal-score-grid">
+      <div class="form-group">
+        <label style="color:var(--cat-skill-fg)">SKILL score</label>
+        <input type="number" id="edit-skill" placeholder="—" min="0" max="9999">
+      </div>
+      <div class="form-group">
+        <label style="color:var(--cat-style-fg)">STYLE score</label>
+        <input type="number" id="edit-style" placeholder="—" min="0" max="9999">
+      </div>
+      <div class="form-group">
+        <label style="color:var(--cat-speed-fg)">SPEED score</label>
+        <input type="number" id="edit-speed" placeholder="—" min="0" max="9999">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
-      <div class="card" style="padding: 0; overflow: hidden;">
-        <div class="card-header" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); margin: 0;">
-          <div class="card-title">🎖 Individual Rankings</div>
-          <span id="ind-count" style="font-size:0.78rem;color:var(--muted);"></span>
+<div id="toast-container"></div>
+
+<script>
+  /* =====================================================
+     DATA MODEL
+     Each competitor:
+     { id, name, team, division, scores: { SKILL: n|null, STYLE: n|null, SPEED: n|null } }
+  ===================================================== */
+  let competitors = [];
+  let teamDiv = 'PICCOLI';
+  let indDiv  = 'PICCOLI';
+
+  const CATEGORIES = ['SKILL', 'STYLE', 'SPEED'];
+  const DIVISIONS  = ['PICCOLI', 'MEDI', 'GRANDI'];
+  const STORAGE_KEY = 'compmanager_v2';
+
+  function totalScore(c) {
+    return CATEGORIES.reduce((s, k) => s + (c.scores[k] ?? 0), 0);
+  }
+
+  /* =====================================================
+     PERSISTENCE + MIGRATION
+  ===================================================== */
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(competitors));
+  }
+
+  function load() {
+    // Try new key first
+    let raw = localStorage.getItem(STORAGE_KEY);
+    // Fall back to old key and migrate
+    if (!raw) raw = localStorage.getItem('compmanager_v1');
+    if (raw) {
+      try {
+        let data = JSON.parse(raw);
+        competitors = migrateData(data);
+        save();
+        return;
+      } catch { /* ignore */ }
+    }
+    competitors = buildSampleData();
+    save();
+  }
+
+  function migrateData(data) {
+    if (!data || !data.length) return data;
+    // Old format had a single 'category' string field
+    if ('category' in data[0] && !('scores' in data[0])) {
+      const map = new Map();
+      data.forEach(c => {
+        const key = `${c.name}||${c.team}||${c.division}`;
+        if (!map.has(key)) {
+          map.set(key, {
+            id: c.id, name: c.name, team: c.team, division: c.division,
+            scores: { SKILL: null, STYLE: null, SPEED: null }
+          });
+        }
+        if (c.category && CATEGORIES.includes(c.category)) {
+          map.get(key).scores[c.category] = c.score ?? 0;
+        }
+      });
+      return [...map.values()];
+    }
+    // Ensure scores object always has all 3 keys
+    return data.map(c => ({
+      ...c,
+      scores: { SKILL: null, STYLE: null, SPEED: null, ...c.scores }
+    }));
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  /* =====================================================
+     SAMPLE DATA
+  ===================================================== */
+  function buildSampleData() {
+    const raw = [
+      // PICCOLI
+      { n:'Marco Rossi',   t:'Falchi', d:'PICCOLI', sk:88,  st:79,  sp:null },
+      { n:'Sara Conti',    t:'Falchi', d:'PICCOLI', sk:null,st:92,  sp:null },
+      { n:'Luca Ferri',    t:'Falchi', d:'PICCOLI', sk:null,st:null,sp:85   },
+      { n:'Elena Bruno',   t:'Draghi', d:'PICCOLI', sk:76,  st:null,sp:null },
+      { n:'Matteo Neri',   t:'Draghi', d:'PICCOLI', sk:null,st:91,  sp:null },
+      { n:'Giulia Ricci',  t:'Draghi', d:'PICCOLI', sk:null,st:null,sp:83   },
+      { n:'Davide Costa',  t:'Leoni',  d:'PICCOLI', sk:95,  st:null,sp:null },
+      { n:'Anna Vitale',   t:'Leoni',  d:'PICCOLI', sk:null,st:78,  sp:null },
+      { n:'Paolo Greco',   t:'Leoni',  d:'PICCOLI', sk:null,st:null,sp:88   },
+      // MEDI
+      { n:'Roberto Marin', t:'Aquile', d:'MEDI',    sk:82,  st:null,sp:78   },
+      { n:'Francesca Riva',t:'Aquile', d:'MEDI',    sk:null,st:88,  sp:null },
+      { n:'Simone Gallo',  t:'Aquile', d:'MEDI',    sk:null,st:null,sp:94   },
+      { n:'Laura Sanna',   t:'Tigri',  d:'MEDI',    sk:90,  st:null,sp:null },
+      { n:'Antonio Longo', t:'Tigri',  d:'MEDI',    sk:null,st:85,  sp:null },
+      { n:'Chiara Sala',   t:'Tigri',  d:'MEDI',    sk:null,st:null,sp:79   },
+      { n:'Giovanni Poli', t:'Orsi',   d:'MEDI',    sk:77,  st:null,sp:null },
+      { n:'Marta Fiore',   t:'Orsi',   d:'MEDI',    sk:null,st:93,  sp:null },
+      { n:'Federico Bova', t:'Orsi',   d:'MEDI',    sk:null,st:null,sp:86   },
+      // GRANDI
+      { n:'Alessandro Ru', t:'Cobra',  d:'GRANDI',  sk:91,  st:null,sp:null },
+      { n:'Valentina Bini',t:'Cobra',  d:'GRANDI',  sk:null,st:87,  sp:82   },
+      { n:'Stefano Cava',  t:'Cobra',  d:'GRANDI',  sk:null,st:null,sp:96   },
+      { n:'Beatrice Fusi', t:'Squali', d:'GRANDI',  sk:84,  st:null,sp:null },
+      { n:'Leonardo Pace', t:'Squali', d:'GRANDI',  sk:null,st:90,  sp:null },
+      { n:'Maria Amato',   t:'Squali', d:'GRANDI',  sk:null,st:null,sp:88   },
+      { n:'Riccardo Tosi', t:'Puma',   d:'GRANDI',  sk:79,  st:null,sp:null },
+      { n:'Silvia Bassi',  t:'Puma',   d:'GRANDI',  sk:null,st:95,  sp:null },
+      { n:'Tommaso Foti',  t:'Puma',   d:'GRANDI',  sk:null,st:null,sp:82   },
+    ];
+    return raw.map(r => ({
+      id: uid(), name: r.n, team: r.t, division: r.d,
+      scores: { SKILL: r.sk, STYLE: r.st, SPEED: r.sp }
+    }));
+  }
+
+  /* =====================================================
+     HELPERS
+  ===================================================== */
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function divBadge(div) { return `<span class="badge badge-${div.toLowerCase()}">${esc(div)}</span>`; }
+  function rankMedal(r)  { return r===1?'🥇':r===2?'🥈':r===3?'🥉':`<span class="rank-num">${r}</span>`; }
+  function rankRowClass(r){ return r===1?'row-gold':r===2?'row-silver':r===3?'row-bronze':''; }
+
+  function toast(msg, type='ok') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),350); }, 2600);
+  }
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+  function showView(name, el) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    el.classList.add('active');
+    renderAll();
+  }
+  function showTeamDiv(div, el) {
+    teamDiv = div;
+    document.querySelectorAll('#view-teams .div-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderTeams();
+  }
+  function showIndDiv(div, el) {
+    indDiv = div;
+    document.querySelectorAll('#view-individual .div-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderIndividual();
+  }
+
+  /* =====================================================
+     RENDER ALL
+  ===================================================== */
+  function renderAll() {
+    renderAdmin();
+    renderTeams();
+    renderIndividual();
+    refreshTeamDatalist();
+  }
+
+  /* =====================================================
+     RENDER: ADMIN
+  ===================================================== */
+  function renderAdmin() {
+    const tbody = document.getElementById('admin-tbody');
+    const empty = document.getElementById('admin-empty');
+    const count = document.getElementById('admin-count');
+    const table = document.getElementById('admin-table');
+
+    count.textContent = `(${competitors.length})`;
+
+    if (!competitors.length) {
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    table.style.display = '';
+    empty.style.display = 'none';
+
+    tbody.innerHTML = competitors.map(c => {
+      const tot = totalScore(c);
+      return `
+        <tr>
+          <td style="font-weight:600">${esc(c.name)}</td>
+          <td style="color:var(--muted)">${esc(c.team)}</td>
+          <td>${divBadge(c.division)}</td>
+          <td><input class="sci" type="number" min="0" max="9999"
+            value="${c.scores.SKILL ?? ''}" placeholder="—"
+            onchange="updateScoreInline('${esc(c.id)}','SKILL',this.value)"
+            onblur="updateScoreInline('${esc(c.id)}','SKILL',this.value)"></td>
+          <td><input class="sci" type="number" min="0" max="9999"
+            value="${c.scores.STYLE ?? ''}" placeholder="—"
+            onchange="updateScoreInline('${esc(c.id)}','STYLE',this.value)"
+            onblur="updateScoreInline('${esc(c.id)}','STYLE',this.value)"></td>
+          <td><input class="sci" type="number" min="0" max="9999"
+            value="${c.scores.SPEED ?? ''}" placeholder="—"
+            onchange="updateScoreInline('${esc(c.id)}','SPEED',this.value)"
+            onblur="updateScoreInline('${esc(c.id)}','SPEED',this.value)"></td>
+          <td><span class="total-val">${tot}</span></td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-ghost btn-sm" onclick="openEdit('${esc(c.id)}')">✏ Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteCompetitor('${esc(c.id)}')">✕</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  /* Save a single score inline (without re-rendering admin table, to preserve focus) */
+  function updateScoreInline(id, cat, val) {
+    const c = competitors.find(x => x.id === id);
+    if (!c) return;
+    const parsed = val.trim() === '' ? null : (parseInt(val, 10) || 0);
+    if (c.scores[cat] === parsed) return; // no change
+    c.scores[cat] = parsed;
+    save();
+    // Re-render only leaderboard views, not admin (would lose focus)
+    renderTeams();
+    renderIndividual();
+  }
+
+  /* =====================================================
+     RENDER: TEAMS
+  ===================================================== */
+  function renderTeams() {
+    const container = document.getElementById('division-content');
+    const divComps  = competitors.filter(c => c.division === teamDiv);
+
+    const teamMap = {};
+    divComps.forEach(c => {
+      if (!teamMap[c.team]) teamMap[c.team] = { name: c.team, members: [], total: 0 };
+      teamMap[c.team].members.push(c);
+      teamMap[c.team].total += totalScore(c);
+    });
+    const teams = Object.values(teamMap).sort((a,b) => b.total - a.total);
+
+    const divColors = { PICCOLI:'#22d3ee', MEDI:'#fb923c', GRANDI:'#f87171' };
+    const color = divColors[teamDiv];
+
+    if (!teams.length) {
+      container.innerHTML = `<div class="empty-state"><div class="es-icon">🏟️</div><p>No teams in <strong>${teamDiv}</strong> division yet.</p></div>`;
+      return;
+    }
+
+    const maxTotal = teams[0].total || 1;
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+        <div style="font-size:1rem;font-weight:800;color:${color}">
+          Division ${teamDiv}
+          <span style="font-size:.78rem;color:var(--muted);font-weight:500;margin-left:.4rem">${teams.length} team${teams.length!==1?'s':''}</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
+      </div>
+      ${teams.map((t,i) => renderTeamCard(t, i+1, maxTotal)).join('')}`;
+  }
+
+  function renderTeamCard(team, rank, maxTotal) {
+    const cardCls   = rank===1?'team-card-gold':rank===2?'team-card-silver':rank===3?'team-card-bronze':'';
+    const rankColor = rank===1?'var(--gold)':rank===2?'var(--silver)':rank===3?'var(--bronze)':'var(--muted)';
+    const barColor  = rank===1?'#f5c542':rank===2?'#b0bec5':rank===3?'#cd8b3a':'#4f7cff';
+    const pct       = maxTotal > 0 ? (team.total / maxTotal * 100).toFixed(1) : 0;
+
+    const members = team.members.map(m => {
+      const tot = totalScore(m);
+      const catChips = CATEGORIES.filter(k => m.scores[k] !== null && m.scores[k] !== undefined)
+        .map(k => `<span class="mcs mcs-${k.toLowerCase()}">${k[0]}:${m.scores[k]}</span>`)
+        .join('');
+      return `<div class="member-chip">
+        <span class="member-chip-name">${esc(m.name)}</span>
+        <div class="member-chip-scores">${catChips}</div>
+        <span class="member-chip-total">${tot}</span>
+      </div>`;
+    }).join('');
+
+    return `
+      <div class="team-card ${cardCls}">
+        <div class="team-card-header">
+          <div class="team-rank-badge" style="color:${rankColor}">${rankMedal(rank)}</div>
+          <div class="team-name-cell">
+            <div class="team-name-text">${esc(team.name)}</div>
+            <div class="score-bar-wrap" style="width:130px">
+              <div class="score-bar" style="width:${pct}%;background:${barColor}"></div>
+            </div>
+          </div>
+          <div class="team-score-cell">
+            <div class="team-score-label">TOTAL</div>
+            <div class="team-score-val">${team.total}</div>
+          </div>
+        </div>
+        <div class="team-members">${members}</div>
+      </div>`;
+  }
+
+  /* =====================================================
+     RENDER: INDIVIDUAL (split by division)
+  ===================================================== */
+  function renderIndividual() {
+    const search = (document.getElementById('ind-search').value || '').toLowerCase().trim();
+    const container = document.getElementById('ind-content');
+    const divColors = { PICCOLI:'#22d3ee', MEDI:'#fb923c', GRANDI:'#f87171' };
+    const color = divColors[indDiv];
+
+    // Filter to current division
+    let list = competitors
+      .filter(c => c.division === indDiv)
+      .map(c => ({ ...c, _total: totalScore(c) }))
+      .sort((a,b) => b._total - a._total);
+
+    // Assign rank before text search (global rank within division)
+    list.forEach((c, i) => { c._rank = i + 1; });
+
+    // Apply name/team search
+    if (search) {
+      list = list.filter(c =>
+        c.name.toLowerCase().includes(search) ||
+        c.team.toLowerCase().includes(search)
+      );
+    }
+
+    if (!list.length) {
+      container.innerHTML = `<div class="empty-state"><div class="es-icon">${search ? '🔍' : '🏟️'}</div><p>${search ? 'No competitors match your search.' : `No competitors in <strong>${indDiv}</strong> yet.`}</p></div>`;
+      return;
+    }
+
+    const rows = list.map(c => {
+      const rc = rankRowClass(c._rank);
+      const skillCell = scoreCell(c, 'SKILL');
+      const styleCell = scoreCell(c, 'STYLE');
+      const speedCell = scoreCell(c, 'SPEED');
+      return `
+        <tr class="${rc}">
+          <td><span class="ind-rank">${rankMedal(c._rank)}</span></td>
+          <td style="font-weight:700">${esc(c.name)}</td>
+          <td style="color:var(--muted);font-size:.82rem">${esc(c.team)}</td>
+          <td>${skillCell}</td>
+          <td>${styleCell}</td>
+          <td>${speedCell}</td>
+          <td><span class="total-val">${c._total}</span></td>
+        </tr>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+          <div style="font-size:.95rem;font-weight:800;color:${color}">Division ${indDiv}</div>
+          <span style="font-size:.78rem;color:var(--muted)">${list.length} competitor${list.length!==1?'s':''}</span>
         </div>
         <div class="table-wrap">
           <table>
@@ -786,548 +851,228 @@
                 <th style="width:48px">#</th>
                 <th>Name</th>
                 <th>Team</th>
-                <th>Category</th>
-                <th>Division</th>
-                <th>Score</th>
+                <th style="color:var(--cat-skill-fg)">SKILL ✏</th>
+                <th style="color:var(--cat-style-fg)">STYLE ✏</th>
+                <th style="color:var(--cat-speed-fg)">SPEED ✏</th>
+                <th>Total</th>
               </tr>
             </thead>
-            <tbody id="ind-tbody"></tbody>
+            <tbody>${rows}</tbody>
           </table>
         </div>
-        <div id="ind-empty" class="empty-state" style="display:none;">
-          <div class="es-icon">🔍</div>
-          <p>No competitors match your filters.</p>
-        </div>
-      </div>
-    </div>
+      </div>`;
+  }
 
-  </main>
-
-  <!-- EDIT MODAL -->
-  <div id="modal-overlay" class="modal-overlay hidden">
-    <div class="modal">
-      <div class="modal-title">✏️ Edit Competitor</div>
-      <input type="hidden" id="edit-id">
-      <div class="form-grid">
-        <div class="form-group" style="grid-column: span 2;">
-          <label>Name</label>
-          <input type="text" id="edit-name" autocomplete="off">
-        </div>
-        <div class="form-group" style="grid-column: span 2;">
-          <label>Team</label>
-          <input type="text" id="edit-team" autocomplete="off" list="team-datalist">
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="edit-category">
-            <option value="SKILL">SKILL</option>
-            <option value="STYLE">STYLE</option>
-            <option value="SPEED">SPEED</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Division</label>
-          <select id="edit-division">
-            <option value="PICCOLI">PICCOLI</option>
-            <option value="MEDI">MEDI</option>
-            <option value="GRANDI">GRANDI</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Score</label>
-          <input type="number" id="edit-score" min="0" max="9999">
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
-
-  <script>
-    /* =====================================================
-       STATE
-    ===================================================== */
-    let competitors = [];
-    let currentDivision = 'PICCOLI';
-
-    const CATEGORIES = ['SKILL', 'STYLE', 'SPEED'];
-    const DIVISIONS  = ['PICCOLI', 'MEDI', 'GRANDI'];
-
-    const STORAGE_KEY = 'compmanager_v1';
-
-    /* =====================================================
-       PERSISTENCE
-    ===================================================== */
-    function save() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(competitors));
+  function scoreCell(c, cat) {
+    const val = c.scores[cat];
+    const colorClass = cat === 'SKILL' ? 'var(--cat-skill-fg)' : cat === 'STYLE' ? 'var(--cat-style-fg)' : 'var(--cat-speed-fg)';
+    if (val === null || val === undefined) {
+      return `<span class="escore no-score" onclick="editScore(this,'${esc(c.id)}','${cat}')">—<span class="escore-pencil">✏</span></span>`;
     }
+    return `<span class="escore" style="color:${colorClass}" onclick="editScore(this,'${esc(c.id)}','${cat}')">${val}<span class="escore-pencil">✏</span></span>`;
+  }
 
-    function load() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        try { competitors = JSON.parse(raw); } catch { competitors = []; }
-      } else {
-        competitors = buildSampleData();
-        save();
-      }
-    }
+  /* Click-to-edit score cell in leaderboards */
+  function editScore(el, id, cat) {
+    const c = competitors.find(x => x.id === id);
+    if (!c) return;
+    const current = c.scores[cat] ?? '';
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.min = '0'; inp.max = '9999';
+    inp.value = current;
+    inp.style.cssText = 'width:60px;padding:3px 6px;font-size:.88rem;font-weight:700;text-align:center;background:var(--surface2);border:1.5px solid var(--accent);border-radius:5px;color:var(--text);outline:none;';
+    el.replaceWith(inp);
+    inp.focus(); inp.select();
 
-    function uid() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-    }
-
-    /* =====================================================
-       SAMPLE DATA  (9 teams × 3 members = 27 competitors)
-    ===================================================== */
-    function buildSampleData() {
-      const defs = [
-        // PICCOLI
-        { team: 'Falchi',  div: 'PICCOLI', names: ['Marco Rossi',    'Sara Conti',    'Luca Ferri'   ], scores: [88, 92, 85] },
-        { team: 'Draghi',  div: 'PICCOLI', names: ['Elena Bruno',    'Matteo Neri',   'Giulia Ricci' ], scores: [76, 91, 83] },
-        { team: 'Leoni',   div: 'PICCOLI', names: ['Davide Costa',   'Anna Vitale',   'Paolo Greco'  ], scores: [95, 78, 88] },
-        // MEDI
-        { team: 'Aquile',  div: 'MEDI',    names: ['Roberto Marin',  'Francesca Riva','Simone Gallo' ], scores: [82, 88, 94] },
-        { team: 'Tigri',   div: 'MEDI',    names: ['Laura Sanna',    'Antonio Longo', 'Chiara Sala'  ], scores: [90, 85, 79] },
-        { team: 'Orsi',    div: 'MEDI',    names: ['Giovanni Poli',  'Marta Fiore',   'Federico Bova'], scores: [77, 93, 86] },
-        // GRANDI
-        { team: 'Cobra',   div: 'GRANDI',  names: ['Alessandro Ru',  'Valentina Bini','Stefano Cava' ], scores: [91, 87, 96] },
-        { team: 'Squali',  div: 'GRANDI',  names: ['Beatrice Fusi',  'Leonardo Pace', 'Maria Amato'  ], scores: [84, 90, 88] },
-        { team: 'Puma',    div: 'GRANDI',  names: ['Riccardo Tosi',  'Silvia Bassi',  'Tommaso Foti' ], scores: [79, 95, 82] },
-      ];
-
-      const result = [];
-      defs.forEach(d => {
-        CATEGORIES.forEach((cat, i) => {
-          result.push({
-            id:       uid(),
-            name:     d.names[i],
-            team:     d.team,
-            category: cat,
-            division: d.div,
-            score:    d.scores[i],
-          });
-        });
-      });
-      return result;
-    }
-
-    /* =====================================================
-       HELPERS
-    ===================================================== */
-    function esc(str) {
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;');
-    }
-
-    function catBadge(cat) {
-      return `<span class="badge badge-${cat.toLowerCase()}">${esc(cat)}</span>`;
-    }
-
-    function divBadge(div) {
-      return `<span class="badge badge-${div.toLowerCase()}">${esc(div)}</span>`;
-    }
-
-    function rankMedal(rank) {
-      if (rank === 1) return '🥇';
-      if (rank === 2) return '🥈';
-      if (rank === 3) return '🥉';
-      return `<span class="rank-num">${rank}</span>`;
-    }
-
-    function rankRowClass(rank) {
-      if (rank === 1) return 'row-gold';
-      if (rank === 2) return 'row-silver';
-      if (rank === 3) return 'row-bronze';
-      return '';
-    }
-
-    function maxScore() {
-      return competitors.length ? Math.max(...competitors.map(c => c.score)) : 100;
-    }
-
-    function barColor(score, max) {
-      const pct = max > 0 ? score / max : 0;
-      if (pct >= 0.85) return '#4f7cff';
-      if (pct >= 0.65) return '#22c55e';
-      return '#f97316';
-    }
-
-    /* =====================================================
-       TOAST
-    ===================================================== */
-    function toast(msg, type = 'ok') {
-      const el = document.createElement('div');
-      el.className = `toast ${type}`;
-      el.textContent = msg;
-      document.getElementById('toast-container').appendChild(el);
-      setTimeout(() => {
-        el.style.transition = 'opacity .3s';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 350);
-      }, 2600);
-    }
-
-    /* =====================================================
-       NAVIGATION
-    ===================================================== */
-    function showView(name, el) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('view-' + name).classList.add('active');
-      el.classList.add('active');
-      renderAll();
-    }
-
-    function showDivision(div, el) {
-      currentDivision = div;
-      document.querySelectorAll('.div-tab').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
-      renderTeams();
-    }
-
-    /* =====================================================
-       RENDER ALL
-    ===================================================== */
-    function renderAll() {
-      renderAdmin();
-      renderTeams();
-      renderIndividual();
-      refreshTeamDatalist();
-    }
-
-    /* =====================================================
-       RENDER: ADMIN
-    ===================================================== */
-    function renderAdmin() {
-      const tbody  = document.getElementById('admin-tbody');
-      const empty  = document.getElementById('admin-empty');
-      const count  = document.getElementById('admin-count');
-      const table  = document.getElementById('admin-table');
-
-      count.textContent = `(${competitors.length})`;
-
-      if (competitors.length === 0) {
-        table.style.display = 'none';
-        empty.style.display = 'block';
-        return;
-      }
-
-      table.style.display = '';
-      empty.style.display = 'none';
-
-      tbody.innerHTML = competitors.map(c => `
-        <tr>
-          <td style="font-weight:600">${esc(c.name)}</td>
-          <td style="color:var(--muted)">${esc(c.team)}</td>
-          <td>${catBadge(c.category)}</td>
-          <td>${divBadge(c.division)}</td>
-          <td><span class="score-val">${c.score}</span></td>
-          <td>
-            <div class="actions-cell">
-              <button class="btn btn-ghost btn-sm" onclick="openEdit('${esc(c.id)}')">✏ Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteCompetitor('${esc(c.id)}')">✕</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    /* =====================================================
-       RENDER: TEAMS
-    ===================================================== */
-    function renderTeams() {
-      const container = document.getElementById('division-content');
-      const div = currentDivision;
-      const ms  = maxScore();
-
-      const divComps = competitors.filter(c => c.division === div);
-
-      // Build team map
-      const teamMap = {};
-      divComps.forEach(c => {
-        if (!teamMap[c.team]) teamMap[c.team] = { name: c.team, members: [], total: 0 };
-        teamMap[c.team].members.push(c);
-        teamMap[c.team].total += c.score;
-      });
-
-      const teams = Object.values(teamMap).sort((a, b) => b.total - a.total);
-
-      const divColors = { PICCOLI: '#22d3ee', MEDI: '#fb923c', GRANDI: '#f87171' };
-      const divColor  = divColors[div];
-
-      if (teams.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="es-icon">🏟️</div>
-            <p>No teams in <strong>${div}</strong> division yet.</p>
-            <p style="margin-top:.5rem">Add competitors via the Admin Panel.</p>
-          </div>`;
-        return;
-      }
-
-      const maxTeamTotal = teams[0].total || 1;
-
-      container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
-          <div style="font-size:1rem;font-weight:800;color:${divColor}">
-            Division ${div}
-            <span style="font-size:.78rem;color:var(--muted);font-weight:500;margin-left:.4rem">${teams.length} team${teams.length!==1?'s':''}</span>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
-        </div>
-        ${teams.map((t, i) => renderTeamCard(t, i + 1, maxTeamTotal, divColor)).join('')}
-      `;
-    }
-
-    function renderTeamCard(team, rank, maxTotal, divColor) {
-      const cardClass = rank === 1 ? 'team-card-gold' : rank === 2 ? 'team-card-silver' : rank === 3 ? 'team-card-bronze' : '';
-      const rankColors = { 1: 'var(--gold)', 2: 'var(--silver)', 3: 'var(--bronze)' };
-      const rankColor  = rankColors[rank] || 'var(--muted)';
-      const medal      = rankMedal(rank);
-
-      const pct   = maxTotal > 0 ? (team.total / maxTotal) * 100 : 0;
-      const bColor = rank === 1 ? '#f5c542' : rank === 2 ? '#b0bec5' : rank === 3 ? '#cd8b3a' : '#4f7cff';
-
-      const members = CATEGORIES.map(cat => {
-        const m = team.members.find(m => m.category === cat);
-        if (!m) {
-          return `<div class="member-chip"><span class="member-chip-missing">${cat} — no entry</span></div>`;
-        }
-        return `<div class="member-chip">${catBadge(cat)}<span class="member-chip-name">${esc(m.name)}</span><span class="member-chip-score">${m.score}</span></div>`;
-      }).join('');
-
-      return `
-        <div class="team-card ${cardClass}">
-          <div class="team-card-header">
-            <div class="team-rank-badge" style="color:${rankColor}">${medal}</div>
-            <div class="team-name-cell">
-              <div class="team-name-text">${esc(team.name)}</div>
-              <div class="score-bar-wrap" style="width:120px;margin-top:6px">
-                <div class="score-bar" style="width:${pct.toFixed(1)}%;background:${bColor}"></div>
-              </div>
-            </div>
-            <div class="team-score-cell">
-              <div class="team-score-label">TOTAL</div>
-              <div class="team-score-val">${team.total}</div>
-            </div>
-          </div>
-          <div class="team-members">${members}</div>
-        </div>
-      `;
-    }
-
-    /* =====================================================
-       RENDER: INDIVIDUAL
-    ===================================================== */
-    function renderIndividual() {
-      const search    = (document.getElementById('search-input').value || '').toLowerCase().trim();
-      const catFilter = document.getElementById('filter-cat').value;
-      const divFilter = document.getElementById('filter-div').value;
-
-      // Sort all by score desc and assign global rank
-      const sorted = [...competitors].sort((a, b) => b.score - a.score);
-      sorted.forEach((c, i) => { c._rank = i + 1; });
-
-      // Filter
-      const filtered = sorted.filter(c => {
-        if (search && !c.name.toLowerCase().includes(search) && !c.team.toLowerCase().includes(search)) return false;
-        if (catFilter && c.category !== catFilter) return false;
-        if (divFilter && c.division !== divFilter) return false;
-        return true;
-      });
-
-      const tbody = document.getElementById('ind-tbody');
-      const empty = document.getElementById('ind-empty');
-      const count = document.getElementById('ind-count');
-
-      count.textContent = `${filtered.length} competitor${filtered.length !== 1 ? 's' : ''}`;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-
-      empty.style.display = 'none';
-
-      tbody.innerHTML = filtered.map(c => {
-        const rc = rankRowClass(c._rank);
-        return `
-          <tr class="${rc}">
-            <td><span class="ind-rank">${rankMedal(c._rank)}</span></td>
-            <td style="font-weight:700">${esc(c.name)}</td>
-            <td style="color:var(--muted);font-size:.82rem">${esc(c.team)}</td>
-            <td>${catBadge(c.category)}</td>
-            <td>${divBadge(c.division)}</td>
-            <td><span class="score-val">${c.score}</span></td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function clearIndividualFilters() {
-      document.getElementById('search-input').value = '';
-      document.getElementById('filter-cat').value = '';
-      document.getElementById('filter-div').value = '';
-      renderIndividual();
-    }
-
-    /* =====================================================
-       ADMIN ACTIONS
-    ===================================================== */
-    function addCompetitor() {
-      const name     = document.getElementById('f-name').value.trim();
-      const team     = document.getElementById('f-team').value.trim();
-      const category = document.getElementById('f-category').value;
-      const division = document.getElementById('f-division').value;
-      const score    = parseInt(document.getElementById('f-score').value, 10) || 0;
-
-      if (!name || !team || !category || !division) {
-        toast('Please fill in all fields.', 'err');
-        return;
-      }
-
-      competitors.push({ id: uid(), name, team, category, division, score });
+    let done = false;
+    function commit() {
+      if (done) return; done = true;
+      const val = inp.value.trim();
+      c.scores[cat] = val === '' ? null : (parseInt(val, 10) || 0);
       save();
       renderAll();
-      clearAddForm();
-      toast(`${name} added!`);
+    }
+    inp.addEventListener('blur', commit);
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') commit();
+      if (e.key === 'Escape') { done = true; renderAll(); }
+    });
+  }
+
+  /* =====================================================
+     ADD FORM HELPERS
+  ===================================================== */
+  function toggleCat(cat) {
+    const cb    = document.getElementById('en-' + cat.toLowerCase());
+    const input = document.getElementById('f-' + cat.toLowerCase());
+    const item  = document.getElementById('item-' + cat.toLowerCase());
+    // If toggleCat called from checkbox, cb.checked already flipped
+    const enabled = cb.checked;
+    input.disabled = !enabled;
+    item.className = `cat-score-item${enabled ? ' enabled-' + cat.toLowerCase() : ''}`;
+    if (enabled) input.focus();
+  }
+
+  function clearAddForm() {
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-team').value = '';
+    document.getElementById('f-division').value = '';
+    CATEGORIES.forEach(cat => {
+      const lc = cat.toLowerCase();
+      document.getElementById('en-' + lc).checked = false;
+      document.getElementById('f-' + lc).value = '';
+      document.getElementById('f-' + lc).disabled = true;
+      document.getElementById('item-' + lc).className = 'cat-score-item';
+    });
+  }
+
+  /* =====================================================
+     ADD COMPETITOR
+  ===================================================== */
+  function addCompetitor() {
+    const name     = document.getElementById('f-name').value.trim();
+    const team     = document.getElementById('f-team').value.trim();
+    const division = document.getElementById('f-division').value;
+
+    if (!name || !team || !division) {
+      toast('Please fill in Name, Team and Division.', 'err');
+      return;
     }
 
-    function clearAddForm() {
-      ['f-name', 'f-team', 'f-score'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-      document.getElementById('f-category').value = '';
-      document.getElementById('f-division').value = '';
-    }
+    const scores = { SKILL: null, STYLE: null, SPEED: null };
+    let hasAny = false;
 
-    function deleteCompetitor(id) {
-      const c = competitors.find(x => x.id === id);
-      if (!c) return;
-      if (!confirm(`Delete "${c.name}" from ${c.team}?`)) return;
-      competitors = competitors.filter(x => x.id !== id);
-      save();
-      renderAll();
-      toast('Competitor removed.');
-    }
-
-    function clearAll() {
-      if (!confirm('Delete ALL competitors? This cannot be undone.')) return;
-      competitors = [];
-      save();
-      renderAll();
-      toast('All data cleared.');
-    }
-
-    function resetSampleData() {
-      if (!confirm('Replace all data with the sample dataset?')) return;
-      competitors = buildSampleData();
-      save();
-      renderAll();
-      toast('Sample data loaded!');
-    }
-
-    /* =====================================================
-       MODAL
-    ===================================================== */
-    function openEdit(id) {
-      const c = competitors.find(x => x.id === id);
-      if (!c) return;
-      document.getElementById('edit-id').value       = c.id;
-      document.getElementById('edit-name').value     = c.name;
-      document.getElementById('edit-team').value     = c.team;
-      document.getElementById('edit-category').value = c.category;
-      document.getElementById('edit-division').value = c.division;
-      document.getElementById('edit-score').value    = c.score;
-      document.getElementById('modal-overlay').classList.remove('hidden');
-      document.getElementById('edit-name').focus();
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').classList.add('hidden');
-    }
-
-    function saveEdit() {
-      const id = document.getElementById('edit-id').value;
-      const c  = competitors.find(x => x.id === id);
-      if (!c) return;
-
-      const name     = document.getElementById('edit-name').value.trim();
-      const team     = document.getElementById('edit-team').value.trim();
-      const category = document.getElementById('edit-category').value;
-      const division = document.getElementById('edit-division').value;
-      const score    = parseInt(document.getElementById('edit-score').value, 10) || 0;
-
-      if (!name || !team) {
-        toast('Name and team are required.', 'err');
-        return;
+    CATEGORIES.forEach(cat => {
+      const lc = cat.toLowerCase();
+      const enabled = document.getElementById('en-' + lc).checked;
+      if (enabled) {
+        const val = document.getElementById('f-' + lc).value.trim();
+        scores[cat] = val === '' ? 0 : (parseInt(val, 10) || 0);
+        hasAny = true;
       }
-
-      c.name     = name;
-      c.team     = team;
-      c.category = category;
-      c.division = division;
-      c.score    = score;
-
-      save();
-      renderAll();
-      closeModal();
-      toast('Changes saved!');
-    }
-
-    document.getElementById('modal-overlay').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
     });
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    /* =====================================================
-       TEAM DATALIST (autocomplete)
-    ===================================================== */
-    function refreshTeamDatalist() {
-      const teams = [...new Set(competitors.map(c => c.team))].sort();
-      const dl = document.getElementById('team-datalist');
-      dl.innerHTML = teams.map(t => `<option value="${esc(t)}">`).join('');
+    if (!hasAny) {
+      toast('Select at least one category (SKILL / STYLE / SPEED).', 'err');
+      return;
     }
 
-    /* =====================================================
-       EXPORT CSV
-    ===================================================== */
-    function exportCSV() {
-      if (competitors.length === 0) {
-        toast('No data to export.', 'err');
-        return;
-      }
-      const header = ['Name', 'Team', 'Category', 'Division', 'Score'];
-      const rows   = competitors.map(c => [c.name, c.team, c.category, c.division, c.score]);
-      const csv    = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url  = URL.createObjectURL(blob);
-      const a    = Object.assign(document.createElement('a'), { href: url, download: 'competition_data.csv' });
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast('CSV exported!');
-    }
-
-    /* =====================================================
-       INIT
-    ===================================================== */
-    load();
+    competitors.push({ id: uid(), name, team, division, scores });
+    save();
     renderAll();
-  </script>
+    clearAddForm();
+    toast(`${name} added!`);
+  }
+
+  /* =====================================================
+     DELETE / CLEAR
+  ===================================================== */
+  function deleteCompetitor(id) {
+    const c = competitors.find(x => x.id === id);
+    if (!c) return;
+    if (!confirm(`Delete "${c.name}" from ${c.team}?`)) return;
+    competitors = competitors.filter(x => x.id !== id);
+    save(); renderAll();
+    toast('Competitor removed.');
+  }
+
+  function clearAll() {
+    if (!confirm('Delete ALL competitors? This cannot be undone.')) return;
+    competitors = []; save(); renderAll();
+    toast('All data cleared.');
+  }
+
+  function resetSampleData() {
+    if (!confirm('Replace all data with the sample dataset?')) return;
+    competitors = buildSampleData(); save(); renderAll();
+    toast('Sample data loaded!');
+  }
+
+  /* =====================================================
+     EDIT MODAL
+  ===================================================== */
+  function openEdit(id) {
+    const c = competitors.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('edit-id').value       = c.id;
+    document.getElementById('edit-name').value     = c.name;
+    document.getElementById('edit-team').value     = c.team;
+    document.getElementById('edit-division').value = c.division;
+    document.getElementById('edit-skill').value    = c.scores.SKILL ?? '';
+    document.getElementById('edit-style').value    = c.scores.STYLE ?? '';
+    document.getElementById('edit-speed').value    = c.scores.SPEED ?? '';
+    document.getElementById('modal-overlay').classList.remove('hidden');
+    document.getElementById('edit-name').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.add('hidden');
+  }
+
+  function saveEdit() {
+    const id = document.getElementById('edit-id').value;
+    const c  = competitors.find(x => x.id === id);
+    if (!c) return;
+
+    const name     = document.getElementById('edit-name').value.trim();
+    const team     = document.getElementById('edit-team').value.trim();
+    const division = document.getElementById('edit-division').value;
+
+    if (!name || !team) { toast('Name and team are required.', 'err'); return; }
+
+    const parseScore = id => {
+      const v = document.getElementById(id).value.trim();
+      return v === '' ? null : (parseInt(v, 10) || 0);
+    };
+
+    c.name = name; c.team = team; c.division = division;
+    c.scores.SKILL = parseScore('edit-skill');
+    c.scores.STYLE = parseScore('edit-style');
+    c.scores.SPEED = parseScore('edit-speed');
+
+    save(); renderAll(); closeModal();
+    toast('Changes saved!');
+  }
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* =====================================================
+     TEAM DATALIST
+  ===================================================== */
+  function refreshTeamDatalist() {
+    const teams = [...new Set(competitors.map(c => c.team))].sort();
+    const dl = document.getElementById('team-datalist');
+    dl.innerHTML = teams.map(t => `<option value="${esc(t)}">`).join('');
+  }
+
+  /* =====================================================
+     EXPORT CSV
+  ===================================================== */
+  function exportCSV() {
+    if (!competitors.length) { toast('No data to export.', 'err'); return; }
+    const header = ['Name','Team','Division','SKILL','STYLE','SPEED','Total'];
+    const rows = competitors.map(c => [
+      c.name, c.team, c.division,
+      c.scores.SKILL ?? '', c.scores.STYLE ?? '', c.scores.SPEED ?? '',
+      totalScore(c)
+    ]);
+    const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'})),
+      download: 'competition_data.csv'
+    });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast('CSV exported!');
+  }
+
+  /* =====================================================
+     INIT
+  ===================================================== */
+  load();
+  renderAll();
+</script>
 </body>
 </html>
