@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>City Challenge</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b1120;--surface:#151f33;--surface2:#1e2d47;--surface3:#243352;
+  --border:#2d3f5c;--text:#e8edf5;--muted:#7a8fad;
+  --accent:#4f7cff;--accent2:#7aa2ff;
+  --gold:#f5c542;--silver:#b0bec5;--bronze:#cd8b3a;
+  --danger:#ef4444;--success:#22c55e;--warn:#f97316;
+  --cat-skill-bg:rgba(79,124,255,.15);--cat-skill-fg:#7aa2ff;--cat-skill-bdr:rgba(79,124,255,.35);
+  --cat-style-bg:rgba(168,85,247,.15);--cat-style-fg:#c084fc;--cat-style-bdr:rgba(168,85,247,.35);
+  --cat-speed-bg:rgba(34,197,94,.15);--cat-speed-fg:#4ade80;--cat-speed-bdr:rgba(34,197,94,.35);
+  --div-pic-bg:rgba(6,182,212,.15);--div-pic-fg:#22d3ee;--div-pic-bdr:rgba(6,182,212,.35);
+  --div-med-bg:rgba(249,115,22,.15);--div-med-fg:#fb923c;--div-med-bdr:rgba(249,115,22,.35);
+  --div-grd-bg:rgba(239,68,68,.15);--div-grd-fg:#f87171;--div-grd-bdr:rgba(239,68,68,.35);
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* HEADER */
+#app-header{
+  position:fixed;top:0;left:0;right:0;height:52px;z-index:1000;
+  background:linear-gradient(135deg,#101d34 0%,#0b1120 60%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 .9rem;gap:.6rem;
+}
+#app-header .logo{font-size:1.3rem;line-height:1}
+#app-header .title{font-size:.95rem;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--accent2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#app-header .subtitle{font-size:.62rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+#app-header .hstatus{margin-left:auto;display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted)}
+#gps-status,#sync-status{display:flex;align-items:center;gap:.2rem}
+
+/* BOTTOM NAV */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:56px;z-index:1000;
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:.6rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;transition:color .18s;padding:.3rem 0;
+}
+.bnav-btn .icon{font-size:1.3rem;line-height:1}
+.bnav-btn.active{color:var(--accent2)}
+.bnav-btn.active .icon{filter:drop-shadow(0 0 6px var(--accent))}
+
+/* VIEWS */
+#views-container{position:fixed;top:52px;bottom:56px;left:0;right:0;overflow:hidden}
+.view{display:none;height:100%;overflow-y:auto;overflow-x:hidden}
+.view.active{display:block}
+
+/* MAP VIEW */
+#map-view{padding:0;overflow:hidden}
+#map{width:100%;height:100%}
+
+/* OFFLINE BANNER */
+#offline-banner{
+  position:absolute;top:0;left:0;right:0;z-index:500;
+  background:rgba(249,115,22,.15);border-bottom:1px solid rgba(249,115,22,.4);
+  padding:.45rem 1rem;font-size:.76rem;color:var(--warn);text-align:center;
+  display:none;
+}
+
+/* BOTTOM SHEET */
+#spot-sheet{
+  position:fixed;bottom:56px;left:0;right:0;z-index:900;
+  background:var(--surface);border-top:1px solid var(--border);
+  border-radius:1.2rem 1.2rem 0 0;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  max-height:80vh;overflow-y:auto;
+}
+#spot-sheet.open{transform:translateY(0)}
+#sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:.75rem auto .5rem}
+#sheet-backdrop{
+  position:fixed;inset:0;z-index:899;background:rgba(0,0,0,.5);
+  display:none;
+}
+#sheet-backdrop.open{display:block}
+.sheet-body{padding:.5rem 1.2rem 1.5rem}
+.sheet-spot-name{font-size:1.1rem;font-weight:800;margin-bottom:.25rem}
+.sheet-spot-desc{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+.challenge-list{display:flex;flex-direction:column;gap:.6rem}
+.challenge-item{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.75rem;
+  padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;
+}
+.challenge-item.done{opacity:.5}
+.ch-icon{font-size:1.5rem;flex-shrink:0}
+.ch-info{flex:1}
+.ch-name{font-weight:700;font-size:.9rem}
+.ch-pts{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.ch-completors{font-size:.72rem;color:var(--muted)}
+.btn-complete{
+  padding:.4rem .85rem;border-radius:.5rem;border:none;cursor:pointer;
+  font-size:.78rem;font-weight:700;background:var(--accent);color:#fff;
+  transition:opacity .15s,transform .1s;flex-shrink:0;
+}
+.btn-complete:hover{opacity:.85}
+.btn-complete:active{transform:scale(.95)}
+.btn-complete:disabled{opacity:.4;cursor:not-allowed}
+.btn-complete.done-btn{background:var(--surface3);color:var(--muted)}
+
+/* RANKINGS VIEW */
+#rankings-view{padding:.9rem .9rem 1rem}
+.div-tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.div-tab{
+  padding:.4rem .9rem;border-radius:.5rem;cursor:pointer;font-size:.76rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;border:2px solid transparent;
+  transition:all .18s;background:var(--surface2);color:var(--muted);border-color:var(--border);
+}
+.div-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.leaderboard-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
+.lb-row{
+  background:var(--surface);border:1px solid var(--border);border-radius:.75rem;
+  padding:.8rem 1rem;display:flex;align-items:center;gap:.75rem;
+}
+.lb-row.rank-gold{border-color:rgba(245,197,66,.5);background:rgba(245,197,66,.04)}
+.lb-row.rank-silver{border-color:rgba(176,190,197,.4);background:rgba(176,190,197,.03)}
+.lb-row.rank-bronze{border-color:rgba(205,139,58,.4);background:rgba(205,139,58,.03)}
+.lb-rank{font-size:1.1rem;min-width:1.8rem;text-align:center}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-sub{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;margin-top:.15rem;flex-wrap:wrap}
+.lb-pts{font-size:1.05rem;font-weight:800;color:var(--accent2);font-variant-numeric:tabular-nums;flex-shrink:0}
+.lb-chal{font-size:.7rem;color:var(--muted);flex-shrink:0}
+.section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.6rem}
+.feed-list{display:flex;flex-direction:column;gap:.4rem}
+.feed-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:.6rem;
+  padding:.65rem .9rem;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:.5rem;
+}
+.feed-item strong{color:var(--text)}
+.feed-time{margin-left:auto;font-size:.68rem;flex-shrink:0}
+
+/* ADMIN VIEW */
+#admin-view{padding:.9rem .9rem 1rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:.85rem;padding:1.1rem;margin-bottom:1rem}
+.card-title{font-size:.9rem;font-weight:700;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}
+.form-group{display:flex;flex-direction:column;gap:.25rem}
+.form-group.full{grid-column:1/-1}
+label{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+input,select,textarea{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.5rem;
+  color:var(--text);padding:.48rem .7rem;font-size:.84rem;width:100%;
+  transition:border-color .18s,box-shadow .18s;-webkit-appearance:none;font-family:inherit;
+}
+textarea{resize:vertical;min-height:80px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,124,255,.15)}
+select option{background:var(--surface2)}
+.form-actions{display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.48rem .9rem;border-radius:.5rem;font-size:.8rem;font-weight:600;
+  cursor:pointer;border:none;transition:opacity .15s,transform .1s;white-space:nowrap;
+}
+.btn:hover{opacity:.85}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-success{background:var(--success);color:#fff}
+.btn-sm{padding:.3rem .6rem;font-size:.74rem}
+.badge{
+  display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:9999px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid transparent;
+}
+.badge-skill{background:var(--cat-skill-bg);color:var(--cat-skill-fg);border-color:var(--cat-skill-bdr)}
+.badge-style{background:var(--cat-style-bg);color:var(--cat-style-fg);border-color:var(--cat-style-bdr)}
+.badge-speed{background:var(--cat-speed-bg);color:var(--cat-speed-fg);border-color:var(--cat-speed-bdr)}
+.badge-piccoli{background:var(--div-pic-bg);color:var(--div-pic-fg);border-color:var(--div-pic-bdr)}
+.badge-medi{background:var(--div-med-bg);color:var(--div-med-fg);border-color:var(--div-med-bdr)}
+.badge-grandi{background:var(--div-grd-bg);color:var(--div-grd-fg);border-color:var(--div-grd-bdr)}
+.challenge-checks{display:flex;gap:.5rem;margin-top:.3rem;flex-wrap:wrap}
+.ch-check{display:flex;align-items:center;gap:.3rem;cursor:pointer;font-size:.8rem;font-weight:600}
+.ch-check input{width:14px;height:14px;accent-color:var(--accent);flex-shrink:0}
+
+/* SPOTS LIST */
+.spots-list{display:flex;flex-direction:column;gap:.5rem}
+.spot-row{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;
+  padding:.7rem .9rem;display:flex;align-items:center;gap:.7rem;
+}
+.spot-row-icon{font-size:1.3rem;flex-shrink:0}
+.spot-row-info{flex:1;min-width:0}
+.spot-row-name{font-weight:700;font-size:.85rem}
+.spot-row-sub{font-size:.72rem;color:var(--muted);margin-top:.1rem}
+.spot-row-actions{display:flex;gap:.3rem;flex-shrink:0}
+
+/* FIREBASE CARD */
+.firebase-status{display:flex;align-items:center;gap:.5rem;font-size:.82rem;margin-bottom:.75rem}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);flex-shrink:0}
+.status-dot.connected{background:var(--success)}
+.join-url-box{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.5rem;
+  padding:.6rem .8rem;font-size:.72rem;color:var(--muted);word-break:break-all;
+  margin-bottom:.5rem;
+}
+.danger-zone{border-color:rgba(239,68,68,.35)!important;background:rgba(239,68,68,.04)!important}
+.danger-title{color:var(--danger)!important}
+
+/* MODAL */
+#profile-modal{
+  position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+}
+.modal-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:1rem;
+  padding:1.5rem;width:100%;max-width:380px;
+}
+.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:.3rem;
+  background:linear-gradient(135deg,var(--accent2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-subtitle{font-size:.78rem;color:var(--muted);margin-bottom:1.2rem}
+.modal-form{display:flex;flex-direction:column;gap:.85rem}
+
+/* SPOT EDIT MODAL */
+#spot-modal{
+  position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.7);
+  display:flex;align-items:flex-end;justify-content:center;
+  display:none;
+}
+#spot-modal.open{display:flex}
+.spot-modal-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:1rem 1rem 0 0;padding:1.3rem;width:100%;max-width:520px;
+  max-height:92vh;overflow-y:auto;
+}
+.spot-modal-title{font-size:1rem;font-weight:800;margin-bottom:1rem}
+
+/* MAP PLACEMENT MODE */
+#map-placement-banner{
+  position:absolute;top:0;left:0;right:0;z-index:500;
+  background:rgba(79,124,255,.9);padding:.6rem 1rem;
+  font-size:.82rem;color:#fff;font-weight:600;text-align:center;
+  display:none;
+}
+#map-placement-banner.active{display:block}
+
+/* PLAYER MARKER */
+.player-dot{
+  width:14px;height:14px;border-radius:50%;
+  background:#4f7cff;border:2px solid #fff;
+  box-shadow:0 0 0 4px rgba(79,124,255,.3);
+}
+
+/* SPOT MARKERS */
+.spot-marker{
+  display:flex;flex-direction:column;align-items:center;cursor:pointer;
+}
+.spot-marker-icon{
+  font-size:1.4rem;line-height:1;background:var(--surface);
+  border:2px solid var(--border);border-radius:50%;
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);transition:border-color .3s,box-shadow .3s;
+}
+.spot-marker-badge{
+  font-size:.6rem;font-weight:800;background:var(--surface2);border:1px solid var(--border);
+  border-radius:9999px;padding:1px 5px;margin-top:2px;color:var(--muted);white-space:nowrap;
+}
+.spot-marker-label{
+  font-size:.62rem;font-weight:700;color:var(--text);background:rgba(11,17,32,.85);
+  border-radius:3px;padding:1px 4px;margin-top:2px;white-space:nowrap;
+  max-width:90px;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* PULSE ANIMATION */
+@keyframes pulse-ring{
+  0%{transform:scale(1);opacity:.8}
+  70%{transform:scale(1.5);opacity:0}
+  100%{transform:scale(1.5);opacity:0}
+}
+.in-range .spot-marker-icon{
+  border-color:var(--success)!important;
+  box-shadow:0 0 0 0 rgba(34,197,94,.6),0 2px 8px rgba(0,0,0,.4)!important;
+  animation:pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow{
+  0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6),0 2px 8px rgba(0,0,0,.4)}
+  50%{box-shadow:0 0 0 8px rgba(34,197,94,0),0 2px 8px rgba(0,0,0,.4)}
+}
+.all-done .spot-marker-icon{opacity:.4;filter:grayscale(1)}
+
+/* CONFIRM DIALOG */
+#confirm-dialog{
+  position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.75);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#confirm-dialog.open{display:flex}
+.confirm-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:1rem;
+  padding:1.4rem;width:100%;max-width:340px;text-align:center;
+}
+.confirm-title{font-size:1rem;font-weight:800;margin-bottom:.5rem}
+.confirm-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.2rem}
+.confirm-actions{display:flex;gap:.6rem;justify-content:center}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:4000;background:var(--surface2);border:1px solid var(--border);
+  border-radius:.6rem;padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;
+  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* SPINNER */
+.spinner{
+  display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* UTILS */
+.empty-state{text-align:center;color:var(--muted);padding:2rem;font-size:.85rem}
+.separator{height:1px;background:var(--border);margin:.75rem 0}
+
+/* Leaflet overrides */
+.leaflet-container{background:#0b1120!important}
+.leaflet-bar a,.leaflet-bar a:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
+.leaflet-popup-content-wrapper{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:.6rem}
+.leaflet-popup-tip{background:var(--surface)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="app-header">
+  <span class="logo">🏃</span>
+  <div>
+    <div class="title">City Challenge</div>
+    <div class="subtitle" id="header-athlete">Loading…</div>
+  </div>
+  <div class="hstatus">
+    <div id="gps-status" title="GPS">📡 GPS</div>
+    <div id="sync-status" title="Sync">🔴 Demo</div>
+  </div>
+</header>
+
+<!-- OFFLINE BANNER -->
+<div id="offline-banner">⚠️ Demo mode — Firebase not configured. Data saved locally only.</div>
+
+<!-- VIEWS CONTAINER -->
+<div id="views-container">
+
+  <!-- MAP VIEW -->
+  <div id="map-view" class="view active">
+    <div id="map-placement-banner">📍 Tap on the map to place the spot</div>
+    <div id="offline-banner" style="display:none;position:relative"></div>
+    <div id="map"></div>
+  </div>
+
+  <!-- RANKINGS VIEW -->
+  <div id="rankings-view" class="view">
+    <div class="div-tabs" id="div-tabs">
+      <button class="div-tab active" data-div="ALL">All</button>
+      <button class="div-tab" data-div="PICCOLI" style="background:var(--div-pic-bg);color:var(--div-pic-fg);border-color:var(--div-pic-bdr)">Piccoli</button>
+      <button class="div-tab" data-div="MEDI" style="background:var(--div-med-bg);color:var(--div-med-fg);border-color:var(--div-med-bdr)">Medi</button>
+      <button class="div-tab" data-div="GRANDI" style="background:var(--div-grd-bg);color:var(--div-grd-fg);border-color:var(--div-grd-bdr)">Grandi</button>
+    </div>
+    <div id="leaderboard-list" class="leaderboard-list"></div>
+    <div class="separator"></div>
+    <div class="section-label">Recent Completions</div>
+    <div id="feed-list" class="feed-list"></div>
+  </div>
+
+  <!-- ADMIN VIEW -->
+  <div id="admin-view" class="view">
+
+    <!-- Firebase Config -->
+    <div class="card" id="firebase-card">
+      <div class="card-title">🔥 Firebase Config</div>
+      <div class="firebase-status">
+        <div class="status-dot" id="fb-dot"></div>
+        <span id="fb-status-text">Not connected</span>
+      </div>
+      <div id="fb-setup-section">
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:.75rem">Paste your Firebase Realtime Database config JSON below to enable live sync across devices.</p>
+        <div class="form-group">
+          <label>Firebase Config JSON</label>
+          <textarea id="fb-config-input" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"..."}'></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveFirebaseConfig()">💾 Save & Connect</button>
+          <button class="btn btn-ghost" onclick="clearFirebaseConfig()">Clear</button>
+        </div>
+      </div>
+      <div id="fb-connected-section" style="display:none">
+        <div class="section-label" style="margin-bottom:.4rem">Join URL</div>
+        <div class="join-url-box" id="join-url-box">—</div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" onclick="copyJoinUrl()">📋 Copy URL</button>
+          <button class="btn btn-ghost btn-sm" onclick="disconnectFirebase()">Disconnect</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spots Management -->
+    <div class="card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>📍 Challenge Spots</span>
+        <button class="btn btn-primary btn-sm" onclick="openSpotModal(null)">+ Add Spot</button>
+      </div>
+      <div id="spots-list" class="spots-list"><div class="empty-state">No spots yet</div></div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card danger-zone">
+      <div class="card-title danger-title">⚠️ Danger Zone</div>
+      <div class="form-actions">
+        <button class="btn btn-danger btn-sm" onclick="confirmAction('Clear all completions?','This will reset all scores.',clearCompletions)">Clear Completions</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmAction('Remove all athletes?','Athletes will be deleted.',clearAthletes)">Clear Athletes</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <button class="bnav-btn active" data-tab="map" onclick="switchTab('map',this)">
+    <span class="icon">🗺️</span><span>Map</span>
+  </button>
+  <button class="bnav-btn" data-tab="rankings" onclick="switchTab('rankings',this)">
+    <span class="icon">🏅</span><span>Rankings</span>
+  </button>
+  <button class="bnav-btn" data-tab="admin" onclick="switchTab('admin',this)">
+    <span class="icon">⚙️</span><span>Admin</span>
+  </button>
+</nav>
+
+<!-- SPOT BOTTOM SHEET -->
+<div id="sheet-backdrop" onclick="closeSheet()"></div>
+<div id="spot-sheet">
+  <div id="sheet-handle"></div>
+  <div class="sheet-body">
+    <div class="sheet-spot-name" id="sheet-spot-name"></div>
+    <div class="sheet-spot-desc" id="sheet-spot-desc"></div>
+    <div class="challenge-list" id="challenge-list"></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal">
+  <div class="modal-box">
+    <div class="modal-title">🏃 Welcome!</div>
+    <div class="modal-subtitle">Set up your athlete profile to join the challenge.</div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input id="prof-name" type="text" placeholder="Marco Rossi" maxlength="40">
+      </div>
+      <div class="form-group">
+        <label>Team</label>
+        <input id="prof-team" type="text" placeholder="Team Rosso" maxlength="40">
+      </div>
+      <div class="form-group">
+        <label>Division</label>
+        <select id="prof-division">
+          <option value="PICCOLI">Piccoli</option>
+          <option value="MEDI">Medi</option>
+          <option value="GRANDI" selected>Grandi</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:.65rem" onclick="saveProfile()">Start Competing 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPOT EDIT MODAL -->
+<div id="spot-modal">
+  <div class="spot-modal-box">
+    <div class="spot-modal-title" id="spot-modal-title">Add Spot</div>
+    <input type="hidden" id="spot-edit-id">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Name</label>
+        <input id="spot-name" type="text" placeholder="Piazza Duomo">
+      </div>
+      <div class="form-group">
+        <label>Emoji</label>
+        <input id="spot-emoji" type="text" placeholder="📍" maxlength="2" style="font-size:1.3rem">
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <input id="spot-desc" type="text" placeholder="Optional description">
+      </div>
+      <div class="form-group">
+        <label>Latitude</label>
+        <input id="spot-lat" type="number" step="any" placeholder="45.4642">
+      </div>
+      <div class="form-group">
+        <label>Longitude</label>
+        <input id="spot-lng" type="number" step="any" placeholder="9.1900">
+      </div>
+      <div class="form-group">
+        <label>Radius (m)</label>
+        <input id="spot-radius" type="number" value="50" min="10" max="500">
+      </div>
+      <div class="form-group full">
+        <label>Challenges</label>
+        <div class="challenge-checks">
+          <label class="ch-check"><input type="checkbox" id="ch-skill" value="SKILL" checked> <span class="badge badge-skill">SKILL</span></label>
+          <label class="ch-check"><input type="checkbox" id="ch-style" value="STYLE" checked> <span class="badge badge-style">STYLE</span></label>
+          <label class="ch-check"><input type="checkbox" id="ch-speed" value="SPEED" checked> <span class="badge badge-speed">SPEED</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveSpot()">💾 Save</button>
+      <button class="btn btn-ghost" onclick="useMyLocation()">📡 My Location</button>
+      <button class="btn btn-ghost" id="place-on-map-btn" onclick="startMapPlacement()">📍 Place on Map</button>
+      <button class="btn btn-ghost" onclick="closeSpotModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div id="confirm-dialog">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-sub" id="confirm-sub"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" id="confirm-ok">Confirm</button>
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let db = null;
+let firebaseApp = null;
+let athlete = null; // {id, name, team, division}
+let spots = {};     // {id: {name, emoji, lat, lng, radius, challenges, description}}
+let athletes = {};  // {id: {...}}
+let completions = {};// {id: {athleteId, spotId, challenge, timestamp}}
+let scores = {};    // {athleteId: number}
+let playerPos = null;
+let mapInstance = null;
+let spotMarkers = {};
+let playerMarker = null;
+let accuracyCircle = null;
+let activeSheetSpotId = null;
+let mapPlacementMode = false;
+let currentDivFilter = 'ALL';
+let confirmCallback = null;
+
+// ─── DEFAULT SPOTS (Milan) ────────────────────────────────────────────────────
+const DEFAULT_SPOTS = {
+  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:['SKILL','STYLE','SPEED']},
+  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:['SKILL','SPEED']},
+  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:['STYLE','SPEED']},
+  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:['SKILL','STYLE']},
+  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:['SKILL','STYLE','SPEED']},
+};
+
+const CHALLENGE_META = {
+  SKILL:{label:'SKILL',emoji:'🎯',badgeClass:'badge-skill'},
+  STYLE:{label:'STYLE',emoji:'✨',badgeClass:'badge-style'},
+  SPEED:{label:'SPEED',emoji:'⚡',badgeClass:'badge-speed'},
+};
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadAthleteProfile();
+  loadFirebaseFromUrl();
+  initMap();
+  startGPS();
+  renderAdminSpots();
+  renderLeaderboard();
+  renderFeed();
+});
+
+// ─── PROFILE ──────────────────────────────────────────────────────────────────
+function loadAthleteProfile() {
+  const saved = localStorage.getItem('cc_athlete');
+  if (saved) {
+    athlete = JSON.parse(saved);
+    document.getElementById('profile-modal').style.display = 'none';
+    updateHeaderAthlete();
+    ensureAthleteInDb();
+  }
+  // else modal stays visible
+}
+
+function saveProfile() {
+  const name = document.getElementById('prof-name').value.trim();
+  const team = document.getElementById('prof-team').value.trim();
+  const div  = document.getElementById('prof-division').value;
+  if (!name) { showToast('Please enter your name'); return; }
+  athlete = {id:'ath-'+Date.now(), name, team, division:div, joinedAt:Date.now()};
+  localStorage.setItem('cc_athlete', JSON.stringify(athlete));
+  document.getElementById('profile-modal').style.display = 'none';
+  updateHeaderAthlete();
+  ensureAthleteInDb();
+}
+
+function updateHeaderAthlete() {
+  if (!athlete) return;
+  document.getElementById('header-athlete').textContent = athlete.name + (athlete.team ? ' · '+athlete.team : '');
+}
+
+function ensureAthleteInDb() {
+  if (!athlete) return;
+  if (db) {
+    db.ref('/athletes/'+athlete.id).set({
+      name:athlete.name, team:athlete.team, division:athlete.division, joinedAt:athlete.joinedAt
+    });
+  } else {
+    // localStorage
+    const local = getLocalAthletes();
+    local[athlete.id] = {name:athlete.name,team:athlete.team,division:athlete.division,joinedAt:athlete.joinedAt};
+    localStorage.setItem('cc_athletes', JSON.stringify(local));
+    athletes = local;
+  }
+}
+
+// ─── FIREBASE ─────────────────────────────────────────────────────────────────
+function loadFirebaseFromUrl() {
+  const hash = window.location.hash;
+  const match = hash.match(/#cfg=([^&]+)/);
+  if (match) {
+    try {
+      const cfg = JSON.parse(atob(match[1]));
+      localStorage.setItem('cc_firebase_config', JSON.stringify(cfg));
+      initFirebase(cfg);
+    } catch(e) { console.warn('Invalid cfg in URL', e); }
+  } else {
+    const saved = localStorage.getItem('cc_firebase_config');
+    if (saved) {
+      try { initFirebase(JSON.parse(saved)); } catch(e) {}
+    } else {
+      useDemoMode();
+    }
+  }
+}
+
+function initFirebase(cfg) {
+  try {
+    if (firebaseApp) {
+      try { firebaseApp.delete(); } catch(e){}
+    }
+    if (firebase.apps.length > 0) {
+      firebaseApp = firebase.apps[0];
+    } else {
+      firebaseApp = firebase.initializeApp(cfg);
+    }
+    db = firebase.database();
+    setupFirebaseListeners();
+    setFirebaseStatus(true);
+    updateJoinUrl();
+    document.getElementById('offline-banner').style.display = 'none';
+  } catch(e) {
+    console.error('Firebase init failed', e);
+    showToast('Firebase error: '+e.message);
+    useDemoMode();
+  }
+}
+
+function setupFirebaseListeners() {
+  db.ref('/spots').on('value', snap => {
+    const data = snap.val() || {};
+    if (Object.keys(data).length === 0) {
+      // seed default spots
+      Object.entries(DEFAULT_SPOTS).forEach(([id,s]) => db.ref('/spots/'+id).set(s));
+      spots = {...DEFAULT_SPOTS};
+    } else {
+      spots = data;
+    }
+    renderSpotMarkers();
+    renderAdminSpots();
+  });
+  db.ref('/athletes').on('value', snap => {
+    athletes = snap.val() || {};
+    recalcScores();
+    renderLeaderboard();
+    renderFeed();
+  });
+  db.ref('/completions').on('value', snap => {
+    completions = snap.val() || {};
+    recalcScores();
+    renderLeaderboard();
+    renderFeed();
+    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+    updateSpotMarkerStates();
+  });
+  document.getElementById('sync-status').innerHTML = '🟢 Live';
+}
+
+function useDemoMode() {
+  db = null;
+  document.getElementById('sync-status').innerHTML = '🔴 Demo';
+  document.getElementById('offline-banner').style.display = 'block';
+  setFirebaseStatus(false);
+  // load from localStorage
+  spots = getLocalSpots();
+  if (Object.keys(spots).length === 0) {
+    spots = {...DEFAULT_SPOTS};
+    saveLocalSpots(spots);
+  }
+  athletes = getLocalAthletes();
+  completions = getLocalCompletions();
+  recalcScores();
+  renderSpotMarkers();
+  renderAdminSpots();
+  renderLeaderboard();
+  renderFeed();
+}
+
+function saveFirebaseConfig() {
+  const raw = document.getElementById('fb-config-input').value.trim();
+  try {
+    const cfg = JSON.parse(raw);
+    if (!cfg.databaseURL) { showToast('Missing databaseURL in config'); return; }
+    localStorage.setItem('cc_firebase_config', JSON.stringify(cfg));
+    initFirebase(cfg);
+    showToast('Firebase connected!');
+  } catch(e) {
+    showToast('Invalid JSON: '+e.message);
+  }
+}
+
+function clearFirebaseConfig() {
+  localStorage.removeItem('cc_firebase_config');
+  window.location.hash = '';
+  if (firebaseApp) { try { firebaseApp.delete(); } catch(e){} firebaseApp=null; }
+  db = null;
+  useDemoMode();
+  showToast('Firebase disconnected');
+}
+
+function disconnectFirebase() { clearFirebaseConfig(); }
+
+function setFirebaseStatus(connected) {
+  document.getElementById('fb-dot').className = 'status-dot' + (connected?' connected':'');
+  document.getElementById('fb-status-text').textContent = connected ? 'Connected to Firebase' : 'Not connected (demo mode)';
+  document.getElementById('fb-setup-section').style.display = connected ? 'none' : 'block';
+  document.getElementById('fb-connected-section').style.display = connected ? 'block' : 'none';
+}
+
+function updateJoinUrl() {
+  const cfg = localStorage.getItem('cc_firebase_config');
+  if (!cfg) return;
+  const url = window.location.href.split('#')[0] + '#cfg=' + btoa(cfg);
+  document.getElementById('join-url-box').textContent = url;
+}
+
+function copyJoinUrl() {
+  const url = document.getElementById('join-url-box').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('Copied!')).catch(() => showToast('URL: '+url));
+}
+
+// ─── LOCAL STORAGE HELPERS ────────────────────────────────────────────────────
+function getLocalSpots()       { try{return JSON.parse(localStorage.getItem('cc_spots')||'{}')}catch(e){return{}} }
+function saveLocalSpots(d)     { localStorage.setItem('cc_spots',JSON.stringify(d)) }
+function getLocalAthletes()    { try{return JSON.parse(localStorage.getItem('cc_athletes')||'{}')}catch(e){return{}} }
+function getLocalCompletions() { try{return JSON.parse(localStorage.getItem('cc_completions')||'{}')}catch(e){return{}} }
+function saveLocalCompletions(d){ localStorage.setItem('cc_completions',JSON.stringify(d)) }
+
+// ─── MAP ──────────────────────────────────────────────────────────────────────
+function initMap() {
+  mapInstance = L.map('map', {zoomControl:true, attributionControl:false}).setView([45.4654,9.1859], 14);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom:19, subdomains:'abcd'
+  }).addTo(mapInstance);
+
+  mapInstance.on('click', onMapClick);
+
+  // Render initial spots
+  renderSpotMarkers();
+}
+
+function onMapClick(e) {
+  if (mapPlacementMode) {
+    document.getElementById('spot-lat').value = e.latlng.lat.toFixed(6);
+    document.getElementById('spot-lng').value = e.latlng.lng.toFixed(6);
+    stopMapPlacement();
+    switchTab('admin', document.querySelector('[data-tab="admin"]'));
+    document.getElementById('spot-modal').classList.add('open');
+    showToast('Location set!');
+  }
+}
+
+function renderSpotMarkers() {
+  if (!mapInstance) return;
+  // Remove old
+  Object.values(spotMarkers).forEach(m => mapInstance.removeLayer(m));
+  spotMarkers = {};
+
+  Object.entries(spots).forEach(([id, spot]) => {
+    const totalCh = (spot.challenges||[]).length;
+    const doneCh  = countMyCompletionsAtSpot(id);
+    const inRange = playerPos ? haversine(playerPos.lat,playerPos.lng,spot.lat,spot.lng) <= (spot.radius||50) : false;
+    const allDone = doneCh >= totalCh && totalCh > 0;
+
+    const wrapClass = [
+      'spot-marker',
+      inRange && !allDone ? 'in-range' : '',
+      allDone ? 'all-done' : ''
+    ].filter(Boolean).join(' ');
+
+    const icon = L.divIcon({
+      className:'',
+      html:`<div class="${wrapClass}">
+        <div class="spot-marker-icon">${spot.emoji||'📍'}</div>
+        <div class="spot-marker-badge">${doneCh}/${totalCh}</div>
+        <div class="spot-marker-label">${escHtml(spot.name)}</div>
+      </div>`,
+      iconSize:[90,70],
+      iconAnchor:[45,38],
+    });
+
+    const marker = L.marker([spot.lat, spot.lng], {icon}).addTo(mapInstance);
+    marker.on('click', () => openSheet(id));
+    spotMarkers[id] = marker;
+  });
+}
+
+function updateSpotMarkerStates() {
+  // Re-render markers to update in-range / done state
+  renderSpotMarkers();
+}
+
+function countMyCompletionsAtSpot(spotId) {
+  if (!athlete) return 0;
+  return Object.values(completions).filter(c => c.athleteId===athlete.id && c.spotId===spotId).length;
+}
+
+// ─── GPS ──────────────────────────────────────────────────────────────────────
+function startGPS() {
+  if (!navigator.geolocation) {
+    document.getElementById('gps-status').textContent = '❌ GPS';
+    return;
+  }
+  document.getElementById('gps-status').textContent = '📡 GPS';
+  navigator.geolocation.watchPosition(onGpsUpdate, onGpsError, {
+    enableHighAccuracy:true, maximumAge:5000, timeout:10000
+  });
+}
+
+function onGpsUpdate(pos) {
+  playerPos = {lat:pos.coords.latitude, lng:pos.coords.longitude};
+  document.getElementById('gps-status').textContent = '✅ GPS';
+
+  if (!mapInstance) return;
+
+  const latlng = [playerPos.lat, playerPos.lng];
+  const acc = pos.coords.accuracy;
+
+  if (!playerMarker) {
+    const icon = L.divIcon({
+      className:'',
+      html:'<div class="player-dot"></div>',
+      iconSize:[14,14], iconAnchor:[7,7]
+    });
+    playerMarker = L.marker(latlng, {icon, zIndexOffset:1000}).addTo(mapInstance);
+    accuracyCircle = L.circle(latlng, {radius:acc, color:'#4f7cff', fillColor:'#4f7cff', fillOpacity:.08, weight:1}).addTo(mapInstance);
+    mapInstance.setView(latlng, 16);
+  } else {
+    playerMarker.setLatLng(latlng);
+    accuracyCircle.setLatLng(latlng);
+    accuracyCircle.setRadius(acc);
+  }
+
+  updateSpotMarkerStates();
+  if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+}
+
+function onGpsError(err) {
+  document.getElementById('gps-status').textContent = '📡 GPS';
+}
+
+// ─── HAVERSINE ────────────────────────────────────────────────────────────────
+function haversine(lat1,lng1,lat2,lng2) {
+  const R=6371000, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// ─── SCORING ──────────────────────────────────────────────────────────────────
+function recalcScores() {
+  scores = {};
+  // For each unique (spotId, challenge): count completors, award each 10/count
+  const groups = {};
+  Object.values(completions).forEach(c => {
+    const key = c.spotId+'__'+c.challenge;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(c.athleteId);
+  });
+  Object.entries(groups).forEach(([key, athleteIds]) => {
+    const pts = 10 / athleteIds.length;
+    athleteIds.forEach(id => { scores[id] = (scores[id]||0) + pts; });
+  });
+}
+
+function getAthleteScore(id) { return scores[id] || 0; }
+
+function getAthleteCompletionCount(id) {
+  return Object.values(completions).filter(c=>c.athleteId===id).length;
+}
+
+// ─── SHEET ────────────────────────────────────────────────────────────────────
+function openSheet(spotId) {
+  activeSheetSpotId = spotId;
+  renderSheet(spotId);
+  document.getElementById('spot-sheet').classList.add('open');
+  document.getElementById('sheet-backdrop').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('spot-sheet').classList.remove('open');
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  activeSheetSpotId = null;
+}
+
+function renderSheet(spotId) {
+  const spot = spots[spotId];
+  if (!spot) return;
+  document.getElementById('sheet-spot-name').textContent = (spot.emoji||'📍')+' '+spot.name;
+  document.getElementById('sheet-spot-desc').textContent = spot.description || '';
+
+  const dist = playerPos ? Math.round(haversine(playerPos.lat,playerPos.lng,spot.lat,spot.lng)) : null;
+  const radius = spot.radius || 50;
+  const inRange = dist !== null && dist <= radius;
+
+  const list = document.getElementById('challenge-list');
+  list.innerHTML = '';
+
+  (spot.challenges||[]).forEach(ch => {
+    const meta = CHALLENGE_META[ch]||{label:ch,emoji:'🏆',badgeClass:'badge-skill'};
+    // count completors for this spot+challenge
+    const completorsAll = Object.values(completions).filter(c=>c.spotId===spotId&&c.challenge===ch);
+    const myDone = athlete && completorsAll.some(c=>c.athleteId===athlete.id);
+    const pts = completorsAll.length > 0 ? (10/completorsAll.length).toFixed(2) : '10.00';
+    const projPts = completorsAll.length > 0 && !myDone ? (10/(completorsAll.length+1)).toFixed(2) : pts;
+
+    const item = document.createElement('div');
+    item.className = 'challenge-item' + (myDone?' done':'');
+    item.innerHTML = `
+      <div class="ch-icon">${meta.emoji}</div>
+      <div class="ch-info">
+        <div class="ch-name"><span class="badge ${meta.badgeClass}">${meta.label}</span></div>
+        <div class="ch-pts">${myDone?'✅ Completed · ':''}${pts} pts each · ${completorsAll.length} completor${completorsAll.length!==1?'s':''}</div>
+        ${!myDone?`<div class="ch-completors">Complete to earn ~${projPts} pts</div>`:''}
+      </div>
+      <button class="btn-complete ${myDone?'done-btn':''}"
+        ${myDone?'disabled':''}
+        ${!inRange&&!myDone?'disabled title="Get closer to unlock"':''}
+        onclick="completeChallenge('${spotId}','${ch}',this)">
+        ${myDone?'Done':(inRange?'Complete':'📍 '+(dist!==null?dist+'m away':'—'))}
+      </button>
+    `;
+    list.appendChild(item);
+  });
+
+  if (!inRange && dist !== null) {
+    const info = document.createElement('div');
+    info.style.cssText='text-align:center;font-size:.78rem;color:var(--muted);padding:.5rem 0';
+    info.textContent = `📍 You are ${dist}m away (need ${radius}m)`;
+    list.appendChild(info);
+  }
+}
+
+async function completeChallenge(spotId, challenge, btn) {
+  if (!athlete) { showToast('Set up your profile first'); return; }
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  confirmAction(
+    `Complete ${challenge} at ${spots[spotId]?.name}?`,
+    'This will record your completion and update scores.',
+    async () => {
+      const compId = 'comp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+      const comp = {athleteId:athlete.id, spotId, challenge, timestamp:Date.now()};
+
+      if (db) {
+        await db.ref('/completions/'+compId).set(comp);
+      } else {
+        const local = getLocalCompletions();
+        local[compId] = comp;
+        saveLocalCompletions(local);
+        completions = local;
+        recalcScores();
+        renderLeaderboard();
+        renderFeed();
+        renderSheet(spotId);
+        updateSpotMarkerStates();
+      }
+      showToast('🎉 Challenge completed!');
+    },
+    () => {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  );
+}
+
+// ─── LEADERBOARD ──────────────────────────────────────────────────────────────
+function renderLeaderboard() {
+  const allAths = {...athletes};
+  // make sure current athlete is listed
+  if (athlete && !allAths[athlete.id]) {
+    allAths[athlete.id] = {name:athlete.name,team:athlete.team,division:athlete.division};
+  }
+
+  let list = Object.entries(allAths).map(([id,a]) => ({
+    id, name:a.name||'Unknown', team:a.team||'', division:a.division||'',
+    pts: getAthleteScore(id), count: getAthleteCompletionCount(id)
+  }));
+
+  if (currentDivFilter !== 'ALL') {
+    list = list.filter(a => a.division === currentDivFilter);
+  }
+
+  list.sort((a,b) => b.pts - a.pts);
+
+  const container = document.getElementById('leaderboard-list');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-state">No athletes yet</div>';
+    return;
+  }
+
+  container.innerHTML = list.map((a,i) => {
+    const rank = i+1;
+    const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':`${rank}`;
+    const rowClass = rank===1?'rank-gold':rank===2?'rank-silver':rank===3?'rank-bronze':'';
+    const divBadge = a.division ? `<span class="badge badge-${a.division.toLowerCase()}">${a.division}</span>` : '';
+    return `<div class="lb-row ${rowClass}">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info">
+        <div class="lb-name">${escHtml(a.name)}</div>
+        <div class="lb-sub">${a.team?escHtml(a.team):''}${divBadge}</div>
+      </div>
+      <div>
+        <div class="lb-pts">${a.pts.toFixed(2)}</div>
+        <div class="lb-chal">${a.count} done</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFeed() {
+  const sorted = Object.values(completions)
+    .sort((a,b) => b.timestamp - a.timestamp)
+    .slice(0,20);
+
+  const container = document.getElementById('feed-list');
+  if (sorted.length === 0) {
+    container.innerHTML = '<div class="empty-state">No completions yet</div>';
+    return;
+  }
+  container.innerHTML = sorted.map(c => {
+    const ath = athletes[c.athleteId] || {name:athlete&&c.athleteId===athlete?.id?athlete.name:'Unknown'};
+    const spot = spots[c.spotId] || {name:'Unknown Spot'};
+    const meta = CHALLENGE_META[c.challenge]||{emoji:'🏆'};
+    const ago = timeAgo(c.timestamp);
+    return `<div class="feed-item">
+      <span>${meta.emoji}</span>
+      <span><strong>${escHtml(ath.name)}</strong> completed <span class="badge badge-${c.challenge.toLowerCase()}">${c.challenge}</span> at <strong>${escHtml(spot.name)}</strong></span>
+      <span class="feed-time">${ago}</span>
+    </div>`;
+  }).join('');
+}
+
+// Division filter tabs
+document.getElementById('div-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.div-tab');
+  if (!btn) return;
+  document.querySelectorAll('.div-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentDivFilter = btn.dataset.div;
+  renderLeaderboard();
+});
+
+// ─── ADMIN – SPOTS ────────────────────────────────────────────────────────────
+function renderAdminSpots() {
+  const container = document.getElementById('spots-list');
+  const entries = Object.entries(spots);
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state">No spots yet. Add one!</div>';
+    return;
+  }
+  container.innerHTML = entries.map(([id,s]) => `
+    <div class="spot-row">
+      <div class="spot-row-icon">${s.emoji||'📍'}</div>
+      <div class="spot-row-info">
+        <div class="spot-row-name">${escHtml(s.name)}</div>
+        <div class="spot-row-sub">${(s.challenges||[]).map(c=>`<span class="badge badge-${c.toLowerCase()}">${c}</span>`).join(' ')} · ${s.lat?.toFixed(4)}, ${s.lng?.toFixed(4)}</div>
+      </div>
+      <div class="spot-row-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openSpotModal('${id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmAction('Delete spot?','This cannot be undone.',()=>deleteSpot('${id}'))">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openSpotModal(spotId) {
+  const modal = document.getElementById('spot-modal');
+  if (spotId && spots[spotId]) {
+    const s = spots[spotId];
+    document.getElementById('spot-modal-title').textContent = 'Edit Spot';
+    document.getElementById('spot-edit-id').value = spotId;
+    document.getElementById('spot-name').value = s.name||'';
+    document.getElementById('spot-emoji').value = s.emoji||'📍';
+    document.getElementById('spot-desc').value = s.description||'';
+    document.getElementById('spot-lat').value = s.lat||'';
+    document.getElementById('spot-lng').value = s.lng||'';
+    document.getElementById('spot-radius').value = s.radius||50;
+    document.getElementById('ch-skill').checked = (s.challenges||[]).includes('SKILL');
+    document.getElementById('ch-style').checked = (s.challenges||[]).includes('STYLE');
+    document.getElementById('ch-speed').checked = (s.challenges||[]).includes('SPEED');
+  } else {
+    document.getElementById('spot-modal-title').textContent = 'Add Spot';
+    document.getElementById('spot-edit-id').value = '';
+    document.getElementById('spot-name').value = '';
+    document.getElementById('spot-emoji').value = '📍';
+    document.getElementById('spot-desc').value = '';
+    document.getElementById('spot-lat').value = '';
+    document.getElementById('spot-lng').value = '';
+    document.getElementById('spot-radius').value = 50;
+    document.getElementById('ch-skill').checked = true;
+    document.getElementById('ch-style').checked = true;
+    document.getElementById('ch-speed').checked = true;
+  }
+  modal.classList.add('open');
+}
+
+function closeSpotModal() {
+  document.getElementById('spot-modal').classList.remove('open');
+  stopMapPlacement();
+}
+
+async function saveSpot() {
+  const id = document.getElementById('spot-edit-id').value || 'spot-'+Date.now();
+  const name = document.getElementById('spot-name').value.trim();
+  const emoji = document.getElementById('spot-emoji').value.trim()||'📍';
+  const desc  = document.getElementById('spot-desc').value.trim();
+  const lat   = parseFloat(document.getElementById('spot-lat').value);
+  const lng   = parseFloat(document.getElementById('spot-lng').value);
+  const radius= parseInt(document.getElementById('spot-radius').value)||50;
+  const challenges = ['SKILL','STYLE','SPEED'].filter(c=>document.getElementById('ch-'+c.toLowerCase()).checked);
+
+  if (!name) { showToast('Spot name required'); return; }
+  if (isNaN(lat)||isNaN(lng)) { showToast('Valid lat/lng required'); return; }
+  if (challenges.length === 0) { showToast('Select at least one challenge'); return; }
+
+  const spot = {name,emoji,description:desc,lat,lng,radius,challenges};
+
+  if (db) {
+    await db.ref('/spots/'+id).set(spot);
+  } else {
+    spots[id] = spot;
+    saveLocalSpots(spots);
+    renderSpotMarkers();
+    renderAdminSpots();
+  }
+  closeSpotModal();
+  showToast('Spot saved!');
+}
+
+async function deleteSpot(id) {
+  if (db) {
+    await db.ref('/spots/'+id).remove();
+  } else {
+    delete spots[id];
+    saveLocalSpots(spots);
+    renderSpotMarkers();
+    renderAdminSpots();
+  }
+  showToast('Spot deleted');
+}
+
+function useMyLocation() {
+  if (!playerPos) { showToast('GPS not available yet'); return; }
+  document.getElementById('spot-lat').value = playerPos.lat.toFixed(6);
+  document.getElementById('spot-lng').value = playerPos.lng.toFixed(6);
+  showToast('Location filled!');
+}
+
+function startMapPlacement() {
+  document.getElementById('spot-modal').classList.remove('open');
+  switchTab('map', document.querySelector('[data-tab="map"]'));
+  mapPlacementMode = true;
+  document.getElementById('map-placement-banner').classList.add('active');
+  document.getElementById('map').style.cursor = 'crosshair';
+}
+
+function stopMapPlacement() {
+  mapPlacementMode = false;
+  document.getElementById('map-placement-banner').classList.remove('active');
+  if (mapInstance) document.getElementById('map').style.cursor = '';
+}
+
+// ─── DANGER ZONE ──────────────────────────────────────────────────────────────
+async function clearCompletions() {
+  if (db) {
+    await db.ref('/completions').remove();
+  } else {
+    completions = {};
+    saveLocalCompletions({});
+    recalcScores();
+    renderLeaderboard();
+    renderFeed();
+    updateSpotMarkerStates();
+  }
+  showToast('Completions cleared');
+}
+
+async function clearAthletes() {
+  if (db) {
+    await db.ref('/athletes').remove();
+  } else {
+    athletes = {};
+    localStorage.removeItem('cc_athletes');
+    renderLeaderboard();
+  }
+  showToast('Athletes cleared');
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab, btnEl) {
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  else document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(tab+'-view').classList.add('active');
+
+  if (tab === 'map' && mapInstance) {
+    setTimeout(() => mapInstance.invalidateSize(), 100);
+  }
+}
+
+// ─── CONFIRM ──────────────────────────────────────────────────────────────────
+function confirmAction(title, sub, onOk, onCancel) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-sub').textContent = sub;
+  document.getElementById('confirm-dialog').classList.add('open');
+  confirmCallback = {ok:onOk, cancel:onCancel};
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-dialog').classList.remove('open');
+  if (confirmCallback?.cancel) confirmCallback.cancel();
+  confirmCallback = null;
+}
+
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  document.getElementById('confirm-dialog').classList.remove('open');
+  if (confirmCallback?.ok) confirmCallback.ok();
+  confirmCallback = null;
+});
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s < 60) return s+'s ago';
+  const m = Math.floor(s/60); if (m < 60) return m+'m ago';
+  const h = Math.floor(m/60); if (h < 24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
+
+// Swipe-down to close sheet
+let sheetTouchY = null;
+const sheet = document.getElementById('spot-sheet');
+sheet.addEventListener('touchstart', e => { sheetTouchY = e.touches[0].clientY; }, {passive:true});
+sheet.addEventListener('touchend', e => {
+  if (sheetTouchY !== null) {
+    const delta = e.changedTouches[0].clientY - sheetTouchY;
+    if (delta > 60) closeSheet();
+  }
+  sheetTouchY = null;
+}, {passive:true});
+</script>
+</body>
+</html>
