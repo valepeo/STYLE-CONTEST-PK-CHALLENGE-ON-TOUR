@@ -293,6 +293,29 @@ select option{background:var(--surface2)}
 }
 .all-done .spot-marker-icon{opacity:.4;filter:grayscale(1)}
 
+/* ORGANIZER PIN MODAL */
+#pin-modal{
+  position:fixed;inset:0;z-index:2600;background:rgba(0,0,0,.75);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#pin-modal.open{display:flex}
+#pin-modal input{text-align:center;font-size:1.15rem;letter-spacing:.35em;font-variant-numeric:tabular-nums}
+.pin-error{display:none;font-size:.76rem;color:var(--danger);text-align:center}
+.pin-error.show{display:block}
+.modal-box.shake{animation:pin-shake .45s ease}
+@keyframes pin-shake{
+  0%,100%{transform:translateX(0)}
+  15%{transform:translateX(-9px)}30%{transform:translateX(9px)}
+  45%{transform:translateX(-7px)}60%{transform:translateX(7px)}
+  75%{transform:translateX(-4px)}90%{transform:translateX(4px)}
+}
+.organizer-access-link{
+  display:block;width:100%;background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:.7rem;text-align:center;margin-top:1.4rem;
+  padding:.5rem;opacity:.6;text-decoration:underline;text-underline-offset:2px;
+}
+.organizer-access-link:active{opacity:1}
+
 /* CONFIRM DIALOG */
 #confirm-dialog{
   position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.75);
@@ -327,6 +350,163 @@ select option{background:var(--surface2)}
 .empty-state{text-align:center;color:var(--muted);padding:2rem;font-size:.85rem}
 .separator{height:1px;background:var(--border);margin:.75rem 0}
 
+/* WELCOME SCREEN */
+#welcome-screen{
+  position:fixed;inset:0;z-index:2500;
+  background:radial-gradient(120% 120% at 50% 0%,#16233f 0%,var(--bg) 60%);
+  display:none;align-items:center;justify-content:center;padding:1.2rem;text-align:center;
+}
+#welcome-screen.open{display:flex}
+.welcome-box{width:100%;max-width:360px}
+.welcome-logo{font-size:3.4rem;line-height:1;margin-bottom:.6rem}
+.welcome-title{font-size:1.6rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.4rem;
+  background:linear-gradient(135deg,var(--accent2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.welcome-pitch{font-size:.85rem;color:var(--muted);margin-bottom:1.6rem;line-height:1.5}
+.welcome-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.9rem 1rem;border-radius:.8rem;border:none;cursor:pointer;
+  font-size:.95rem;font-weight:800;margin-bottom:.7rem;transition:opacity .15s,transform .1s;
+}
+.welcome-btn:active{transform:scale(.97)}
+.welcome-btn.demo{background:var(--accent);color:#fff}
+.welcome-btn.join{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.welcome-join-info{
+  display:none;background:var(--surface);border:1px solid var(--border);border-radius:.7rem;
+  padding:.85rem 1rem;font-size:.8rem;color:var(--muted);line-height:1.5;text-align:left;
+}
+.welcome-join-info.open{display:block}
+
+/* FIREBASE WIZARD */
+.wizard-step{display:flex;gap:.65rem;margin-bottom:.7rem;align-items:flex-start}
+.wizard-num{
+  flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;
+  font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:.1rem;
+}
+.wizard-text{font-size:.78rem;color:var(--muted);line-height:1.45}
+.wizard-text b{color:var(--text)}
+#fb-test-result{font-size:.78rem;margin-top:.5rem;display:none}
+
+/* ME VIEW */
+#me-view{padding:.9rem .9rem 1rem}
+.me-profile-card{
+  background:linear-gradient(135deg,var(--surface2),var(--surface));
+  border:1px solid var(--border);border-radius:.85rem;padding:1.1rem;margin-bottom:1rem;
+}
+.me-name{font-size:1.15rem;font-weight:800;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.me-sub{font-size:.78rem;color:var(--muted);margin-top:.3rem;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.lvl-badge{
+  display:inline-flex;align-items:center;gap:.2rem;padding:.12rem .5rem;border-radius:9999px;
+  font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+  background:rgba(245,197,66,.14);color:var(--gold);border:1px solid rgba(245,197,66,.35);
+}
+.team-dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.xp-bar-wrap{margin-top:.85rem}
+.xp-bar-label{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:.3rem}
+.xp-bar-track{height:8px;background:var(--surface3);border-radius:9999px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:9999px;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .5s ease}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+.stat-cell{
+  background:var(--surface);border:1px solid var(--border);border-radius:.7rem;
+  padding:.7rem .5rem;text-align:center;
+}
+.stat-val{font-size:1.05rem;font-weight:800;color:var(--accent2);font-variant-numeric:tabular-nums}
+.stat-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.15rem}
+.ach-grid{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.ach-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:.7rem;
+  padding:.7rem .9rem;display:flex;align-items:center;gap:.7rem;
+}
+.ach-item.unlocked{border-color:rgba(245,197,66,.4);background:rgba(245,197,66,.05)}
+.ach-item.locked{opacity:.45}
+.ach-item.locked .ach-emoji{filter:grayscale(1)}
+.ach-emoji{font-size:1.5rem;flex-shrink:0}
+.ach-name{font-weight:700;font-size:.85rem}
+.ach-hint{font-size:.72rem;color:var(--muted);margin-top:.1rem}
+
+/* REACTIONS */
+.feed-item{flex-wrap:wrap}
+.feed-main{display:flex;align-items:center;gap:.5rem;width:100%}
+.feed-reactions{display:flex;gap:.4rem;margin-top:.4rem}
+.react-btn{
+  display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;
+  border-radius:9999px;border:1px solid var(--border);background:var(--surface2);
+  cursor:pointer;font-size:.72rem;color:var(--muted);transition:border-color .15s;
+}
+.react-btn.mine{border-color:var(--accent);color:var(--accent2);background:rgba(79,124,255,.12)}
+.react-btn.pop{animation:react-pop .3s ease}
+@keyframes react-pop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.crew-tag{
+  display:inline-flex;align-items:center;padding:.1rem .4rem;border-radius:9999px;
+  font-size:.62rem;font-weight:700;background:rgba(34,197,94,.14);color:#4ade80;
+  border:1px solid rgba(34,197,94,.35);
+}
+
+/* WHO CLEARED IT */
+.completor-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
+.comp-chip{
+  display:inline-flex;align-items:center;gap:.3rem;padding:.12rem .5rem;border-radius:9999px;
+  background:var(--surface3);border:1px solid var(--border);font-size:.66rem;color:var(--text);
+}
+.comp-chip.mate{border-color:rgba(34,197,94,.45)}
+.ch-hint{font-size:.7rem;color:var(--muted);margin-top:.25rem;font-style:italic}
+.spot-respect{font-size:.68rem;color:var(--muted);text-align:center;margin-top:1.1rem;opacity:.75;line-height:1.4}
+
+/* IN-RANGE LABEL */
+.spot-marker-inrange{
+  font-size:.52rem;font-weight:800;color:#4ade80;background:rgba(11,17,32,.85);
+  border-radius:3px;padding:1px 4px;margin-top:2px;white-space:nowrap;letter-spacing:.03em;
+}
+
+/* COUNTDOWN OVERLAY */
+#countdown-overlay{
+  position:fixed;inset:0;z-index:5000;background:rgba(11,17,32,.85);
+  display:none;align-items:center;justify-content:center;pointer-events:none;
+}
+#countdown-overlay.open{display:flex;pointer-events:auto}
+#countdown-num{
+  font-size:5rem;font-weight:900;
+  background:linear-gradient(135deg,var(--accent2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+#countdown-num.tick{animation:count-pop .32s ease}
+@keyframes count-pop{0%{transform:scale(1.6);opacity:0}60%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:1}}
+
+/* ACHIEVEMENT TOAST + CONFETTI */
+#ach-toast{
+  position:fixed;bottom:120px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:4100;background:var(--surface2);border:1px solid rgba(245,197,66,.5);
+  border-radius:.8rem;padding:.8rem 1.3rem;font-size:.88rem;font-weight:700;
+  opacity:0;transition:all .3s;pointer-events:none;text-align:center;overflow:visible;
+}
+#ach-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confetti-bit{
+  position:absolute;top:-6px;width:7px;height:7px;border-radius:2px;opacity:0;
+}
+#ach-toast.show .confetti-bit{animation:confetti-fall 1.3s ease-out forwards}
+@keyframes confetti-fall{
+  0%{opacity:1;transform:translateY(-10px) rotate(0deg)}
+  100%{opacity:0;transform:translateY(70px) rotate(320deg)}
+}
+
+/* WARM-UP CARD */
+#warmup-card{
+  position:fixed;bottom:70px;left:.9rem;right:.9rem;z-index:800;
+  background:var(--surface);border:1px solid rgba(34,197,94,.4);border-radius:.85rem;
+  padding:.85rem 1rem;display:none;align-items:flex-start;gap:.6rem;font-size:.8rem;
+  box-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+#warmup-card.show{display:flex}
+#warmup-card .wc-text{flex:1;color:var(--text);line-height:1.45}
+#warmup-card .wc-close{background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;flex-shrink:0;padding:0 .2rem}
+
+/* TEAM LEADERBOARD */
+.team-lb-row{
+  background:var(--surface);border:1px solid var(--border);border-radius:.6rem;
+  padding:.6rem .9rem;display:flex;align-items:center;gap:.6rem;font-size:.82rem;
+}
+.team-lb-row .lb-pts{font-size:.92rem}
+
 /* Leaflet overrides */
 .leaflet-container{background:#0b1120!important}
 .leaflet-bar a,.leaflet-bar a:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
@@ -344,6 +524,7 @@ select option{background:var(--surface2)}
     <div class="subtitle" id="header-athlete">Loading…</div>
   </div>
   <div class="hstatus">
+    <div id="header-dist" title="Distance today" style="display:none">🚶 0 km</div>
     <div id="gps-status" title="GPS">📡 GPS</div>
     <div id="sync-status" title="Sync">🔴 Demo</div>
   </div>
@@ -371,6 +552,8 @@ select option{background:var(--surface2)}
       <button class="div-tab" data-div="GRANDI" style="background:var(--div-grd-bg);color:var(--div-grd-fg);border-color:var(--div-grd-bdr)">Grandi</button>
     </div>
     <div id="leaderboard-list" class="leaderboard-list"></div>
+    <div class="section-label">🤝 Team Leaderboard</div>
+    <div id="team-leaderboard-list" class="feed-list" style="margin-bottom:1.5rem"></div>
     <div class="separator"></div>
     <div class="section-label">Recent Completions</div>
     <div id="feed-list" class="feed-list"></div>
@@ -378,6 +561,15 @@ select option{background:var(--surface2)}
 
   <!-- ADMIN VIEW -->
   <div id="admin-view" class="view">
+
+    <!-- Organizer Mode -->
+    <div class="card" style="display:flex;align-items:center;gap:.7rem;justify-content:space-between;flex-wrap:wrap">
+      <div style="min-width:0">
+        <div style="font-size:.88rem;font-weight:700">🎛️ Organizer mode</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:.15rem">This device controls the event.</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="organizerLogout()">🚪 Log out of organizer mode</button>
+    </div>
 
     <!-- Firebase Config -->
     <div class="card" id="firebase-card">
@@ -387,23 +579,32 @@ select option{background:var(--surface2)}
         <span id="fb-status-text">Not connected</span>
       </div>
       <div id="fb-setup-section">
-        <p style="font-size:.78rem;color:var(--muted);margin-bottom:.75rem">Paste your Firebase Realtime Database config JSON below to enable live sync across devices.</p>
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:.85rem">Live sync lets everyone's phone see the same scores in real time. It's free and takes ~5 minutes. Follow the steps:</p>
+        <div class="wizard-step"><div class="wizard-num">1</div><div class="wizard-text">Go to <b>console.firebase.google.com</b>, sign in with a Google account and click <b>"Create a project"</b>. Name it anything (e.g. "city-challenge"). You can turn Analytics <b>off</b>.</div></div>
+        <div class="wizard-step"><div class="wizard-num">2</div><div class="wizard-text">In the left menu open <b>Build → Realtime Database</b> and click <b>"Create Database"</b>. Pick the location closest to you.</div></div>
+        <div class="wizard-step"><div class="wizard-num">3</div><div class="wizard-text">When asked about security rules, choose <b>"Start in test mode"</b>. (Test mode lets phones read & write without logins — perfect for a one-day event.)</div></div>
+        <div class="wizard-step"><div class="wizard-num">4</div><div class="wizard-text">Click the <b>⚙️ gear → Project settings</b>, scroll to "Your apps", click the <b>&lt;/&gt; (Web)</b> icon, give it any nickname and click <b>"Register app"</b>. Copy the <b>firebaseConfig</b> object shown.</div></div>
+        <div class="wizard-step"><div class="wizard-num">5</div><div class="wizard-text">Paste it below. Make sure it contains <b>databaseURL</b> — that's the address of your live database, the app can't sync without it. If it's missing, copy the URL shown at the top of the Realtime Database page (looks like <b>https://xxx.firebasedatabase.app</b>) and add it as <b>"databaseURL"</b>.</div></div>
         <div class="form-group">
-          <label>Firebase Config JSON</label>
-          <textarea id="fb-config-input" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"..."}'></textarea>
+          <label>Firebase Config (JSON or copied firebaseConfig)</label>
+          <textarea id="fb-config-input" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://...firebasedatabase.app","projectId":"..."}'></textarea>
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" onclick="saveFirebaseConfig()">💾 Save & Connect</button>
+          <button class="btn btn-ghost" onclick="testFirebaseConnection()">🔌 Test connection</button>
           <button class="btn btn-ghost" onclick="clearFirebaseConfig()">Clear</button>
         </div>
+        <div id="fb-test-result"></div>
       </div>
       <div id="fb-connected-section" style="display:none">
         <div class="section-label" style="margin-bottom:.4rem">Join URL</div>
         <div class="join-url-box" id="join-url-box">—</div>
         <div class="form-actions">
           <button class="btn btn-ghost btn-sm" onclick="copyJoinUrl()">📋 Copy URL</button>
+          <button class="btn btn-ghost btn-sm" onclick="testFirebaseConnection()">🔌 Test connection</button>
           <button class="btn btn-ghost btn-sm" onclick="disconnectFirebase()">Disconnect</button>
         </div>
+        <div id="fb-test-result-2"></div>
       </div>
     </div>
 
@@ -426,6 +627,17 @@ select option{background:var(--surface2)}
     </div>
 
   </div>
+
+  <!-- ME VIEW -->
+  <div id="me-view" class="view">
+    <div class="me-profile-card" id="me-profile-card"></div>
+    <div class="section-label">📊 Stats</div>
+    <div class="stats-grid" id="me-stats-grid"></div>
+    <div class="section-label">🏆 Achievements</div>
+    <div class="ach-grid" id="me-ach-grid"></div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="editProfile()">✏️ Edit profile</button>
+    <button class="organizer-access-link" onclick="openOrganizerAccess()">Organizer access</button>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -436,7 +648,10 @@ select option{background:var(--surface2)}
   <button class="bnav-btn" data-tab="rankings" onclick="switchTab('rankings',this)">
     <span class="icon">🏅</span><span>Rankings</span>
   </button>
-  <button class="bnav-btn" data-tab="admin" onclick="switchTab('admin',this)">
+  <button class="bnav-btn" data-tab="me" onclick="switchTab('me',this)">
+    <span class="icon">👤</span><span>Me</span>
+  </button>
+  <button class="bnav-btn" data-tab="admin" id="nav-admin-btn" style="display:none" onclick="switchTab('admin',this)">
     <span class="icon">⚙️</span><span>Admin</span>
   </button>
 </nav>
@@ -449,7 +664,36 @@ select option{background:var(--surface2)}
     <div class="sheet-spot-name" id="sheet-spot-name"></div>
     <div class="sheet-spot-desc" id="sheet-spot-desc"></div>
     <div class="challenge-list" id="challenge-list"></div>
+    <div class="spot-respect">🌿 Respect the spot — leave no trace, mind the locals, train safe.</div>
   </div>
+</div>
+
+<!-- WELCOME SCREEN -->
+<div id="welcome-screen">
+  <div class="welcome-box">
+    <div class="welcome-logo">🏃</div>
+    <div class="welcome-title">City Challenge</div>
+    <div class="welcome-pitch">Explore the city, send challenges at real spots, and train together with your crew.</div>
+    <button class="welcome-btn demo" onclick="welcomeDemo()">🎮 Try Demo</button>
+    <button class="welcome-btn join" onclick="welcomeJoin()">📡 Join Event</button>
+    <div class="welcome-join-info" id="welcome-join-info">
+      Ask your organizer for the <b style="color:var(--text)">event link</b> — it connects you automatically. Just open it and you're in!<br><br>
+      No link yet? Start with <b style="color:var(--text)">🎮 Try Demo</b> — you can join an event later.
+    </div>
+  </div>
+</div>
+
+<!-- COUNTDOWN OVERLAY -->
+<div id="countdown-overlay"><div id="countdown-num">3</div></div>
+
+<!-- ACHIEVEMENT TOAST -->
+<div id="ach-toast"></div>
+
+<!-- WARM-UP CARD -->
+<div id="warmup-card">
+  <span style="font-size:1.3rem">🧘</span>
+  <div class="wc-text"><strong>Warm up before you send it</strong> — wrists, ankles, shoulders. 5 minutes now saves 5 weeks later.</div>
+  <button class="wc-close" onclick="dismissWarmup()">✕</button>
 </div>
 
 <!-- PROFILE MODAL -->
@@ -517,12 +761,41 @@ select option{background:var(--surface2)}
           <label class="ch-check"><input type="checkbox" id="ch-speed" value="SPEED" checked> <span class="badge badge-speed">SPEED</span></label>
         </div>
       </div>
+      <div class="form-group full">
+        <label>💡 Move Hints (optional)</label>
+        <input id="hint-skill" type="text" placeholder="SKILL hint — e.g. precision jump the low wall gaps" style="margin-bottom:.4rem">
+        <input id="hint-style" type="text" placeholder="STYLE hint — e.g. flow line with vaults and spins" style="margin-bottom:.4rem">
+        <input id="hint-speed" type="text" placeholder="SPEED hint — e.g. sprint route around the fountain">
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn btn-primary" onclick="saveSpot()">💾 Save</button>
       <button class="btn btn-ghost" onclick="useMyLocation()">📡 My Location</button>
       <button class="btn btn-ghost" id="place-on-map-btn" onclick="startMapPlacement()">📍 Place on Map</button>
       <button class="btn btn-ghost" onclick="closeSpotModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORGANIZER PIN MODAL -->
+<div id="pin-modal">
+  <div class="modal-box" id="pin-modal-box">
+    <div class="modal-title" id="pin-modal-title">🔐 Organizer access</div>
+    <div class="modal-subtitle" id="pin-modal-subtitle">Enter the organizer PIN to unlock the Admin tab.</div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label id="pin-label-1">PIN</label>
+        <input id="pin-input-1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="6" placeholder="••••">
+      </div>
+      <div class="form-group" id="pin-group-2" style="display:none">
+        <label>Repeat PIN</label>
+        <input id="pin-input-2" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="6" placeholder="••••">
+      </div>
+      <div class="pin-error" id="pin-error">Wrong PIN — try again.</div>
+      <div class="form-actions" style="margin-top:0">
+        <button class="btn btn-primary" id="pin-submit-btn" style="flex:1;justify-content:center" onclick="submitPin()">Unlock</button>
+        <button class="btn btn-ghost" onclick="closePinModal()">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
@@ -560,14 +833,23 @@ let activeSheetSpotId = null;
 let mapPlacementMode = false;
 let currentDivFilter = 'ALL';
 let confirmCallback = null;
+let reactions = {};      // {completionId: {emoji: {athleteId: true}}}
+let crewInfo = {};       // {completionId: {partners:[names]}} — derived in recalcScores
+let crewBonusCount = {}; // {athleteId: number of crew bonuses} — derived
+let lastGpsFix = null;   // for distance tracking
 
 // ─── DEFAULT SPOTS (Milan) ────────────────────────────────────────────────────
 const DEFAULT_SPOTS = {
-  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:['SKILL','STYLE','SPEED']},
-  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:['SKILL','SPEED']},
-  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:['STYLE','SPEED']},
-  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:['SKILL','STYLE']},
-  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:['SKILL','STYLE','SPEED']},
+  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:['SKILL','STYLE','SPEED'],
+    hints:{SKILL:'Precision jumps along the low marble ledges — stick every landing',STYLE:'Flow line across the steps: dash vault, spin, roll out clean',SPEED:'Sprint the arcade columns end to end, no stops'}},
+  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:['SKILL','SPEED'],
+    hints:{SKILL:'Climb-up on the old brick wall — quiet feet, solid top-out',SPEED:'Race the moat perimeter: vault the barriers, keep the rhythm'}},
+  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:['STYLE','SPEED'],
+    hints:{STYLE:'Rail balance along the canal edge into a smooth lazy vault',SPEED:'Bridge-to-bridge sprint — pick your line through the crowd gaps'}},
+  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:['SKILL','STYLE'],
+    hints:{SKILL:'Strides across the bollard line — commit to the last gap',STYLE:'Kong vault the flat blocks, land in a controlled roll'}},
+  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:['SKILL','STYLE','SPEED'],
+    hints:{SKILL:'Cat leap to the low wall by the pond — arms first, then feet',STYLE:'Freestyle flow on the benches: vault, cork, whatever feels good',SPEED:'Cross-park route: fastest line from gate to bridge'}},
 };
 
 const CHALLENGE_META = {
@@ -576,8 +858,25 @@ const CHALLENGE_META = {
   SPEED:{label:'SPEED',emoji:'⚡',badgeClass:'badge-speed'},
 };
 
+// ─── XP / LEVELS ──────────────────────────────────────────────────────────────
+const XP_PER_CHALLENGE = 50;
+const XP_SPOT_SWEEP    = 25;
+const LEVELS = [
+  {lvl:1, xp:0,    title:'Rookie'},
+  {lvl:2, xp:100,  title:'Explorer'},
+  {lvl:3, xp:250,  title:'Traceur'},
+  {lvl:4, xp:500,  title:'Flow Master'},
+  {lvl:5, xp:1000, title:'Street Legend'},
+];
+
+const CREW_WINDOW_MS = 45*60*1000; // 45 minutes
+const CREW_BONUS_PTS = 2.0;
+const REACTION_EMOJIS = ['🔥','💪','👏'];
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
+  updateAdminVisibility();
+  maybeShowWelcome();
   loadAthleteProfile();
   loadFirebaseFromUrl();
   initMap();
@@ -585,7 +884,31 @@ window.addEventListener('DOMContentLoaded', () => {
   renderAdminSpots();
   renderLeaderboard();
   renderFeed();
+  updateHeaderDistance();
+  maybeShowWarmup();
 });
+
+// ─── WELCOME SCREEN ───────────────────────────────────────────────────────────
+function maybeShowWelcome() {
+  const hasCfgInUrl = /#cfg=/.test(window.location.hash);
+  const done = localStorage.getItem('cc_welcome_done');
+  if (hasCfgInUrl || done || localStorage.getItem('cc_athlete')) {
+    if (hasCfgInUrl) localStorage.setItem('cc_welcome_done','1');
+    return; // straight to profile modal (or app)
+  }
+  document.getElementById('welcome-screen').classList.add('open');
+}
+
+function welcomeDemo() {
+  localStorage.setItem('cc_welcome_done','1');
+  document.getElementById('welcome-screen').classList.remove('open');
+  if (!db) useDemoMode(); // ensure Milan sample spots are loaded
+  showToast('Demo mode — explore freely! 🎮');
+}
+
+function welcomeJoin() {
+  document.getElementById('welcome-join-info').classList.toggle('open');
+}
 
 // ─── PROFILE ──────────────────────────────────────────────────────────────────
 function loadAthleteProfile() {
@@ -604,16 +927,32 @@ function saveProfile() {
   const team = document.getElementById('prof-team').value.trim();
   const div  = document.getElementById('prof-division').value;
   if (!name) { showToast('Please enter your name'); return; }
-  athlete = {id:'ath-'+Date.now(), name, team, division:div, joinedAt:Date.now()};
+  // keep existing id when editing so completions/XP stay attached
+  const id = athlete ? athlete.id : 'ath-'+Date.now();
+  const joinedAt = athlete ? (athlete.joinedAt||Date.now()) : Date.now();
+  athlete = {id, name, team, division:div, joinedAt};
   localStorage.setItem('cc_athlete', JSON.stringify(athlete));
   document.getElementById('profile-modal').style.display = 'none';
   updateHeaderAthlete();
   ensureAthleteInDb();
+  renderLeaderboard();
+  renderMe();
+}
+
+function editProfile() {
+  if (athlete) {
+    document.getElementById('prof-name').value = athlete.name||'';
+    document.getElementById('prof-team').value = athlete.team||'';
+    document.getElementById('prof-division').value = athlete.division||'GRANDI';
+  }
+  document.getElementById('profile-modal').style.display = 'flex';
 }
 
 function updateHeaderAthlete() {
   if (!athlete) return;
-  document.getElementById('header-athlete').textContent = athlete.name + (athlete.team ? ' · '+athlete.team : '');
+  const lvl = getLevelForAthlete(athlete.id);
+  document.getElementById('header-athlete').textContent =
+    athlete.name + ' · L' + lvl.lvl + ' ' + lvl.title + (athlete.team ? ' · '+athlete.team : '');
 }
 
 function ensureAthleteInDb() {
@@ -685,12 +1024,14 @@ function setupFirebaseListeners() {
     }
     renderSpotMarkers();
     renderAdminSpots();
+    renderMe();
   });
   db.ref('/athletes').on('value', snap => {
     athletes = snap.val() || {};
     recalcScores();
     renderLeaderboard();
     renderFeed();
+    renderMe();
   });
   db.ref('/completions').on('value', snap => {
     completions = snap.val() || {};
@@ -699,6 +1040,13 @@ function setupFirebaseListeners() {
     renderFeed();
     if (activeSheetSpotId) renderSheet(activeSheetSpotId);
     updateSpotMarkerStates();
+    updateHeaderAthlete();
+    renderMe();
+    checkAchievements();
+  });
+  db.ref('/reactions').on('value', snap => {
+    reactions = snap.val() || {};
+    renderFeed();
   });
   document.getElementById('sync-status').innerHTML = '🟢 Live';
 }
@@ -716,18 +1064,93 @@ function useDemoMode() {
   }
   athletes = getLocalAthletes();
   completions = getLocalCompletions();
+  reactions = getLocalReactions();
   recalcScores();
   renderSpotMarkers();
   renderAdminSpots();
   renderLeaderboard();
   renderFeed();
+  updateHeaderAthlete();
+  renderMe();
+}
+
+async function testFirebaseConnection() {
+  const resultEl = document.getElementById('fb-setup-section').style.display !== 'none'
+    ? document.getElementById('fb-test-result')
+    : document.getElementById('fb-test-result-2');
+  const show = (html, ok) => {
+    resultEl.style.cssText = 'display:block;margin-top:.5rem;font-size:.78rem;line-height:1.4;color:' + (ok?'var(--success)':'var(--danger)');
+    resultEl.innerHTML = html;
+  };
+  show('<span class="spinner"></span> Testing…', true);
+
+  let testDb = db;
+  if (!testDb) {
+    // not connected yet — try config from the textarea
+    const raw = document.getElementById('fb-config-input').value.trim();
+    if (!raw) { show('❌ Paste your Firebase config above first, then hit Test.', false); return; }
+    let cfg;
+    try { cfg = parseFirebaseConfigInput(raw); }
+    catch(e) { show('❌ That doesn’t look like valid config: '+escHtml(e.message), false); return; }
+    if (!cfg.databaseURL) { show('❌ Config is missing <b>databaseURL</b> — see step 5 above.', false); return; }
+    try {
+      let app = firebase.apps.find(a=>a.name==='cc-probe');
+      if (app) await app.delete();
+      app = firebase.initializeApp(cfg, 'cc-probe');
+      testDb = app.database();
+    } catch(e) { show('❌ Could not start Firebase: '+escHtml(humanFirebaseError(e)), false); return; }
+  }
+
+  try {
+    const probeVal = 'probe-'+Date.now();
+    const ref = testDb.ref('/_probe');
+    await withTimeout(ref.set(probeVal), 8000);
+    const snap = await withTimeout(ref.once('value'), 8000);
+    if (snap.val() === probeVal) {
+      await ref.remove().catch(()=>{});
+      show('✅ Connection works! Wrote and read a test value. You’re good to go.', true);
+    } else {
+      show('❌ Wrote a value but read back something different. Check that databaseURL points to YOUR database.', false);
+    }
+  } catch(e) {
+    show('❌ '+escHtml(humanFirebaseError(e)), false);
+  }
+}
+
+function withTimeout(promise, ms) {
+  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms))]);
+}
+
+function humanFirebaseError(e) {
+  const msg = (e && e.message || '').toLowerCase();
+  if (msg.includes('permission')) return 'Permission denied — your database rules block access. In the Firebase console open Realtime Database → Rules and start in "test mode" (or set read/write to true for the event).';
+  if (msg.includes('timeout')) return 'No answer from the database (timed out). Check your internet connection and that databaseURL is correct.';
+  if (msg.includes('cannot parse') || msg.includes('invalid url') || msg.includes('fatal')) return 'The databaseURL looks wrong. Copy the https://…firebasedatabase.app URL from the top of the Realtime Database page.';
+  return e && e.message ? e.message : 'Unknown error';
+}
+
+// Accepts strict JSON or a copied `const firebaseConfig = {...}` snippet
+function parseFirebaseConfigInput(raw) {
+  let text = raw;
+  const braceStart = text.indexOf('{');
+  const braceEnd = text.lastIndexOf('}');
+  if (braceStart >= 0 && braceEnd > braceStart) text = text.slice(braceStart, braceEnd+1);
+  try { return JSON.parse(text); }
+  catch(e) {
+    // tolerate unquoted keys / single quotes from the console snippet
+    const fixed = text
+      .replace(/([{,]\s*)([A-Za-z_$][\w$]*)\s*:/g, '$1"$2":')
+      .replace(/'/g, '"')
+      .replace(/,\s*}/g, '}');
+    return JSON.parse(fixed);
+  }
 }
 
 function saveFirebaseConfig() {
   const raw = document.getElementById('fb-config-input').value.trim();
   try {
-    const cfg = JSON.parse(raw);
-    if (!cfg.databaseURL) { showToast('Missing databaseURL in config'); return; }
+    const cfg = parseFirebaseConfigInput(raw);
+    if (!cfg.databaseURL) { showToast('Missing databaseURL — see step 5 of the wizard'); return; }
     localStorage.setItem('cc_firebase_config', JSON.stringify(cfg));
     initFirebase(cfg);
     showToast('Firebase connected!');
@@ -772,6 +1195,10 @@ function saveLocalSpots(d)     { localStorage.setItem('cc_spots',JSON.stringify(
 function getLocalAthletes()    { try{return JSON.parse(localStorage.getItem('cc_athletes')||'{}')}catch(e){return{}} }
 function getLocalCompletions() { try{return JSON.parse(localStorage.getItem('cc_completions')||'{}')}catch(e){return{}} }
 function saveLocalCompletions(d){ localStorage.setItem('cc_completions',JSON.stringify(d)) }
+function getLocalReactions()   { try{return JSON.parse(localStorage.getItem('cc_reactions')||'{}')}catch(e){return{}} }
+function saveLocalReactions(d) { localStorage.setItem('cc_reactions',JSON.stringify(d)) }
+function getVisitedSpots()     { try{return JSON.parse(localStorage.getItem('cc_visited')||'{}')}catch(e){return{}} }
+function saveVisitedSpots(d)   { localStorage.setItem('cc_visited',JSON.stringify(d)) }
 
 // ─── MAP ──────────────────────────────────────────────────────────────────────
 function initMap() {
@@ -809,11 +1236,15 @@ function renderSpotMarkers() {
     const inRange = playerPos ? haversine(playerPos.lat,playerPos.lng,spot.lat,spot.lng) <= (spot.radius||50) : false;
     const allDone = doneCh >= totalCh && totalCh > 0;
 
+    if (inRange) markSpotVisited(id);
+
     const wrapClass = [
       'spot-marker',
       inRange && !allDone ? 'in-range' : '',
       allDone ? 'all-done' : ''
     ].filter(Boolean).join(' ');
+
+    const inRangeLabel = inRange && !allDone ? '<div class="spot-marker-inrange">IN RANGE — TAP TO SEND</div>' : '';
 
     const icon = L.divIcon({
       className:'',
@@ -821,9 +1252,10 @@ function renderSpotMarkers() {
         <div class="spot-marker-icon">${spot.emoji||'📍'}</div>
         <div class="spot-marker-badge">${doneCh}/${totalCh}</div>
         <div class="spot-marker-label">${escHtml(spot.name)}</div>
+        ${inRangeLabel}
       </div>`,
-      iconSize:[90,70],
-      iconAnchor:[45,38],
+      iconSize:[110,84],
+      iconAnchor:[55,38],
     });
 
     const marker = L.marker([spot.lat, spot.lng], {icon}).addTo(mapInstance);
@@ -857,6 +1289,8 @@ function startGPS() {
 function onGpsUpdate(pos) {
   playerPos = {lat:pos.coords.latitude, lng:pos.coords.longitude};
   document.getElementById('gps-status').textContent = '✅ GPS';
+
+  trackDistance(pos);
 
   if (!mapInstance) return;
 
@@ -896,16 +1330,47 @@ function haversine(lat1,lng1,lat2,lng2) {
 // ─── SCORING ──────────────────────────────────────────────────────────────────
 function recalcScores() {
   scores = {};
+  crewInfo = {};
+  crewBonusCount = {};
   // For each unique (spotId, challenge): count completors, award each 10/count
   const groups = {};
-  Object.values(completions).forEach(c => {
+  Object.entries(completions).forEach(([compId, c]) => {
     const key = c.spotId+'__'+c.challenge;
     if (!groups[key]) groups[key] = [];
-    groups[key].push(c.athleteId);
+    groups[key].push({compId, ...c});
   });
-  Object.entries(groups).forEach(([key, athleteIds]) => {
-    const pts = 10 / athleteIds.length;
-    athleteIds.forEach(id => { scores[id] = (scores[id]||0) + pts; });
+  Object.values(groups).forEach(comps => {
+    const pts = 10 / comps.length;
+    comps.forEach(c => { scores[c.athleteId] = (scores[c.athleteId]||0) + pts; });
+  });
+
+  // CREW BONUS: deterministic, derived from the completions log.
+  // A completion earns +2 flat if a TEAMMATE (same team, different athlete)
+  // completed the SAME spot+challenge within 45 minutes of it. Both sides of
+  // the pair qualify, so both get the bonus — but max once per completion.
+  const teamOf = id => {
+    if (athletes[id] && athletes[id].team) return athletes[id].team;
+    if (athlete && id === athlete.id) return athlete.team || '';
+    return '';
+  };
+  Object.values(groups).forEach(comps => {
+    comps.forEach(c => {
+      const myTeam = teamOf(c.athleteId);
+      if (!myTeam) return;
+      const partners = comps.filter(o =>
+        o.athleteId !== c.athleteId &&
+        teamOf(o.athleteId) === myTeam &&
+        Math.abs(o.timestamp - c.timestamp) <= CREW_WINDOW_MS
+      );
+      if (partners.length > 0) {
+        scores[c.athleteId] = (scores[c.athleteId]||0) + CREW_BONUS_PTS;
+        crewBonusCount[c.athleteId] = (crewBonusCount[c.athleteId]||0) + 1;
+        crewInfo[c.compId] = {partners: partners.map(p => {
+          const a = athletes[p.athleteId];
+          return a ? a.name : (athlete && p.athleteId===athlete.id ? athlete.name : 'Teammate');
+        })};
+      }
+    });
   });
 }
 
@@ -913,6 +1378,47 @@ function getAthleteScore(id) { return scores[id] || 0; }
 
 function getAthleteCompletionCount(id) {
   return Object.values(completions).filter(c=>c.athleteId===id).length;
+}
+
+// ─── XP & LEVELS (derived from completions — never stored) ──────────────────
+function getSpotsFullyClearedBy(athleteId) {
+  return Object.entries(spots).filter(([spotId, spot]) => {
+    const chs = spot.challenges || [];
+    if (chs.length === 0) return false;
+    return chs.every(ch => Object.values(completions).some(c =>
+      c.athleteId === athleteId && c.spotId === spotId && c.challenge === ch));
+  }).map(([id]) => id);
+}
+
+function getAthleteXP(id) {
+  return getAthleteCompletionCount(id) * XP_PER_CHALLENGE
+       + getSpotsFullyClearedBy(id).length * XP_SPOT_SWEEP;
+}
+
+function getLevelForXP(xp) {
+  let lvl = LEVELS[0];
+  LEVELS.forEach(l => { if (xp >= l.xp) lvl = l; });
+  return lvl;
+}
+
+function getLevelForAthlete(id) { return getLevelForXP(getAthleteXP(id)); }
+
+function levelTag(id) {
+  const l = getLevelForAthlete(id);
+  return `<span class="lvl-badge">L${l.lvl} ${l.title}</span>`;
+}
+
+// ─── TEAM COLORS ──────────────────────────────────────────────────────────────
+function teamHue(team) {
+  let h = 0;
+  const s = String(team||'');
+  for (let i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+
+function teamDot(team) {
+  if (!team) return '';
+  return `<span class="team-dot" style="background:hsl(${teamHue(team)},70%,55%)"></span>`;
 }
 
 // ─── SHEET ────────────────────────────────────────────────────────────────────
@@ -949,6 +1455,20 @@ function renderSheet(spotId) {
     const myDone = athlete && completorsAll.some(c=>c.athleteId===athlete.id);
     const pts = completorsAll.length > 0 ? (10/completorsAll.length).toFixed(2) : '10.00';
     const projPts = completorsAll.length > 0 && !myDone ? (10/(completorsAll.length+1)).toFixed(2) : pts;
+    const hint = spot.hints && spot.hints[ch] ? `<div class="ch-hint">💡 ${escHtml(spot.hints[ch])}</div>` : '';
+
+    // WHO CLEARED IT — chips with team color dots, teammates highlighted
+    const myTeam = athlete ? (athlete.team||'') : '';
+    const chips = completorsAll
+      .slice().sort((a,b)=>a.timestamp-b.timestamp)
+      .map(c => {
+        const a = athletes[c.athleteId] || (athlete && c.athleteId===athlete.id ? athlete : null);
+        const nm = a ? a.name : 'Unknown';
+        const tm = a ? (a.team||'') : '';
+        const isMate = myTeam && tm === myTeam && c.athleteId !== athlete.id;
+        return `<span class="comp-chip ${isMate?'mate':''}">${teamDot(tm)}${escHtml(nm)}${isMate?' 🤝':''}</span>`;
+      }).join('');
+    const chipsHtml = chips ? `<div class="completor-chips">${chips}</div>` : '';
 
     const item = document.createElement('div');
     item.className = 'challenge-item' + (myDone?' done':'');
@@ -958,6 +1478,8 @@ function renderSheet(spotId) {
         <div class="ch-name"><span class="badge ${meta.badgeClass}">${meta.label}</span></div>
         <div class="ch-pts">${myDone?'✅ Completed · ':''}${pts} pts each · ${completorsAll.length} completor${completorsAll.length!==1?'s':''}</div>
         ${!myDone?`<div class="ch-completors">Complete to earn ~${projPts} pts</div>`:''}
+        ${hint}
+        ${chipsHtml}
       </div>
       <button class="btn-complete ${myDone?'done-btn':''}"
         ${myDone?'disabled':''}
@@ -983,12 +1505,16 @@ async function completeChallenge(spotId, challenge, btn) {
   const orig = btn.textContent;
   btn.innerHTML = '<span class="spinner"></span>';
 
+  // 3-2-1 GO! micro-animation, then a single quick confirm
+  await runCountdown();
+
   confirmAction(
     `Complete ${challenge} at ${spots[spotId]?.name}?`,
     'This will record your completion and update scores.',
     async () => {
       const compId = 'comp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
       const comp = {athleteId:athlete.id, spotId, challenge, timestamp:Date.now()};
+      const sweepsBefore = getSpotsFullyClearedBy(athlete.id).length;
 
       if (db) {
         await db.ref('/completions/'+compId).set(comp);
@@ -1002,14 +1528,54 @@ async function completeChallenge(spotId, challenge, btn) {
         renderFeed();
         renderSheet(spotId);
         updateSpotMarkerStates();
+        updateHeaderAthlete();
+        renderMe();
       }
-      showToast('🎉 Challenge completed!');
+
+      // toast: crew bonus > sweep > plain (crewInfo is derived in recalcScores)
+      if (!completions[compId]) completions[compId] = comp; // defensive for sync lag
+      recalcScores();
+      const crew = crewInfo[compId];
+      const sweepsAfter = getSpotsFullyClearedBy(athlete.id).length;
+      let xpGain = XP_PER_CHALLENGE + (sweepsAfter > sweepsBefore ? XP_SPOT_SWEEP : 0);
+      if (crew && crew.partners.length > 0) {
+        showToast(`🎉 +${xpGain} XP · +2 Crew Bonus with ${crew.partners[0]}! 🤝`);
+      } else if (sweepsAfter > sweepsBefore) {
+        showToast(`🧗 Spot swept! +${xpGain} XP`);
+      } else {
+        showToast(`🎉 Challenge completed! +${xpGain} XP`);
+      }
+      checkAchievements();
     },
     () => {
       btn.disabled = false;
       btn.textContent = orig;
     }
   );
+}
+
+function runCountdown() {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('countdown-overlay');
+    const num = document.getElementById('countdown-num');
+    const steps = ['3','2','1','GO!'];
+    let i = 0;
+    overlay.classList.add('open');
+    const tick = () => {
+      if (i >= steps.length) {
+        overlay.classList.remove('open');
+        resolve();
+        return;
+      }
+      num.textContent = steps[i];
+      num.classList.remove('tick');
+      void num.offsetWidth; // restart animation
+      num.classList.add('tick');
+      i++;
+      setTimeout(tick, i === steps.length ? 380 : 320);
+    };
+    tick();
+  });
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────────────────
@@ -1045,8 +1611,8 @@ function renderLeaderboard() {
     return `<div class="lb-row ${rowClass}">
       <div class="lb-rank">${medal}</div>
       <div class="lb-info">
-        <div class="lb-name">${escHtml(a.name)}</div>
-        <div class="lb-sub">${a.team?escHtml(a.team):''}${divBadge}</div>
+        <div class="lb-name">${escHtml(a.name)} ${levelTag(a.id)}</div>
+        <div class="lb-sub">${a.team?teamDot(a.team)+escHtml(a.team):''}${divBadge}</div>
       </div>
       <div>
         <div class="lb-pts">${a.pts.toFixed(2)}</div>
@@ -1054,11 +1620,39 @@ function renderLeaderboard() {
       </div>
     </div>`;
   }).join('');
+
+  renderTeamLeaderboard(list);
+}
+
+function renderTeamLeaderboard(list) {
+  const container = document.getElementById('team-leaderboard-list');
+  const teams = {};
+  list.forEach(a => {
+    if (!a.team) return;
+    if (!teams[a.team]) teams[a.team] = {pts:0, members:0};
+    teams[a.team].pts += a.pts;
+    teams[a.team].members++;
+  });
+  const rows = Object.entries(teams).sort((a,b) => b[1].pts - a[1].pts);
+  if (rows.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="padding:1rem">No teams yet</div>';
+    return;
+  }
+  container.innerHTML = rows.map(([team,t],i) => {
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    return `<div class="team-lb-row">
+      <span style="min-width:1.6rem;text-align:center">${medal}</span>
+      ${teamDot(team)}
+      <strong style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(team)}</strong>
+      <span style="font-size:.7rem;color:var(--muted)">${t.members} athlete${t.members!==1?'s':''}</span>
+      <span class="lb-pts">${t.pts.toFixed(2)}</span>
+    </div>`;
+  }).join('');
 }
 
 function renderFeed() {
-  const sorted = Object.values(completions)
-    .sort((a,b) => b.timestamp - a.timestamp)
+  const sorted = Object.entries(completions)
+    .sort((a,b) => b[1].timestamp - a[1].timestamp)
     .slice(0,20);
 
   const container = document.getElementById('feed-list');
@@ -1066,17 +1660,49 @@ function renderFeed() {
     container.innerHTML = '<div class="empty-state">No completions yet</div>';
     return;
   }
-  container.innerHTML = sorted.map(c => {
+  container.innerHTML = sorted.map(([compId, c]) => {
     const ath = athletes[c.athleteId] || {name:athlete&&c.athleteId===athlete?.id?athlete.name:'Unknown'};
     const spot = spots[c.spotId] || {name:'Unknown Spot'};
     const meta = CHALLENGE_META[c.challenge]||{emoji:'🏆'};
     const ago = timeAgo(c.timestamp);
+    const crewTag = crewInfo[compId] ? '<span class="crew-tag">🤝 Crew +2</span>' : '';
+    const lvl = getLevelForAthlete(c.athleteId);
+    const reactBtns = REACTION_EMOJIS.map(emoji => {
+      const who = (reactions[compId] && reactions[compId][emoji]) || {};
+      const count = Object.keys(who).length;
+      const mine = athlete && who[athlete.id];
+      return `<button class="react-btn ${mine?'mine':''}" onclick="toggleReaction('${compId}','${emoji}',this)">${emoji}${count>0?' '+count:''}</button>`;
+    }).join('');
     return `<div class="feed-item">
-      <span>${meta.emoji}</span>
-      <span><strong>${escHtml(ath.name)}</strong> completed <span class="badge badge-${c.challenge.toLowerCase()}">${c.challenge}</span> at <strong>${escHtml(spot.name)}</strong></span>
-      <span class="feed-time">${ago}</span>
+      <div class="feed-main">
+        <span>${meta.emoji}</span>
+        <span><strong>${escHtml(ath.name)}</strong> <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span> completed <span class="badge badge-${c.challenge.toLowerCase()}">${c.challenge}</span> at <strong>${escHtml(spot.name)}</strong> ${crewTag}</span>
+        <span class="feed-time">${ago}</span>
+      </div>
+      <div class="feed-reactions">${reactBtns}</div>
     </div>`;
   }).join('');
+}
+
+// ─── HYPE REACTIONS ───────────────────────────────────────────────────────────
+function toggleReaction(compId, emoji, btn) {
+  if (!athlete) { showToast('Set up your profile first'); return; }
+  if (btn) { btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
+  const has = reactions[compId] && reactions[compId][emoji] && reactions[compId][emoji][athlete.id];
+  if (db) {
+    const ref = db.ref('/reactions/'+compId+'/'+emoji+'/'+athlete.id);
+    if (has) ref.remove(); else ref.set(true);
+  } else {
+    const local = getLocalReactions();
+    if (!local[compId]) local[compId] = {};
+    if (!local[compId][emoji]) local[compId][emoji] = {};
+    if (has) delete local[compId][emoji][athlete.id];
+    else local[compId][emoji][athlete.id] = true;
+    saveLocalReactions(local);
+    reactions = local;
+    // re-render after the pop animation so the tap feedback is visible
+    setTimeout(renderFeed, 250);
+  }
 }
 
 // Division filter tabs
@@ -1127,6 +1753,9 @@ function openSpotModal(spotId) {
     document.getElementById('ch-skill').checked = (s.challenges||[]).includes('SKILL');
     document.getElementById('ch-style').checked = (s.challenges||[]).includes('STYLE');
     document.getElementById('ch-speed').checked = (s.challenges||[]).includes('SPEED');
+    document.getElementById('hint-skill').value = (s.hints&&s.hints.SKILL)||'';
+    document.getElementById('hint-style').value = (s.hints&&s.hints.STYLE)||'';
+    document.getElementById('hint-speed').value = (s.hints&&s.hints.SPEED)||'';
   } else {
     document.getElementById('spot-modal-title').textContent = 'Add Spot';
     document.getElementById('spot-edit-id').value = '';
@@ -1139,6 +1768,9 @@ function openSpotModal(spotId) {
     document.getElementById('ch-skill').checked = true;
     document.getElementById('ch-style').checked = true;
     document.getElementById('ch-speed').checked = true;
+    document.getElementById('hint-skill').value = '';
+    document.getElementById('hint-style').value = '';
+    document.getElementById('hint-speed').value = '';
   }
   modal.classList.add('open');
 }
@@ -1162,7 +1794,14 @@ async function saveSpot() {
   if (isNaN(lat)||isNaN(lng)) { showToast('Valid lat/lng required'); return; }
   if (challenges.length === 0) { showToast('Select at least one challenge'); return; }
 
+  const hints = {};
+  ['SKILL','STYLE','SPEED'].forEach(c => {
+    const v = document.getElementById('hint-'+c.toLowerCase()).value.trim();
+    if (v && challenges.includes(c)) hints[c] = v;
+  });
+
   const spot = {name,emoji,description:desc,lat,lng,radius,challenges};
+  if (Object.keys(hints).length > 0) spot.hints = hints;
 
   if (db) {
     await db.ref('/spots/'+id).set(spot);
@@ -1220,6 +1859,8 @@ async function clearCompletions() {
     renderLeaderboard();
     renderFeed();
     updateSpotMarkerStates();
+    updateHeaderAthlete();
+    renderMe();
   }
   showToast('Completions cleared');
 }
@@ -1235,8 +1876,176 @@ async function clearAthletes() {
   showToast('Athletes cleared');
 }
 
+// ─── ORGANIZER MODE ───────────────────────────────────────────────────────────
+// The ⚙️ Admin tab is hidden unless this device has unlocked organizer mode
+// with the event PIN. The join URL (#cfg=...) never grants admin — only the
+// PIN does. Only a hash of the PIN is ever stored (Firebase /config/organizerPinHash
+// when connected, localStorage in demo mode).
+const ORGANIZER_FLAG_KEY   = 'cc_organizer_mode';
+const LOCAL_PIN_HASH_KEY   = 'cc_organizer_pin_hash';
+let pinModalMode = 'verify';     // 'verify' | 'create'
+let pinExpectedHash = null;      // hash to verify against (in 'verify' mode)
+let pinBusy = false;
+
+function isOrganizer() { return localStorage.getItem(ORGANIZER_FLAG_KEY) === '1'; }
+
+// Small deterministic sync hash (cyrb53 variant) — same result on every device,
+// works offline and on http, keeps the raw PIN out of storage.
+function hashPin(pin) {
+  const str = 'cc-organizer-pin::' + String(pin);
+  let h1 = 0xdeadbeef ^ str.length, h2 = 0x41c6ce57 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 'v1-' + (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+
+async function fetchOrganizerPinHash() {
+  if (db) {
+    const snap = await withTimeout(db.ref('/config/organizerPinHash').once('value'), 8000);
+    return snap.val() || null;
+  }
+  return localStorage.getItem(LOCAL_PIN_HASH_KEY) || null;
+}
+
+async function storeOrganizerPinHash(hash) {
+  if (db) await db.ref('/config/organizerPinHash').set(hash);
+  else localStorage.setItem(LOCAL_PIN_HASH_KEY, hash);
+}
+
+function updateAdminVisibility() {
+  const btn = document.getElementById('nav-admin-btn');
+  const org = isOrganizer();
+  btn.style.display = org ? 'flex' : 'none';
+  if (!org && document.getElementById('admin-view').classList.contains('active')) {
+    switchTab('map', document.querySelector('[data-tab="map"]'));
+  }
+}
+
+async function openOrganizerAccess() {
+  if (isOrganizer()) {
+    updateAdminVisibility();
+    switchTab('admin', document.querySelector('[data-tab="admin"]'));
+    showToast('Already in organizer mode 🎛️');
+    return;
+  }
+  let existingHash = null;
+  try { existingHash = await fetchOrganizerPinHash(); }
+  catch(e) { showToast('Could not check organizer PIN: ' + humanFirebaseError(e)); return; }
+  openPinModal(existingHash ? 'verify' : 'create', existingHash);
+}
+
+function openPinModal(mode, expectedHash) {
+  pinModalMode = mode;
+  pinExpectedHash = expectedHash || null;
+  const create = mode === 'create';
+  document.getElementById('pin-modal-title').textContent = create ? '🔐 Create organizer PIN' : '🔐 Organizer access';
+  document.getElementById('pin-modal-subtitle').textContent = create
+    ? 'No PIN exists yet for this event. Choose a 4–6 digit PIN — you\'ll need it to control the event from any device.'
+    : 'Enter the organizer PIN to unlock the Admin tab.';
+  document.getElementById('pin-label-1').textContent = create ? 'New PIN (4–6 digits)' : 'PIN';
+  document.getElementById('pin-group-2').style.display = create ? 'flex' : 'none';
+  document.getElementById('pin-submit-btn').textContent = create ? 'Create & unlock' : 'Unlock';
+  document.getElementById('pin-input-1').value = '';
+  document.getElementById('pin-input-2').value = '';
+  hidePinError();
+  document.getElementById('pin-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pin-input-1').focus(), 80);
+}
+
+function closePinModal() {
+  document.getElementById('pin-modal').classList.remove('open');
+  document.getElementById('pin-input-1').value = '';
+  document.getElementById('pin-input-2').value = '';
+  hidePinError();
+}
+
+function showPinError(msg) {
+  const err = document.getElementById('pin-error');
+  err.textContent = msg;
+  err.classList.add('show');
+  const box = document.getElementById('pin-modal-box');
+  box.classList.remove('shake');
+  void box.offsetWidth; // restart animation
+  box.classList.add('shake');
+}
+
+function hidePinError() {
+  document.getElementById('pin-error').classList.remove('show');
+  document.getElementById('pin-modal-box').classList.remove('shake');
+}
+
+async function submitPin() {
+  if (pinBusy) return;
+  const pin1 = document.getElementById('pin-input-1').value.trim();
+
+  if (pinModalMode === 'create') {
+    const pin2 = document.getElementById('pin-input-2').value.trim();
+    if (!/^\d{4,6}$/.test(pin1)) { showPinError('PIN must be 4–6 digits.'); return; }
+    if (pin1 !== pin2) { showPinError('PINs don\'t match — try again.'); return; }
+    pinBusy = true;
+    try {
+      // Re-check right before writing: another organizer may have created a
+      // PIN meanwhile — never overwrite an existing one.
+      const current = await fetchOrganizerPinHash();
+      if (current) {
+        pinBusy = false;
+        openPinModal('verify', current);
+        showPinError('A PIN already exists for this event — enter it instead.');
+        return;
+      }
+      await storeOrganizerPinHash(hashPin(pin1));
+    } catch(e) {
+      pinBusy = false;
+      showPinError('Could not save PIN: ' + humanFirebaseError(e));
+      return;
+    }
+    pinBusy = false;
+    grantOrganizer('PIN created — you\'re the organizer! 🎛️');
+    return;
+  }
+
+  // verify mode
+  if (!/^\d{4,6}$/.test(pin1)) { showPinError('Enter your 4–6 digit PIN.'); return; }
+  if (pinExpectedHash && hashPin(pin1) === pinExpectedHash) {
+    grantOrganizer('Organizer mode unlocked 🎛️');
+  } else {
+    document.getElementById('pin-input-1').value = '';
+    document.getElementById('pin-input-1').focus();
+    showPinError('Wrong PIN — try again.');
+  }
+}
+
+function grantOrganizer(msg) {
+  localStorage.setItem(ORGANIZER_FLAG_KEY, '1');
+  closePinModal();
+  updateAdminVisibility();
+  switchTab('admin', document.querySelector('[data-tab="admin"]'));
+  showToast(msg);
+}
+
+function organizerLogout() {
+  confirmAction('Log out of organizer mode?', 'The Admin tab will be hidden on this device until the PIN is entered again.', () => {
+    localStorage.removeItem(ORGANIZER_FLAG_KEY);
+    updateAdminVisibility();
+    showToast('Logged out of organizer mode');
+  });
+}
+
+// Enter key submits the PIN modal
+['pin-input-1','pin-input-2'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitPin();
+  });
+});
+
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(tab, btnEl) {
+  if (tab === 'admin' && !isOrganizer()) { showToast('Organizer access required'); return; }
   document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
   else document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
@@ -1247,6 +2056,7 @@ function switchTab(tab, btnEl) {
   if (tab === 'map' && mapInstance) {
     setTimeout(() => mapInstance.invalidateSize(), 100);
   }
+  if (tab === 'me') renderMe();
 }
 
 // ─── CONFIRM ──────────────────────────────────────────────────────────────────
@@ -1290,6 +2100,173 @@ function timeAgo(ts) {
   const m = Math.floor(s/60); if (m < 60) return m+'m ago';
   const h = Math.floor(m/60); if (h < 24) return h+'h ago';
   return Math.floor(h/24)+'d ago';
+}
+
+// ─── DISTANCE TRACKER (outdoor identity) ─────────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function getTodayDistance() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('cc_distance')||'{}');
+    return saved.date === todayKey() ? (saved.meters||0) : 0;
+  } catch(e) { return 0; }
+}
+
+function addTodayDistance(meters) {
+  const total = getTodayDistance() + meters;
+  localStorage.setItem('cc_distance', JSON.stringify({date:todayKey(), meters:total}));
+  return total;
+}
+
+function trackDistance(pos) {
+  const acc = pos.coords.accuracy;
+  const fix = {lat:pos.coords.latitude, lng:pos.coords.longitude, acc, t:Date.now()};
+  if (acc > 50) return;                 // ignore low-accuracy fixes (GPS noise)
+  if (lastGpsFix) {
+    const d = haversine(lastGpsFix.lat, lastGpsFix.lng, fix.lat, fix.lng);
+    if (d > 100) { lastGpsFix = fix; return; } // teleport jump — GPS noise, don't count
+    if (d > 2) { // ignore micro-jitter
+      addTodayDistance(d);
+      updateHeaderDistance();
+    }
+  }
+  lastGpsFix = fix;
+}
+
+function fmtKm(meters) {
+  return meters >= 1000 ? (meters/1000).toFixed(1)+' km' : Math.round(meters)+' m';
+}
+
+function updateHeaderDistance() {
+  const m = getTodayDistance();
+  const el = document.getElementById('header-dist');
+  if (m > 0) { el.style.display = 'block'; el.textContent = '🚶 '+fmtKm(m); }
+}
+
+// ─── VISITED SPOTS (for Scout achievement) ───────────────────────────────────
+function markSpotVisited(spotId) {
+  const v = getVisitedSpots();
+  if (!v[spotId]) {
+    v[spotId] = Date.now();
+    saveVisitedSpots(v);
+    checkAchievements();
+  }
+}
+
+// ─── WARM-UP NUDGE ────────────────────────────────────────────────────────────
+function maybeShowWarmup() {
+  if (localStorage.getItem('cc_warmup_day') === todayKey()) return;
+  setTimeout(() => document.getElementById('warmup-card').classList.add('show'), 1500);
+}
+
+function dismissWarmup() {
+  document.getElementById('warmup-card').classList.remove('show');
+  localStorage.setItem('cc_warmup_day', todayKey());
+}
+
+// ─── ME SECTION ───────────────────────────────────────────────────────────────
+function renderMe() {
+  if (!athlete) {
+    document.getElementById('me-profile-card').innerHTML = '<div class="empty-state">Set up your profile first</div>';
+    document.getElementById('me-stats-grid').innerHTML = '';
+    document.getElementById('me-ach-grid').innerHTML = '';
+    return;
+  }
+  const xp = getAthleteXP(athlete.id);
+  const lvl = getLevelForXP(xp);
+  const nextLvl = LEVELS.find(l => l.xp > xp);
+  const prevXp = lvl.xp;
+  const pct = nextLvl ? Math.min(100, Math.round((xp-prevXp)/(nextLvl.xp-prevXp)*100)) : 100;
+  const divBadge = athlete.division ? `<span class="badge badge-${athlete.division.toLowerCase()}">${athlete.division}</span>` : '';
+
+  document.getElementById('me-profile-card').innerHTML = `
+    <div class="me-name">${escHtml(athlete.name)} <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span></div>
+    <div class="me-sub">${athlete.team?teamDot(athlete.team)+escHtml(athlete.team):'No team'} ${divBadge}</div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-label"><span>${xp} XP</span><span>${nextLvl?nextLvl.xp+' XP → L'+nextLvl.lvl+' '+nextLvl.title:'MAX LEVEL 🏆'}</span></div>
+      <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+
+  const cleared = getAthleteCompletionCount(athlete.id);
+  const swept = getSpotsFullyClearedBy(athlete.id).length;
+  const crew = crewBonusCount[athlete.id]||0;
+  const stats = [
+    [getAthleteScore(athlete.id).toFixed(2), 'Points'],
+    [cleared, 'Cleared'],
+    [swept, 'Spots swept'],
+    [fmtKm(getTodayDistance()), 'Today 🚶'],
+    [crew, 'Crew bonuses'],
+    [xp, 'Total XP'],
+  ];
+  document.getElementById('me-stats-grid').innerHTML = stats.map(([v,l]) =>
+    `<div class="stat-cell"><div class="stat-val">${v}</div><div class="stat-lbl">${l}</div></div>`).join('');
+
+  document.getElementById('me-ach-grid').innerHTML = getAchievements().map(a =>
+    `<div class="ach-item ${a.unlocked?'unlocked':'locked'}">
+      <div class="ach-emoji">${a.emoji}</div>
+      <div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-hint">${a.unlocked?a.doneText:a.hint}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── ACHIEVEMENTS (derived from data) ────────────────────────────────────────
+function getAchievements() {
+  if (!athlete) return [];
+  const mine = Object.values(completions).filter(c => c.athleteId === athlete.id);
+  const visited = Object.keys(getVisitedSpots()).length;
+  const spotIds = Object.keys(spots);
+  const mySpotIds = new Set(mine.map(c => c.spotId));
+  // Hat-trick: 3 completions within any 60-minute window
+  const times = mine.map(c => c.timestamp).sort((a,b)=>a-b);
+  let hatTrick = false;
+  for (let i = 0; i + 2 < times.length; i++) {
+    if (times[i+2] - times[i] <= 60*60*1000) { hatTrick = true; break; }
+  }
+  return [
+    {id:'first-send', emoji:'🩸', name:'First Send', unlocked:mine.length >= 1,
+      hint:'Clear your first challenge', doneText:'You sent it. It begins.'},
+    {id:'scout', emoji:'🗺️', name:'Scout', unlocked:visited >= 3,
+      hint:`Come in range of 3 different spots (${visited}/3)`, doneText:'City explorer — 3 spots scouted.'},
+    {id:'sweeper', emoji:'🧗', name:'Spot Sweeper', unlocked:getSpotsFullyClearedBy(athlete.id).length >= 1,
+      hint:'Fully clear every challenge at one spot', doneText:'A whole spot, cleaned out.'},
+    {id:'crew', emoji:'🤝', name:'Crew Session', unlocked:(crewBonusCount[athlete.id]||0) >= 1,
+      hint:'Clear a challenge within 45 min of a teammate', doneText:'Training hits different with the crew.'},
+    {id:'hat-trick', emoji:'🔥', name:'Hat-trick', unlocked:hatTrick,
+      hint:'Clear 3 challenges within 60 minutes', doneText:'Three sends, one hour. On fire.'},
+    {id:'city-runner', emoji:'🌍', name:'City Runner', unlocked:spotIds.length > 0 && spotIds.every(id => mySpotIds.has(id)),
+      hint:`Clear at least one challenge at every spot (${mySpotIds.size}/${spotIds.length})`, doneText:'The whole city is your gym.'},
+  ];
+}
+
+function checkAchievements() {
+  if (!athlete) return;
+  let toasted;
+  try { toasted = JSON.parse(localStorage.getItem('cc_ach_toasted')||'[]'); } catch(e) { toasted = []; }
+  const newly = getAchievements().filter(a => a.unlocked && !toasted.includes(a.id));
+  if (newly.length === 0) return;
+  newly.forEach(a => toasted.push(a.id));
+  localStorage.setItem('cc_ach_toasted', JSON.stringify(toasted));
+  showAchievementToast(newly[0]);
+  renderMe();
+}
+
+let achToastTimer;
+function showAchievementToast(a) {
+  const t = document.getElementById('ach-toast');
+  const colors = ['var(--gold)','var(--accent2)','#4ade80','#f87171','#c084fc','var(--gold)','var(--accent)','#fb923c'];
+  const confetti = colors.map((c,i) =>
+    `<span class="confetti-bit" style="left:${8+i*12}%;background:${c};animation-delay:${(i*0.07).toFixed(2)}s"></span>`).join('');
+  t.innerHTML = `${confetti}<div>${a.emoji} Achievement unlocked!</div><div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">${a.name} — ${a.doneText}</div>`;
+  t.classList.remove('show');
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(achToastTimer);
+  achToastTimer = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 // Swipe-down to close sheet
