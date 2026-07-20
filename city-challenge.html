@@ -507,6 +507,45 @@ select option{background:var(--surface2)}
 }
 .team-lb-row .lb-pts{font-size:.92rem}
 
+/* CHALLENGE VIDEO OVERLAY */
+#video-overlay{
+  position:fixed;inset:0;z-index:2800;background:rgba(11,17,32,.94);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#video-overlay.open{display:flex}
+.video-overlay-inner{width:100%;max-width:720px}
+.video-overlay-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem}
+.video-overlay-title{
+  flex:1;min-width:0;font-size:.95rem;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:linear-gradient(135deg,var(--accent2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.video-overlay-close{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;cursor:pointer;
+  background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  font-size:1rem;line-height:1;display:flex;align-items:center;justify-content:center;
+  transition:opacity .15s,transform .1s;
+}
+.video-overlay-close:hover{opacity:.85}
+.video-overlay-close:active{transform:scale(.92)}
+.video-frame-wrap{
+  position:relative;width:100%;max-width:100%;aspect-ratio:16/9;max-height:70vh;
+  margin:0 auto;background:#000;border:1px solid var(--border);border-radius:.75rem;overflow:hidden;
+}
+.video-frame-wrap iframe,.video-frame-wrap video{
+  position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000;
+}
+.ch-video-btn{
+  display:inline-flex;align-items:center;gap:.3rem;margin-top:.4rem;
+  padding:.28rem .6rem;border-radius:.45rem;cursor:pointer;
+  background:var(--surface3);border:1px solid var(--border);color:var(--text);
+  font-size:.72rem;font-weight:700;transition:opacity .15s,transform .1s;
+}
+.ch-video-btn:hover{opacity:.85}
+.ch-video-btn:active{transform:scale(.96)}
+.ch-video-ico{font-size:.78rem;margin-left:.25rem}
+
 /* Leaflet overrides */
 .leaflet-container{background:#0b1120!important}
 .leaflet-bar a,.leaflet-bar a:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
@@ -767,6 +806,12 @@ select option{background:var(--surface2)}
         <input id="hint-style" type="text" placeholder="STYLE hint — e.g. flow line with vaults and spins" style="margin-bottom:.4rem">
         <input id="hint-speed" type="text" placeholder="SPEED hint — e.g. sprint route around the fountain">
       </div>
+      <div class="form-group full">
+        <label>🎥 Challenge Videos (optional)</label>
+        <input id="video-skill" type="url" placeholder="SKILL video URL — Google Drive or YouTube link" style="margin-bottom:.4rem">
+        <input id="video-style" type="url" placeholder="STYLE video URL — Google Drive or YouTube link" style="margin-bottom:.4rem">
+        <input id="video-speed" type="url" placeholder="SPEED video URL — Google Drive or YouTube link">
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn btn-primary" onclick="saveSpot()">💾 Save</button>
@@ -812,6 +857,17 @@ select option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- CHALLENGE VIDEO OVERLAY -->
+<div id="video-overlay" onclick="if(event.target===this)closeVideoOverlay()">
+  <div class="video-overlay-inner">
+    <div class="video-overlay-head">
+      <div class="video-overlay-title" id="video-overlay-title"></div>
+      <button class="video-overlay-close" onclick="closeVideoOverlay()" aria-label="Close video">✕</button>
+    </div>
+    <div class="video-frame-wrap" id="video-frame-wrap"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -820,7 +876,7 @@ select option{background:var(--surface2)}
 let db = null;
 let firebaseApp = null;
 let athlete = null; // {id, name, team, division}
-let spots = {};     // {id: {name, emoji, lat, lng, radius, challenges, description}}
+let spots = {};     // {id: {name, emoji, lat, lng, radius, challenges, description, hints?, videos?:{SKILL,STYLE,SPEED}}}
 let athletes = {};  // {id: {...}}
 let completions = {};// {id: {athleteId, spotId, challenge, timestamp}}
 let scores = {};    // {athleteId: number}
@@ -1456,6 +1512,9 @@ function renderSheet(spotId) {
     const pts = completorsAll.length > 0 ? (10/completorsAll.length).toFixed(2) : '10.00';
     const projPts = completorsAll.length > 0 && !myDone ? (10/(completorsAll.length+1)).toFixed(2) : pts;
     const hint = spot.hints && spot.hints[ch] ? `<div class="ch-hint">💡 ${escHtml(spot.hints[ch])}</div>` : '';
+    const hasVideo = !!(spot.videos && spot.videos[ch]);
+    const videoIcon = hasVideo ? '<span class="ch-video-ico" title="Demo video available">🎥</span>' : '';
+    const videoBtn = hasVideo ? `<div><button class="ch-video-btn" onclick="openChallengeVideo('${spotId}','${ch}')">🎥 Watch demo</button></div>` : '';
 
     // WHO CLEARED IT — chips with team color dots, teammates highlighted
     const myTeam = athlete ? (athlete.team||'') : '';
@@ -1475,10 +1534,11 @@ function renderSheet(spotId) {
     item.innerHTML = `
       <div class="ch-icon">${meta.emoji}</div>
       <div class="ch-info">
-        <div class="ch-name"><span class="badge ${meta.badgeClass}">${meta.label}</span></div>
+        <div class="ch-name"><span class="badge ${meta.badgeClass}">${meta.label}</span>${videoIcon}</div>
         <div class="ch-pts">${myDone?'✅ Completed · ':''}${pts} pts each · ${completorsAll.length} completor${completorsAll.length!==1?'s':''}</div>
         ${!myDone?`<div class="ch-completors">Complete to earn ~${projPts} pts</div>`:''}
         ${hint}
+        ${videoBtn}
         ${chipsHtml}
       </div>
       <button class="btn-complete ${myDone?'done-btn':''}"
@@ -1497,6 +1557,53 @@ function renderSheet(spotId) {
     info.textContent = `📍 You are ${dist}m away (need ${radius}m)`;
     list.appendChild(info);
   }
+}
+
+// ─── CHALLENGE VIDEOS ─────────────────────────────────────────────────────────
+// Normalize a pasted link into something embeddable.
+// Returns {type:'iframe'|'video', src} or null for an empty url.
+function toEmbedUrl(url) {
+  const u = String(url||'').trim();
+  if (!u) return null;
+
+  // Google Drive: /file/d/FILE_ID/view or /open?id=FILE_ID → /file/d/FILE_ID/preview
+  let m = u.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/i);
+  if (!m) m = u.match(/drive\.google\.com\/open\?(?:[^#]*&)?id=([^&#]+)/i);
+  if (m) return {type:'iframe', src:'https://drive.google.com/file/d/'+m[1]+'/preview'};
+
+  // YouTube: watch?v=ID, youtu.be/ID, shorts/ID → /embed/ID
+  m = u.match(/(?:youtube\.com\/watch\?(?:[^#]*&)?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]+)/i);
+  if (m) return {type:'iframe', src:'https://www.youtube.com/embed/'+m[1]};
+
+  // Direct video files → native <video>
+  if (/\.(mp4|webm|mov)(\?|#|$)/i.test(u)) return {type:'video', src:u};
+
+  // Anything else: try it as-is in an iframe
+  return {type:'iframe', src:u};
+}
+
+function openChallengeVideo(spotId, challenge) {
+  const spot = spots[spotId];
+  const url = spot && spot.videos && spot.videos[challenge];
+  if (!url) { showToast('No video for this challenge'); return; }
+  const embed = toEmbedUrl(url);
+  if (!embed) { showToast('No video for this challenge'); return; }
+  const meta = CHALLENGE_META[challenge] || {emoji:'🏆', label:challenge};
+  document.getElementById('video-overlay-title').textContent =
+    (spot.emoji||'📍')+' '+spot.name+' — '+meta.emoji+' '+(meta.label||challenge);
+  const wrap = document.getElementById('video-frame-wrap');
+  if (embed.type === 'video') {
+    wrap.innerHTML = `<video controls playsinline autoplay src="${escHtml(embed.src)}"></video>`;
+  } else {
+    wrap.innerHTML = `<iframe src="${escHtml(embed.src)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  }
+  document.getElementById('video-overlay').classList.add('open');
+}
+
+function closeVideoOverlay() {
+  // Clearing the wrapper destroys the iframe/video and stops playback
+  document.getElementById('video-frame-wrap').innerHTML = '';
+  document.getElementById('video-overlay').classList.remove('open');
 }
 
 async function completeChallenge(spotId, challenge, btn) {
@@ -1756,6 +1863,9 @@ function openSpotModal(spotId) {
     document.getElementById('hint-skill').value = (s.hints&&s.hints.SKILL)||'';
     document.getElementById('hint-style').value = (s.hints&&s.hints.STYLE)||'';
     document.getElementById('hint-speed').value = (s.hints&&s.hints.SPEED)||'';
+    document.getElementById('video-skill').value = (s.videos&&s.videos.SKILL)||'';
+    document.getElementById('video-style').value = (s.videos&&s.videos.STYLE)||'';
+    document.getElementById('video-speed').value = (s.videos&&s.videos.SPEED)||'';
   } else {
     document.getElementById('spot-modal-title').textContent = 'Add Spot';
     document.getElementById('spot-edit-id').value = '';
@@ -1771,6 +1881,9 @@ function openSpotModal(spotId) {
     document.getElementById('hint-skill').value = '';
     document.getElementById('hint-style').value = '';
     document.getElementById('hint-speed').value = '';
+    document.getElementById('video-skill').value = '';
+    document.getElementById('video-style').value = '';
+    document.getElementById('video-speed').value = '';
   }
   modal.classList.add('open');
 }
@@ -1800,8 +1913,15 @@ async function saveSpot() {
     if (v && challenges.includes(c)) hints[c] = v;
   });
 
+  const videos = {};
+  ['SKILL','STYLE','SPEED'].forEach(c => {
+    const v = document.getElementById('video-'+c.toLowerCase()).value.trim();
+    if (v && challenges.includes(c)) videos[c] = v;
+  });
+
   const spot = {name,emoji,description:desc,lat,lng,radius,challenges};
   if (Object.keys(hints).length > 0) spot.hints = hints;
+  if (Object.keys(videos).length > 0) spot.videos = videos;
 
   if (db) {
     await db.ref('/spots/'+id).set(spot);
