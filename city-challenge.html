@@ -92,22 +92,52 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .challenge-item{
   background:var(--surface2);border:1px solid var(--border);border-radius:.75rem;
   padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;
+  cursor:pointer;transition:border-color .15s,transform .1s;
 }
-.challenge-item.done{opacity:.5}
+.challenge-item:active{transform:scale(.985)}
+.challenge-item.st-cleared{border-color:rgba(74,222,128,.45)}
+.challenge-item.st-tried{border-color:rgba(249,115,22,.45)}
 .ch-icon{font-size:1.5rem;flex-shrink:0}
-.ch-info{flex:1}
+.ch-info{flex:1;min-width:0}
 .ch-name{font-weight:700;font-size:.9rem}
 .ch-pts{font-size:.75rem;color:var(--muted);margin-top:.1rem}
 .ch-completors{font-size:.72rem;color:var(--muted)}
-.btn-complete{
-  padding:.4rem .85rem;border-radius:.5rem;border:none;cursor:pointer;
-  font-size:.78rem;font-weight:700;background:var(--accent);color:#fff;
-  transition:opacity .15s,transform .1s;flex-shrink:0;
+.ch-open-arrow{flex-shrink:0;color:var(--muted);font-size:1rem}
+.st-badge{
+  display:inline-flex;align-items:center;gap:.25rem;padding:.14rem .5rem;border-radius:9999px;
+  font-size:.65rem;font-weight:700;border:1px solid var(--border);
+  background:var(--surface3);color:var(--muted);flex-shrink:0;
 }
-.btn-complete:hover{opacity:.85}
-.btn-complete:active{transform:scale(.95)}
-.btn-complete:disabled{opacity:.4;cursor:not-allowed}
-.btn-complete.done-btn{background:var(--surface3);color:var(--muted)}
+.st-badge.cleared{background:rgba(74,222,128,.14);color:#4ade80;border-color:rgba(74,222,128,.4)}
+.st-badge.tried{background:rgba(249,115,22,.14);color:var(--warn);border-color:rgba(249,115,22,.4)}
+
+/* CHALLENGE DETAIL OVERLAY */
+#challenge-overlay{
+  position:fixed;inset:0;z-index:2700;background:rgba(11,17,32,.96);
+  display:none;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;
+}
+#challenge-overlay.open{display:flex}
+.challenge-overlay-inner{width:100%;max-width:720px;padding-bottom:1.5rem}
+.ch-ov-novideo{
+  display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;max-height:40vh;
+  background:var(--surface2);border:1px dashed var(--border);border-radius:.75rem;
+  color:var(--muted);font-size:.82rem;
+}
+.status-select{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+#challenge-overlay-status{display:flex;flex-direction:column;gap:.5rem}
+.status-select-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.status-btn{
+  display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;
+  padding:.75rem .9rem;border-radius:.7rem;cursor:pointer;font-size:.88rem;font-weight:700;
+  background:var(--surface2);border:2px solid var(--border);color:var(--text);
+  transition:border-color .15s,background .15s,transform .1s;
+}
+.status-btn:active{transform:scale(.98)}
+.status-btn .st-desc{display:block;font-size:.7rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.status-btn.active{border-color:var(--accent)}
+.status-btn.active.cleared{border-color:#4ade80;background:rgba(74,222,128,.1)}
+.status-btn.active.tried{border-color:var(--warn);background:rgba(249,115,22,.1)}
+.ch-ov-completors{margin-top:1rem;font-size:.75rem;color:var(--muted)}
 
 /* RANKINGS VIEW */
 #rankings-view{padding:.9rem .9rem 1rem}
@@ -686,20 +716,10 @@ select option{background:var(--surface2)}
       </div>
     </div>
 
-    <!-- Scoring Mode -->
+    <!-- Scoring -->
     <div class="card">
-      <div class="card-title">🏆 Scoring Mode</div>
-      <label class="scoring-option">
-        <input type="radio" name="scoring-mode" value="fixed" checked onchange="setScoringMode('fixed')">
-        <span><b>Fixed</b> — every completion earns the challenge's point value.
-          <div class="so-desc">A 2pt challenge is always worth 2 points, no matter how many athletes clear it.</div></span>
-      </label>
-      <label class="scoring-option">
-        <input type="radio" name="scoring-mode" value="split" onchange="setScoringMode('split')">
-        <span><b>Split</b> — the challenge's points are divided among everyone who clears it.
-          <div class="so-desc">A 2pt challenge cleared by 4 athletes gives 0.50 points each. Rewards rare sends.</div></span>
-      </label>
-      <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem">Crew bonus (+2 when a teammate clears the same challenge within 45 min) applies in both modes. Changing the mode recalculates all scores live.</p>
+      <div class="card-title">🏆 Scoring</div>
+      <p style="font-size:.8rem;color:var(--muted)">Every challenge is worth <b style="color:var(--text)">10 points divided by the number of athletes who cleared it</b>. Rare sends are worth more; scores update live as more people clear a challenge. Crew bonus (+2 when a teammate clears the same challenge within 45 min) still applies.</p>
     </div>
 
     <!-- Spots Management -->
@@ -941,6 +961,22 @@ select option{background:var(--surface2)}
 </div>
 
 <!-- CHALLENGE VIDEO OVERLAY -->
+<!-- CHALLENGE DETAIL OVERLAY (video + status selector) -->
+<div id="challenge-overlay" onclick="if(event.target===this)closeChallengeView()">
+  <div class="challenge-overlay-inner">
+    <div class="video-overlay-head">
+      <div class="video-overlay-title" id="challenge-overlay-title"></div>
+      <button class="video-overlay-close" onclick="closeChallengeView()" aria-label="Close challenge">✕</button>
+    </div>
+    <div id="challenge-overlay-media"></div>
+    <div class="status-select">
+      <div class="status-select-label">Your status</div>
+      <div id="challenge-overlay-status"></div>
+    </div>
+    <div class="ch-ov-completors" id="challenge-overlay-completors"></div>
+  </div>
+</div>
+
 <div id="video-overlay" onclick="if(event.target===this)closeVideoOverlay()">
   <div class="video-overlay-inner">
     <div class="video-overlay-head">
@@ -978,8 +1014,13 @@ let crewBonusCount = {}; // {athleteId: number of crew bonuses} — derived
 let lastGpsFix = null;   // for distance tracking
 let videoLibrary = {};   // {fileId: {name, url}} — imported Drive videos
 let libraryPickTarget = null; // the video <input> element the library picker fills
-let scoringMode = 'fixed';   // 'fixed' | 'split' — admin setting (/config/scoring)
+let activeChallenge = null;  // {spotId, chId} — challenge detail overlay currently open
 let pendingSpotImport = null;// [{folderId, name, checked, challenges:[{fileId,name,points}]}]
+
+// Bump when DEFAULT_SPOTS change so demo-mode devices with an older seed in
+// localStorage pick up the new defaults (user-added spots are kept).
+const SPOT_SEED_VERSION = 'sacile-v1';
+const OLD_SEED_SPOT_IDS = ['spot-duomo','spot-castello','spot-navigli','spot-arco','spot-sempione'];
 
 // ─── DEFAULT SPOTS (Sacile — PK Challenge Xtreme 26) ─────────────────────────
 // Imported from the Drive folder "VIDEO CHALLENGES": one subfolder per spot,
@@ -1105,11 +1146,6 @@ function findChallenge(spot, chId) {
 function challengeDisplayName(spotId, chId) {
   const ch = findChallenge(spots[spotId], chId);
   return ch ? ch.name : String(chId || '');
-}
-
-function challengeBasePoints(spotId, chId) {
-  const ch = findChallenge(spots[spotId], chId);
-  return ch ? ch.points : 1;
 }
 
 // ─── XP / LEVELS ──────────────────────────────────────────────────────────────
@@ -1284,14 +1320,6 @@ function setupFirebaseListeners() {
     if (activeSheetSpotId) renderSheet(activeSheetSpotId);
     renderMe();
   });
-  db.ref('/config/scoring').on('value', snap => {
-    scoringMode = snap.val() === 'split' ? 'split' : 'fixed';
-    updateScoringUI();
-    recalcScores();
-    renderLeaderboard();
-    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
-    renderMe();
-  });
   db.ref('/athletes').on('value', snap => {
     athletes = snap.val() || {};
     recalcScores();
@@ -1305,6 +1333,7 @@ function setupFirebaseListeners() {
     renderLeaderboard();
     renderFeed();
     if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+    if (activeChallenge) renderChallengeView();
     updateSpotMarkerStates();
     updateHeaderAthlete();
     renderMe();
@@ -1328,12 +1357,14 @@ function useDemoMode() {
   setFirebaseStatus(false);
   // load from localStorage
   spots = migrateSpots(getLocalSpots()); // migrate in memory; written back on next save
-  if (Object.keys(spots).length === 0) {
-    spots = {...DEFAULT_SPOTS};
+  if (Object.keys(spots).length === 0 || localStorage.getItem('cc_spot_seed') !== SPOT_SEED_VERSION) {
+    // stale or missing seed: drop old default spots, refresh current defaults,
+    // keep anything the organizer added themselves
+    OLD_SEED_SPOT_IDS.forEach(id => delete spots[id]);
+    spots = {...spots, ...DEFAULT_SPOTS};
     saveLocalSpots(spots);
+    localStorage.setItem('cc_spot_seed', SPOT_SEED_VERSION);
   }
-  scoringMode = localStorage.getItem('cc_scoring_mode') === 'split' ? 'split' : 'fixed';
-  updateScoringUI();
   athletes = getLocalAthletes();
   completions = getLocalCompletions();
   reactions = getLocalReactions();
@@ -1551,7 +1582,7 @@ function countMyCompletionsAtSpot(spotId) {
   const chIds = new Set(getSpotChallenges(spots[spotId]).map(c => c.id));
   const done = new Set();
   Object.values(completions).forEach(c => {
-    if (c.athleteId === athlete.id && c.spotId === spotId && chIds.has(c.challenge)) done.add(c.challenge);
+    if (c.athleteId === athlete.id && c.spotId === spotId && chIds.has(c.challenge) && isCleared(c)) done.add(c.challenge);
   });
   return done.size;
 }
@@ -1610,50 +1641,34 @@ function haversine(lat1,lng1,lat2,lng2) {
 }
 
 // ─── SCORING ──────────────────────────────────────────────────────────────────
-// Two admin-selectable modes (stored at /config/scoring or cc_scoring_mode):
-//  'fixed' (default): completing a challenge earns its base `points` flat.
-//  'split': the challenge's base points are divided by the number of completors.
-function challengeValue(spotId, chId, completorCount) {
-  const base = challengeBasePoints(spotId, chId);
-  if (scoringMode === 'split') return base / Math.max(1, completorCount);
-  return base;
+// Every challenge is worth 10 points divided by the number of athletes who
+// CLEARED it (status 'tried' records exist for progress tracking but never
+// score). Legacy completion records without a status count as cleared.
+const CHALLENGE_BASE_PTS = 10;
+
+function isCleared(c) { return (c.status || 'cleared') === 'cleared'; }
+
+function challengeValue(completorCount) {
+  return CHALLENGE_BASE_PTS / Math.max(1, completorCount);
 }
 
-function setScoringMode(mode) {
-  mode = mode === 'split' ? 'split' : 'fixed';
-  if (db) {
-    db.ref('/config/scoring').set(mode); // listener applies + recalcs
-  } else {
-    scoringMode = mode;
-    localStorage.setItem('cc_scoring_mode', mode);
-    updateScoringUI();
-    recalcScores();
-    renderLeaderboard();
-    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
-    renderMe();
-  }
-  showToast(mode === 'split' ? 'Scoring: split — points divided by completors' : 'Scoring: fixed point values');
-}
-
-function updateScoringUI() {
-  document.querySelectorAll('input[name="scoring-mode"]').forEach(r => {
-    r.checked = r.value === scoringMode;
-  });
+function clearedCompletions() {
+  return Object.entries(completions).filter(([,c]) => isCleared(c));
 }
 
 function recalcScores() {
   scores = {};
   crewInfo = {};
   crewBonusCount = {};
-  // For each unique (spotId, challengeId): count completors, award per scoring mode
+  // For each unique (spotId, challengeId): count clears, split the 10 points
   const groups = {};
-  Object.entries(completions).forEach(([compId, c]) => {
+  clearedCompletions().forEach(([compId, c]) => {
     const key = c.spotId+'__'+c.challenge;
     if (!groups[key]) groups[key] = [];
     groups[key].push({compId, ...c});
   });
   Object.values(groups).forEach(comps => {
-    const pts = challengeValue(comps[0].spotId, comps[0].challenge, comps.length);
+    const pts = challengeValue(comps.length);
     comps.forEach(c => { scores[c.athleteId] = (scores[c.athleteId]||0) + pts; });
   });
 
@@ -1690,7 +1705,7 @@ function recalcScores() {
 function getAthleteScore(id) { return scores[id] || 0; }
 
 function getAthleteCompletionCount(id) {
-  return Object.values(completions).filter(c=>c.athleteId===id).length;
+  return Object.values(completions).filter(c=>c.athleteId===id && isCleared(c)).length;
 }
 
 // ─── XP & LEVELS (derived from completions — never stored) ──────────────────
@@ -1699,7 +1714,7 @@ function getSpotsFullyClearedBy(athleteId) {
     const chs = getSpotChallenges(spot);
     if (chs.length === 0) return false;
     return chs.every(ch => Object.values(completions).some(c =>
-      c.athleteId === athleteId && c.spotId === spotId && c.challenge === ch.id));
+      c.athleteId === athleteId && c.spotId === spotId && c.challenge === ch.id && isCleared(c)));
   }).map(([id]) => id);
 }
 
@@ -1755,8 +1770,6 @@ function renderSheet(spotId) {
   document.getElementById('sheet-spot-desc').textContent = spot.description || '';
 
   const dist = playerPos ? Math.round(haversine(playerPos.lat,playerPos.lng,spot.lat,spot.lng)) : null;
-  const radius = spot.radius || 50;
-  const inRange = dist !== null && dist <= radius;
 
   const list = document.getElementById('challenge-list');
   list.innerHTML = '';
@@ -1766,64 +1779,178 @@ function renderSheet(spotId) {
     list.innerHTML = '<div class="empty-state">No challenges at this spot yet</div>';
   }
   chs.forEach(ch => {
-    // count completors for this spot+challenge
-    const completorsAll = Object.values(completions).filter(c=>c.spotId===spotId&&c.challenge===ch.id);
-    const n = completorsAll.length;
-    const myDone = athlete && completorsAll.some(c=>c.athleteId===athlete.id);
-    const fmtPts = v => (Math.round(v*100)/100).toFixed(2).replace(/\.?0+$/,'');
-    let ptsLine, projLine = '';
-    if (scoringMode === 'split') {
-      const cur = fmtPts(ch.points / Math.max(1, n));
-      ptsLine = `${cur} pts each · ${n} completor${n!==1?'s':''}`;
-      if (!myDone) projLine = `<div class="ch-completors">Complete to earn ~${fmtPts(ch.points/(n+1))} pts</div>`;
-    } else {
-      ptsLine = `worth ${fmtPts(ch.points)} pt${ch.points!==1?'s':''} · ${n} completor${n!==1?'s':''}`;
-    }
+    const n = Object.values(completions).filter(c=>c.spotId===spotId&&c.challenge===ch.id&&isCleared(c)).length;
+    const st = athlete ? getMyStatus(spotId, ch.id) : 'none';
+    const stBadge = st==='cleared' ? '<span class="st-badge cleared">✅ Cleared</span>'
+                  : st==='tried'   ? '<span class="st-badge tried">🔁 Tried</span>'
+                  :                  '<span class="st-badge">Not tried yet</span>';
+    const videoIcon = ch.video ? '<span class="ch-video-ico" title="Demo video available">🎥</span>' : '';
     const hint = ch.hint ? `<div class="ch-hint">💡 ${escHtml(ch.hint)}</div>` : '';
-    const hasVideo = !!ch.video;
-    const videoIcon = hasVideo ? '<span class="ch-video-ico" title="Demo video available">🎥</span>' : '';
-    const videoBtn = hasVideo ? `<div><button class="ch-video-btn" onclick="openChallengeVideo('${spotId}','${escHtml(ch.id)}')">🎥 Watch demo</button></div>` : '';
-
-    // WHO CLEARED IT — chips with team color dots, teammates highlighted
-    const myTeam = athlete ? (athlete.team||'') : '';
-    const chips = completorsAll
-      .slice().sort((a,b)=>a.timestamp-b.timestamp)
-      .map(c => {
-        const a = athletes[c.athleteId] || (athlete && c.athleteId===athlete.id ? athlete : null);
-        const nm = a ? a.name : 'Unknown';
-        const tm = a ? (a.team||'') : '';
-        const isMate = myTeam && tm === myTeam && c.athleteId !== athlete.id;
-        return `<span class="comp-chip ${isMate?'mate':''}">${teamDot(tm)}${escHtml(nm)}${isMate?' 🤝':''}</span>`;
-      }).join('');
-    const chipsHtml = chips ? `<div class="completor-chips">${chips}</div>` : '';
 
     const item = document.createElement('div');
-    item.className = 'challenge-item' + (myDone?' done':'');
+    item.className = 'challenge-item st-' + st;
+    item.onclick = () => openChallengeView(spotId, ch.id);
     item.innerHTML = `
       <div class="ch-icon">🏆</div>
       <div class="ch-info">
-        <div class="ch-name">${escHtml(ch.name)} <span class="badge badge-pts">${fmtPts(ch.points)} pt${ch.points!==1?'s':''}</span>${videoIcon}</div>
-        <div class="ch-pts">${myDone?'✅ Completed · ':''}${ptsLine}</div>
-        ${!myDone?projLine:''}
+        <div class="ch-name">${escHtml(ch.name)}${videoIcon}</div>
+        <div class="ch-pts">${stBadge} · cleared by ${n}</div>
         ${hint}
-        ${videoBtn}
-        ${chipsHtml}
       </div>
-      <button class="btn-complete ${myDone?'done-btn':''}"
-        ${myDone?'disabled':''}
-        ${!inRange&&!myDone?'disabled title="Get closer to unlock"':''}
-        onclick="completeChallenge('${spotId}','${escHtml(ch.id)}',this)">
-        ${myDone?'Done':(inRange?'Complete':'📍 '+(dist!==null?dist+'m away':'—'))}
-      </button>
+      <div class="ch-open-arrow">›</div>
     `;
     list.appendChild(item);
   });
 
-  if (!inRange && dist !== null) {
+  if (dist !== null) {
     const info = document.createElement('div');
     info.style.cssText='text-align:center;font-size:.78rem;color:var(--muted);padding:.5rem 0';
-    info.textContent = `📍 You are ${dist}m away (need ${radius}m)`;
+    info.textContent = `📍 You are ${dist}m from this spot`;
     list.appendChild(info);
+  }
+}
+
+// ─── CHALLENGE DETAIL VIEW (video + status selector) ─────────────────────────
+function myCompletionFor(spotId, chId) {
+  if (!athlete) return null;
+  return Object.entries(completions).find(([,c]) =>
+    c && c.athleteId === athlete.id && c.spotId === spotId && c.challenge === chId) || null;
+}
+
+function getMyStatus(spotId, chId) {
+  const found = myCompletionFor(spotId, chId);
+  return found ? (found[1].status || 'cleared') : 'none';
+}
+
+function openChallengeView(spotId, chId) {
+  activeChallenge = {spotId, chId};
+  renderChallengeView();
+  document.getElementById('challenge-overlay').classList.add('open');
+}
+
+function closeChallengeView() {
+  activeChallenge = null;
+  // Clearing the media wrapper destroys the iframe/video and stops playback
+  const media = document.getElementById('challenge-overlay-media');
+  media.innerHTML = '';
+  delete media.dataset.key;
+  document.getElementById('challenge-overlay').classList.remove('open');
+}
+
+function renderChallengeView() {
+  if (!activeChallenge) return;
+  const {spotId, chId} = activeChallenge;
+  const spot = spots[spotId];
+  const ch = findChallenge(spot, chId);
+  if (!spot || !ch) { closeChallengeView(); return; }
+
+  document.getElementById('challenge-overlay-title').textContent =
+    (spot.emoji||'📍')+' '+spot.name+' — 🏆 '+ch.name;
+
+  // Rebuild the media element only when the source changes, so tapping a
+  // status button doesn't restart the video
+  const media = document.getElementById('challenge-overlay-media');
+  const embed = toEmbedUrl(ch.video);
+  const mediaKey = embed ? embed.type+'|'+embed.src : 'none';
+  if (media.dataset.key !== mediaKey) {
+    media.dataset.key = mediaKey;
+    if (!embed) {
+      media.innerHTML = '<div class="ch-ov-novideo">🎥 No demo video for this challenge</div>';
+    } else if (embed.type === 'video') {
+      media.innerHTML = `<div class="video-frame-wrap"><video controls playsinline src="${escHtml(embed.src)}"></video></div>`;
+    } else {
+      media.innerHTML = `<div class="video-frame-wrap"><iframe src="${escHtml(embed.src)}" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
+    }
+  }
+
+  const st = getMyStatus(spotId, chId);
+  const btn = (value, cls, emoji, label, desc) => `
+    <button class="status-btn ${cls} ${st===value?'active':''}" onclick="setChallengeStatus('${spotId}','${escHtml(chId)}','${value}')">
+      <span>${emoji}</span>
+      <span>${label}<span class="st-desc">${desc}</span></span>
+    </button>`;
+  document.getElementById('challenge-overlay-status').innerHTML =
+    btn('none','','⬜','Not tried yet','Default — you have not attempted this one') +
+    btn('tried','tried','🔁','Tried','You attempted it but have not landed it yet') +
+    btn('cleared','cleared','✅','Cleared','You made it — counts for the score');
+
+  // Who cleared it — chips with team color dots, teammates highlighted
+  const clearedBy = Object.values(completions)
+    .filter(c=>c.spotId===spotId&&c.challenge===chId&&isCleared(c))
+    .sort((a,b)=>a.timestamp-b.timestamp);
+  const myTeam = athlete ? (athlete.team||'') : '';
+  const chips = clearedBy.map(c => {
+    const a = athletes[c.athleteId] || (athlete && c.athleteId===athlete.id ? athlete : null);
+    const nm = a ? a.name : 'Unknown';
+    const tm = a ? (a.team||'') : '';
+    const isMate = athlete && myTeam && tm === myTeam && c.athleteId !== athlete.id;
+    return `<span class="comp-chip ${isMate?'mate':''}">${teamDot(tm)}${escHtml(nm)}${isMate?' 🤝':''}</span>`;
+  }).join('');
+  document.getElementById('challenge-overlay-completors').innerHTML =
+    clearedBy.length === 0
+      ? 'Nobody has cleared this one yet — be the first!'
+      : `Cleared by ${clearedBy.length}: <div class="completor-chips">${chips}</div>`;
+}
+
+async function setChallengeStatus(spotId, chId, status) {
+  if (!athlete) { showToast('Set up your profile first'); return; }
+  const existing = myCompletionFor(spotId, chId);
+  const cur = existing ? (existing[1].status || 'cleared') : 'none';
+  if (cur === status) return;
+  const sweepsBefore = getSpotsFullyClearedBy(athlete.id).length;
+  let compId = null;
+
+  if (status === 'none') {
+    if (existing) {
+      if (db) {
+        await db.ref('/completions/'+existing[0]).remove();
+      } else {
+        const local = getLocalCompletions();
+        delete local[existing[0]];
+        saveLocalCompletions(local);
+        completions = local;
+      }
+      delete completions[existing[0]]; // defensive for sync lag
+    }
+  } else {
+    compId = existing ? existing[0] : 'comp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
+    const comp = {athleteId:athlete.id, spotId, challenge:chId, status, timestamp:Date.now()};
+    if (db) {
+      await db.ref('/completions/'+compId).set(comp);
+    } else {
+      const local = getLocalCompletions();
+      local[compId] = comp;
+      saveLocalCompletions(local);
+      completions = local;
+    }
+    completions[compId] = comp; // defensive for sync lag
+  }
+
+  recalcScores();
+  renderLeaderboard();
+  renderFeed();
+  if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+  if (activeChallenge) renderChallengeView();
+  updateSpotMarkerStates();
+  updateHeaderAthlete();
+  renderMe();
+
+  if (status === 'cleared') {
+    const crew = compId ? crewInfo[compId] : null;
+    const sweepsAfter = getSpotsFullyClearedBy(athlete.id).length;
+    const xpGain = XP_PER_CHALLENGE + (sweepsAfter > sweepsBefore ? XP_SPOT_SWEEP : 0);
+    if (crew && crew.partners.length > 0) {
+      showToast(`🎉 +${xpGain} XP · +2 Crew Bonus with ${crew.partners[0]}! 🤝`);
+    } else if (sweepsAfter > sweepsBefore) {
+      showToast(`🧗 Spot swept! +${xpGain} XP`);
+    } else {
+      showToast(`🎉 Challenge cleared! +${xpGain} XP`);
+    }
+    checkAchievements();
+  } else if (status === 'tried') {
+    showToast('🔁 Marked as tried — keep at it!');
+  } else {
+    showToast('Status reset');
   }
 }
 
@@ -1850,109 +1977,10 @@ function toEmbedUrl(url) {
   return {type:'iframe', src:u};
 }
 
-function openChallengeVideo(spotId, challengeId) {
-  const spot = spots[spotId];
-  const ch = findChallenge(spot, challengeId);
-  const url = ch && ch.video;
-  if (!url) { showToast('No video for this challenge'); return; }
-  const embed = toEmbedUrl(url);
-  if (!embed) { showToast('No video for this challenge'); return; }
-  document.getElementById('video-overlay-title').textContent =
-    (spot.emoji||'📍')+' '+spot.name+' — 🏆 '+ch.name;
-  const wrap = document.getElementById('video-frame-wrap');
-  if (embed.type === 'video') {
-    wrap.innerHTML = `<video controls playsinline autoplay src="${escHtml(embed.src)}"></video>`;
-  } else {
-    wrap.innerHTML = `<iframe src="${escHtml(embed.src)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-  }
-  document.getElementById('video-overlay').classList.add('open');
-}
-
 function closeVideoOverlay() {
   // Clearing the wrapper destroys the iframe/video and stops playback
   document.getElementById('video-frame-wrap').innerHTML = '';
   document.getElementById('video-overlay').classList.remove('open');
-}
-
-async function completeChallenge(spotId, challengeId, btn) {
-  if (!athlete) { showToast('Set up your profile first'); return; }
-  btn.disabled = true;
-  const orig = btn.textContent;
-  btn.innerHTML = '<span class="spinner"></span>';
-  const challenge = challengeId; // stored in the completion record
-  const chName = challengeDisplayName(spotId, challengeId);
-
-  // 3-2-1 GO! micro-animation, then a single quick confirm
-  await runCountdown();
-
-  confirmAction(
-    `Complete "${chName}" at ${spots[spotId]?.name}?`,
-    'This will record your completion and update scores.',
-    async () => {
-      const compId = 'comp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
-      const comp = {athleteId:athlete.id, spotId, challenge, timestamp:Date.now()};
-      const sweepsBefore = getSpotsFullyClearedBy(athlete.id).length;
-
-      if (db) {
-        await db.ref('/completions/'+compId).set(comp);
-      } else {
-        const local = getLocalCompletions();
-        local[compId] = comp;
-        saveLocalCompletions(local);
-        completions = local;
-        recalcScores();
-        renderLeaderboard();
-        renderFeed();
-        renderSheet(spotId);
-        updateSpotMarkerStates();
-        updateHeaderAthlete();
-        renderMe();
-      }
-
-      // toast: crew bonus > sweep > plain (crewInfo is derived in recalcScores)
-      if (!completions[compId]) completions[compId] = comp; // defensive for sync lag
-      recalcScores();
-      const crew = crewInfo[compId];
-      const sweepsAfter = getSpotsFullyClearedBy(athlete.id).length;
-      let xpGain = XP_PER_CHALLENGE + (sweepsAfter > sweepsBefore ? XP_SPOT_SWEEP : 0);
-      if (crew && crew.partners.length > 0) {
-        showToast(`🎉 +${xpGain} XP · +2 Crew Bonus with ${crew.partners[0]}! 🤝`);
-      } else if (sweepsAfter > sweepsBefore) {
-        showToast(`🧗 Spot swept! +${xpGain} XP`);
-      } else {
-        showToast(`🎉 Challenge completed! +${xpGain} XP`);
-      }
-      checkAchievements();
-    },
-    () => {
-      btn.disabled = false;
-      btn.textContent = orig;
-    }
-  );
-}
-
-function runCountdown() {
-  return new Promise(resolve => {
-    const overlay = document.getElementById('countdown-overlay');
-    const num = document.getElementById('countdown-num');
-    const steps = ['3','2','1','GO!'];
-    let i = 0;
-    overlay.classList.add('open');
-    const tick = () => {
-      if (i >= steps.length) {
-        overlay.classList.remove('open');
-        resolve();
-        return;
-      }
-      num.textContent = steps[i];
-      num.classList.remove('tick');
-      void num.offsetWidth; // restart animation
-      num.classList.add('tick');
-      i++;
-      setTimeout(tick, i === steps.length ? 380 : 320);
-    };
-    tick();
-  });
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────────────────
@@ -2028,7 +2056,7 @@ function renderTeamLeaderboard(list) {
 }
 
 function renderFeed() {
-  const sorted = Object.entries(completions)
+  const sorted = clearedCompletions()
     .sort((a,b) => b[1].timestamp - a[1].timestamp)
     .slice(0,20);
 
@@ -2053,7 +2081,7 @@ function renderFeed() {
     return `<div class="feed-item">
       <div class="feed-main">
         <span>🏆</span>
-        <span><strong>${escHtml(ath.name)}</strong> <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span> completed <span class="badge badge-ch">${escHtml(chName)}</span> at <strong>${escHtml(spot.name)}</strong> ${crewTag}</span>
+        <span><strong>${escHtml(ath.name)}</strong> <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span> cleared <span class="badge badge-ch">${escHtml(chName)}</span> at <strong>${escHtml(spot.name)}</strong> ${crewTag}</span>
         <span class="feed-time">${ago}</span>
       </div>
       <div class="feed-reactions">${reactBtns}</div>
@@ -3162,7 +3190,7 @@ function renderMe() {
 // ─── ACHIEVEMENTS (derived from data) ────────────────────────────────────────
 function getAchievements() {
   if (!athlete) return [];
-  const mine = Object.values(completions).filter(c => c.athleteId === athlete.id);
+  const mine = Object.values(completions).filter(c => c.athleteId === athlete.id && isCleared(c));
   const visited = Object.keys(getVisitedSpots()).length;
   const spotIds = Object.keys(spots);
   const mySpotIds = new Set(mine.map(c => c.spotId));
