@@ -16,9 +16,6 @@
   --accent:#4f7cff;--accent2:#7aa2ff;
   --gold:#f5c542;--silver:#b0bec5;--bronze:#cd8b3a;
   --danger:#ef4444;--success:#22c55e;--warn:#f97316;
-  --cat-skill-bg:rgba(79,124,255,.15);--cat-skill-fg:#7aa2ff;--cat-skill-bdr:rgba(79,124,255,.35);
-  --cat-style-bg:rgba(168,85,247,.15);--cat-style-fg:#c084fc;--cat-style-bdr:rgba(168,85,247,.35);
-  --cat-speed-bg:rgba(34,197,94,.15);--cat-speed-fg:#4ade80;--cat-speed-bdr:rgba(34,197,94,.35);
   --div-pic-bg:rgba(6,182,212,.15);--div-pic-fg:#22d3ee;--div-pic-bdr:rgba(6,182,212,.35);
   --div-med-bg:rgba(249,115,22,.15);--div-med-fg:#fb923c;--div-med-bdr:rgba(249,115,22,.35);
   --div-grd-bg:rgba(239,68,68,.15);--div-grd-fg:#f87171;--div-grd-bdr:rgba(239,68,68,.35);
@@ -177,15 +174,34 @@ select option{background:var(--surface2)}
   display:inline-flex;align-items:center;padding:.15rem .5rem;border-radius:9999px;
   font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid transparent;
 }
-.badge-skill{background:var(--cat-skill-bg);color:var(--cat-skill-fg);border-color:var(--cat-skill-bdr)}
-.badge-style{background:var(--cat-style-bg);color:var(--cat-style-fg);border-color:var(--cat-style-bdr)}
-.badge-speed{background:var(--cat-speed-bg);color:var(--cat-speed-fg);border-color:var(--cat-speed-bdr)}
+.badge-ch{background:rgba(79,124,255,.15);color:#7aa2ff;border-color:rgba(79,124,255,.35);text-transform:none;letter-spacing:0}
+.badge-pts{background:rgba(245,197,66,.14);color:var(--gold);border-color:rgba(245,197,66,.35);flex-shrink:0}
+.badge-pos{background:rgba(249,115,22,.15);color:var(--warn);border-color:rgba(249,115,22,.4);text-transform:none;letter-spacing:0}
 .badge-piccoli{background:var(--div-pic-bg);color:var(--div-pic-fg);border-color:var(--div-pic-bdr)}
 .badge-medi{background:var(--div-med-bg);color:var(--div-med-fg);border-color:var(--div-med-bdr)}
 .badge-grandi{background:var(--div-grd-bg);color:var(--div-grd-fg);border-color:var(--div-grd-bdr)}
 .challenge-checks{display:flex;gap:.5rem;margin-top:.3rem;flex-wrap:wrap}
 .ch-check{display:flex;align-items:center;gap:.3rem;cursor:pointer;font-size:.8rem;font-weight:600}
 .ch-check input{width:14px;height:14px;accent-color:var(--accent);flex-shrink:0}
+.scoring-option{display:flex;align-items:flex-start;gap:.5rem;cursor:pointer;font-size:.82rem;padding:.45rem 0}
+.scoring-option input{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;margin-top:.1rem}
+.scoring-option .so-desc{font-size:.72rem;color:var(--muted);margin-top:.1rem;font-weight:400}
+
+/* CHALLENGE ROW EDITOR (spot modal) */
+.ch-edit-row{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;
+  padding:.6rem;display:flex;flex-direction:column;gap:.4rem;margin-bottom:.5rem;
+}
+.ch-edit-row input{background:var(--surface3)}
+
+/* SPOT IMPORT PREVIEW */
+.import-spot-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;
+  padding:.6rem .7rem;display:flex;flex-direction:column;gap:.4rem;margin-bottom:.5rem;
+}
+.import-spot-card input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0}
+.import-spot-card input[type=text],.import-spot-card input[type=number]{background:var(--surface3)}
+.import-ch-row{display:flex;gap:.4rem;padding-left:1.5rem;align-items:center}
 
 /* SPOTS LIST */
 .spots-list{display:flex;flex-direction:column;gap:.5rem}
@@ -313,6 +329,8 @@ select option{background:var(--surface2)}
   50%{box-shadow:0 0 0 8px rgba(34,197,94,0),0 2px 8px rgba(0,0,0,.4)}
 }
 .all-done .spot-marker-icon{opacity:.4;filter:grayscale(1)}
+.needs-pos .spot-marker-icon{border-style:dashed;border-color:var(--warn)!important;opacity:.85}
+.needs-pos .spot-marker-badge{border-color:rgba(249,115,22,.5);color:var(--warn)}
 
 /* ORGANIZER PIN MODAL */
 #pin-modal{
@@ -668,6 +686,22 @@ select option{background:var(--surface2)}
       </div>
     </div>
 
+    <!-- Scoring Mode -->
+    <div class="card">
+      <div class="card-title">🏆 Scoring Mode</div>
+      <label class="scoring-option">
+        <input type="radio" name="scoring-mode" value="fixed" checked onchange="setScoringMode('fixed')">
+        <span><b>Fixed</b> — every completion earns the challenge's point value.
+          <div class="so-desc">A 2pt challenge is always worth 2 points, no matter how many athletes clear it.</div></span>
+      </label>
+      <label class="scoring-option">
+        <input type="radio" name="scoring-mode" value="split" onchange="setScoringMode('split')">
+        <span><b>Split</b> — the challenge's points are divided among everyone who clears it.
+          <div class="so-desc">A 2pt challenge cleared by 4 athletes gives 0.50 points each. Rewards rare sends.</div></span>
+      </label>
+      <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem">Crew bonus (+2 when a teammate clears the same challenge within 45 min) applies in both modes. Changing the mode recalculates all scores live.</p>
+    </div>
+
     <!-- Spots Management -->
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
@@ -683,7 +717,7 @@ select option{background:var(--surface2)}
         <span>🎬 Video Library</span>
         <span id="vl-count" style="font-size:.72rem;font-weight:600;color:var(--muted)">0 videos</span>
       </div>
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.6rem">Import all challenge videos at once from a public Google Drive folder (shared as "Anyone with the link"). Then attach them to spots with the 📚 button in the spot editor.</p>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.6rem">Paste a public Google Drive folder (shared as "Anyone with the link"). If it contains <b>one subfolder per spot</b> (with challenge videos named like "3-Tic tac step 2pt"), you'll get a preview to import whole spots with their challenges. A flat folder of videos is imported into the library below instead.</p>
       <div class="form-group full">
         <label>Paste Google Drive folder link</label>
         <input id="vl-folder-input" type="url" placeholder="https://drive.google.com/drive/folders/…">
@@ -691,7 +725,9 @@ select option{background:var(--surface2)}
       <div class="form-actions">
         <button class="btn btn-primary" id="vl-import-btn" onclick="importDriveFolder()">📥 Import</button>
       </div>
+      <div id="vl-import-status" style="display:none;font-size:.76rem;color:var(--accent2);margin-top:.5rem"></div>
       <div id="vl-error" style="display:none;font-size:.78rem;color:var(--danger);margin-top:.6rem;line-height:1.45"></div>
+      <div id="spot-import-preview" style="display:none;margin-top:.8rem"></div>
       <div class="separator"></div>
       <div class="form-group full">
         <label>Or paste video links (one per line)</label>
@@ -843,33 +879,9 @@ select option{background:var(--surface2)}
         <input id="spot-radius" type="number" value="50" min="10" max="500">
       </div>
       <div class="form-group full">
-        <label>Challenges</label>
-        <div class="challenge-checks">
-          <label class="ch-check"><input type="checkbox" id="ch-skill" value="SKILL" checked> <span class="badge badge-skill">SKILL</span></label>
-          <label class="ch-check"><input type="checkbox" id="ch-style" value="STYLE" checked> <span class="badge badge-style">STYLE</span></label>
-          <label class="ch-check"><input type="checkbox" id="ch-speed" value="SPEED" checked> <span class="badge badge-speed">SPEED</span></label>
-        </div>
-      </div>
-      <div class="form-group full">
-        <label>💡 Move Hints (optional)</label>
-        <input id="hint-skill" type="text" placeholder="SKILL hint — e.g. precision jump the low wall gaps" style="margin-bottom:.4rem">
-        <input id="hint-style" type="text" placeholder="STYLE hint — e.g. flow line with vaults and spins" style="margin-bottom:.4rem">
-        <input id="hint-speed" type="text" placeholder="SPEED hint — e.g. sprint route around the fountain">
-      </div>
-      <div class="form-group full">
-        <label>🎥 Challenge Videos (optional)</label>
-        <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
-          <input id="video-skill" type="url" placeholder="SKILL video URL — Google Drive or YouTube link">
-          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('SKILL')">📚</button>
-        </div>
-        <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
-          <input id="video-style" type="url" placeholder="STYLE video URL — Google Drive or YouTube link">
-          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('STYLE')">📚</button>
-        </div>
-        <div style="display:flex;gap:.4rem">
-          <input id="video-speed" type="url" placeholder="SPEED video URL — Google Drive or YouTube link">
-          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('SPEED')">📚</button>
-        </div>
+        <label>Challenges (name · points · demo video · hint)</label>
+        <div id="challenge-rows"></div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="addChallengeRow()">➕ Add challenge</button>
       </div>
     </div>
     <div class="form-actions">
@@ -947,9 +959,9 @@ select option{background:var(--surface2)}
 let db = null;
 let firebaseApp = null;
 let athlete = null; // {id, name, team, division}
-let spots = {};     // {id: {name, emoji, lat, lng, radius, challenges, description, hints?, videos?:{SKILL,STYLE,SPEED}}}
+let spots = {};     // {id: {name, emoji, lat, lng, radius, description, needsPosition?, challenges:[{id,name,points,video,hint}]}}
 let athletes = {};  // {id: {...}}
-let completions = {};// {id: {athleteId, spotId, challenge, timestamp}}
+let completions = {};// {id: {athleteId, spotId, challenge:<challengeId>, timestamp}}
 let scores = {};    // {athleteId: number}
 let playerPos = null;
 let mapInstance = null;
@@ -965,27 +977,98 @@ let crewInfo = {};       // {completionId: {partners:[names]}} — derived in re
 let crewBonusCount = {}; // {athleteId: number of crew bonuses} — derived
 let lastGpsFix = null;   // for distance tracking
 let videoLibrary = {};   // {fileId: {name, url}} — imported Drive videos
-let libraryPickTarget = null; // which challenge's video input the picker fills
+let libraryPickTarget = null; // the video <input> element the library picker fills
+let scoringMode = 'fixed';   // 'fixed' | 'split' — admin setting (/config/scoring)
+let pendingSpotImport = null;// [{folderId, name, checked, challenges:[{fileId,name,points}]}]
 
-// ─── DEFAULT SPOTS (Milan) ────────────────────────────────────────────────────
+// ─── DEFAULT SPOTS (Milan demo) — challenges use the flexible model ──────────
 const DEFAULT_SPOTS = {
-  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:['SKILL','STYLE','SPEED'],
-    hints:{SKILL:'Precision jumps along the low marble ledges — stick every landing',STYLE:'Flow line across the steps: dash vault, spin, roll out clean',SPEED:'Sprint the arcade columns end to end, no stops'}},
-  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:['SKILL','SPEED'],
-    hints:{SKILL:'Climb-up on the old brick wall — quiet feet, solid top-out',SPEED:'Race the moat perimeter: vault the barriers, keep the rhythm'}},
-  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:['STYLE','SPEED'],
-    hints:{STYLE:'Rail balance along the canal edge into a smooth lazy vault',SPEED:'Bridge-to-bridge sprint — pick your line through the crowd gaps'}},
-  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:['SKILL','STYLE'],
-    hints:{SKILL:'Strides across the bollard line — commit to the last gap',STYLE:'Kong vault the flat blocks, land in a controlled roll'}},
-  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:['SKILL','STYLE','SPEED'],
-    hints:{SKILL:'Cat leap to the low wall by the pond — arms first, then feet',STYLE:'Freestyle flow on the benches: vault, cork, whatever feels good',SPEED:'Cross-park route: fastest line from gate to bridge'}},
+  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:[
+    {id:'duomo-ledge-prec', name:'Ledge precision', points:1, video:'', hint:'Precision jumps along the low marble ledges — stick every landing'},
+    {id:'duomo-step-flow',  name:'Step flow line',  points:2, video:'', hint:'Flow line across the steps: dash vault, spin, roll out clean'},
+    {id:'duomo-arcade-run', name:'Arcade sprint',   points:4, video:'', hint:'Sprint the arcade columns end to end, no stops'},
+  ]},
+  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:[
+    {id:'castello-wall-up',  name:'Wall climb-up',  points:1, video:'', hint:'Climb-up on the old brick wall — quiet feet, solid top-out'},
+    {id:'castello-moat-run', name:'Moat lap',       points:2, video:'', hint:'Race the moat perimeter: vault the barriers, keep the rhythm'},
+    {id:'castello-cat-leap', name:'Tower cat leap', points:4, video:'', hint:'Cat leap to the low buttress — arms first, then feet'},
+  ]},
+  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:[
+    {id:'navigli-rail',   name:'Rail balance',        points:1, video:'', hint:'Rail balance along the canal edge into a smooth lazy vault'},
+    {id:'navigli-sprint', name:'Bridge sprint',       points:2, video:'', hint:'Bridge-to-bridge sprint — pick your line through the crowd gaps'},
+    {id:'navigli-line',   name:'Canal combo line',    points:4, video:'', hint:'Full line: rail, vault, precision — no touch-downs'},
+  ]},
+  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:[
+    {id:'arco-strides', name:'Bollard strides', points:1, video:'', hint:'Strides across the bollard line — commit to the last gap'},
+    {id:'arco-kong',    name:'Kong vault',      points:2, video:'', hint:'Kong vault the flat blocks, land in a controlled roll'},
+    {id:'arco-360',     name:'360 precision',   points:4, video:'', hint:'360 spin to precision on the low chain posts'},
+  ]},
+  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:[
+    {id:'sempione-cat',   name:'Pond cat leap',  points:1, video:'', hint:'Cat leap to the low wall by the pond — arms first, then feet'},
+    {id:'sempione-bench', name:'Bench freestyle',points:2, video:'', hint:'Freestyle flow on the benches: vault, cork, whatever feels good'},
+    {id:'sempione-cross', name:'Cross-park run', points:4, video:'', hint:'Cross-park route: fastest line from gate to bridge'},
+  ]},
 };
 
-const CHALLENGE_META = {
-  SKILL:{label:'SKILL',emoji:'🎯',badgeClass:'badge-skill'},
-  STYLE:{label:'STYLE',emoji:'✨',badgeClass:'badge-style'},
-  SPEED:{label:'SPEED',emoji:'⚡',badgeClass:'badge-speed'},
-};
+// ─── CHALLENGE MODEL HELPERS + MIGRATION ─────────────────────────────────────
+// Old model: challenges:['SKILL','STYLE','SPEED'] + hints:{cat:..} + videos:{cat:..}
+// New model: challenges:[{id,name,points,video,hint}]. Migration is done in
+// memory on every load (Firebase AND localStorage); the normalized shape is
+// written back on the next save of each spot.
+function migrateSpot(spot) {
+  if (!spot || typeof spot !== 'object') return spot;
+  let chs = spot.challenges;
+  if (chs && !Array.isArray(chs) && typeof chs === 'object') chs = Object.values(chs); // Firebase array→object quirk
+  if (!Array.isArray(chs)) chs = [];
+  let out;
+  if (chs.length > 0 && typeof chs[0] === 'string') {
+    // old category model → one challenge per category, keeping ids ('SKILL'…)
+    // so old completion records still match
+    out = chs.map(cat => ({
+      id: cat,
+      name: cat,
+      points: 10,
+      video: (spot.videos && spot.videos[cat]) || '',
+      hint: (spot.hints && spot.hints[cat]) || ''
+    }));
+  } else {
+    out = chs.filter(c => c && typeof c === 'object').map((c, i) => ({
+      id: c.id || ('ch-' + i),
+      name: c.name || ('Challenge ' + (i + 1)),
+      points: (typeof c.points === 'number' && isFinite(c.points) && c.points > 0) ? c.points : (parseFloat(c.points) > 0 ? parseFloat(c.points) : 1),
+      video: c.video || '',
+      hint: c.hint || ''
+    }));
+  }
+  const s = {...spot, challenges: out};
+  delete s.hints;
+  delete s.videos;
+  return s;
+}
+
+function migrateSpots(map) {
+  const out = {};
+  Object.entries(map || {}).forEach(([id, s]) => { out[id] = migrateSpot(s); });
+  return out;
+}
+
+function getSpotChallenges(spot) {
+  return (spot && Array.isArray(spot.challenges)) ? spot.challenges : [];
+}
+
+function findChallenge(spot, chId) {
+  return getSpotChallenges(spot).find(c => c.id === chId) || null;
+}
+
+function challengeDisplayName(spotId, chId) {
+  const ch = findChallenge(spots[spotId], chId);
+  return ch ? ch.name : String(chId || '');
+}
+
+function challengeBasePoints(spotId, chId) {
+  const ch = findChallenge(spots[spotId], chId);
+  return ch ? ch.points : 1;
+}
 
 // ─── XP / LEVELS ──────────────────────────────────────────────────────────────
 const XP_PER_CHALLENGE = 50;
@@ -1150,10 +1233,21 @@ function setupFirebaseListeners() {
       Object.entries(DEFAULT_SPOTS).forEach(([id,s]) => db.ref('/spots/'+id).set(s));
       spots = {...DEFAULT_SPOTS};
     } else {
-      spots = data;
+      spots = migrateSpots(data); // non-destructive: normalized in memory, written back on next save
     }
+    recalcScores();
     renderSpotMarkers();
     renderAdminSpots();
+    renderLeaderboard();
+    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+    renderMe();
+  });
+  db.ref('/config/scoring').on('value', snap => {
+    scoringMode = snap.val() === 'split' ? 'split' : 'fixed';
+    updateScoringUI();
+    recalcScores();
+    renderLeaderboard();
+    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
     renderMe();
   });
   db.ref('/athletes').on('value', snap => {
@@ -1191,11 +1285,13 @@ function useDemoMode() {
   document.getElementById('offline-banner').style.display = 'block';
   setFirebaseStatus(false);
   // load from localStorage
-  spots = getLocalSpots();
+  spots = migrateSpots(getLocalSpots()); // migrate in memory; written back on next save
   if (Object.keys(spots).length === 0) {
     spots = {...DEFAULT_SPOTS};
     saveLocalSpots(spots);
   }
+  scoringMode = localStorage.getItem('cc_scoring_mode') === 'split' ? 'split' : 'fixed';
+  updateScoringUI();
   athletes = getLocalAthletes();
   completions = getLocalCompletions();
   reactions = getLocalReactions();
@@ -1369,7 +1465,7 @@ function renderSpotMarkers() {
   spotMarkers = {};
 
   Object.entries(spots).forEach(([id, spot]) => {
-    const totalCh = (spot.challenges||[]).length;
+    const totalCh = getSpotChallenges(spot).length;
     const doneCh  = countMyCompletionsAtSpot(id);
     const inRange = playerPos ? haversine(playerPos.lat,playerPos.lng,spot.lat,spot.lng) <= (spot.radius||50) : false;
     const allDone = doneCh >= totalCh && totalCh > 0;
@@ -1379,7 +1475,8 @@ function renderSpotMarkers() {
     const wrapClass = [
       'spot-marker',
       inRange && !allDone ? 'in-range' : '',
-      allDone ? 'all-done' : ''
+      allDone ? 'all-done' : '',
+      spot.needsPosition ? 'needs-pos' : ''
     ].filter(Boolean).join(' ');
 
     const inRangeLabel = inRange && !allDone ? '<div class="spot-marker-inrange">IN RANGE — TAP TO SEND</div>' : '';
@@ -1409,7 +1506,12 @@ function updateSpotMarkerStates() {
 
 function countMyCompletionsAtSpot(spotId) {
   if (!athlete) return 0;
-  return Object.values(completions).filter(c => c.athleteId===athlete.id && c.spotId===spotId).length;
+  const chIds = new Set(getSpotChallenges(spots[spotId]).map(c => c.id));
+  const done = new Set();
+  Object.values(completions).forEach(c => {
+    if (c.athleteId === athlete.id && c.spotId === spotId && chIds.has(c.challenge)) done.add(c.challenge);
+  });
+  return done.size;
 }
 
 // ─── GPS ──────────────────────────────────────────────────────────────────────
@@ -1466,11 +1568,42 @@ function haversine(lat1,lng1,lat2,lng2) {
 }
 
 // ─── SCORING ──────────────────────────────────────────────────────────────────
+// Two admin-selectable modes (stored at /config/scoring or cc_scoring_mode):
+//  'fixed' (default): completing a challenge earns its base `points` flat.
+//  'split': the challenge's base points are divided by the number of completors.
+function challengeValue(spotId, chId, completorCount) {
+  const base = challengeBasePoints(spotId, chId);
+  if (scoringMode === 'split') return base / Math.max(1, completorCount);
+  return base;
+}
+
+function setScoringMode(mode) {
+  mode = mode === 'split' ? 'split' : 'fixed';
+  if (db) {
+    db.ref('/config/scoring').set(mode); // listener applies + recalcs
+  } else {
+    scoringMode = mode;
+    localStorage.setItem('cc_scoring_mode', mode);
+    updateScoringUI();
+    recalcScores();
+    renderLeaderboard();
+    if (activeSheetSpotId) renderSheet(activeSheetSpotId);
+    renderMe();
+  }
+  showToast(mode === 'split' ? 'Scoring: split — points divided by completors' : 'Scoring: fixed point values');
+}
+
+function updateScoringUI() {
+  document.querySelectorAll('input[name="scoring-mode"]').forEach(r => {
+    r.checked = r.value === scoringMode;
+  });
+}
+
 function recalcScores() {
   scores = {};
   crewInfo = {};
   crewBonusCount = {};
-  // For each unique (spotId, challenge): count completors, award each 10/count
+  // For each unique (spotId, challengeId): count completors, award per scoring mode
   const groups = {};
   Object.entries(completions).forEach(([compId, c]) => {
     const key = c.spotId+'__'+c.challenge;
@@ -1478,7 +1611,7 @@ function recalcScores() {
     groups[key].push({compId, ...c});
   });
   Object.values(groups).forEach(comps => {
-    const pts = 10 / comps.length;
+    const pts = challengeValue(comps[0].spotId, comps[0].challenge, comps.length);
     comps.forEach(c => { scores[c.athleteId] = (scores[c.athleteId]||0) + pts; });
   });
 
@@ -1521,10 +1654,10 @@ function getAthleteCompletionCount(id) {
 // ─── XP & LEVELS (derived from completions — never stored) ──────────────────
 function getSpotsFullyClearedBy(athleteId) {
   return Object.entries(spots).filter(([spotId, spot]) => {
-    const chs = spot.challenges || [];
+    const chs = getSpotChallenges(spot);
     if (chs.length === 0) return false;
     return chs.every(ch => Object.values(completions).some(c =>
-      c.athleteId === athleteId && c.spotId === spotId && c.challenge === ch));
+      c.athleteId === athleteId && c.spotId === spotId && c.challenge === ch.id));
   }).map(([id]) => id);
 }
 
@@ -1586,17 +1719,28 @@ function renderSheet(spotId) {
   const list = document.getElementById('challenge-list');
   list.innerHTML = '';
 
-  (spot.challenges||[]).forEach(ch => {
-    const meta = CHALLENGE_META[ch]||{label:ch,emoji:'🏆',badgeClass:'badge-skill'};
+  const chs = getSpotChallenges(spot);
+  if (chs.length === 0) {
+    list.innerHTML = '<div class="empty-state">No challenges at this spot yet</div>';
+  }
+  chs.forEach(ch => {
     // count completors for this spot+challenge
-    const completorsAll = Object.values(completions).filter(c=>c.spotId===spotId&&c.challenge===ch);
+    const completorsAll = Object.values(completions).filter(c=>c.spotId===spotId&&c.challenge===ch.id);
+    const n = completorsAll.length;
     const myDone = athlete && completorsAll.some(c=>c.athleteId===athlete.id);
-    const pts = completorsAll.length > 0 ? (10/completorsAll.length).toFixed(2) : '10.00';
-    const projPts = completorsAll.length > 0 && !myDone ? (10/(completorsAll.length+1)).toFixed(2) : pts;
-    const hint = spot.hints && spot.hints[ch] ? `<div class="ch-hint">💡 ${escHtml(spot.hints[ch])}</div>` : '';
-    const hasVideo = !!(spot.videos && spot.videos[ch]);
+    const fmtPts = v => (Math.round(v*100)/100).toFixed(2).replace(/\.?0+$/,'');
+    let ptsLine, projLine = '';
+    if (scoringMode === 'split') {
+      const cur = fmtPts(ch.points / Math.max(1, n));
+      ptsLine = `${cur} pts each · ${n} completor${n!==1?'s':''}`;
+      if (!myDone) projLine = `<div class="ch-completors">Complete to earn ~${fmtPts(ch.points/(n+1))} pts</div>`;
+    } else {
+      ptsLine = `worth ${fmtPts(ch.points)} pt${ch.points!==1?'s':''} · ${n} completor${n!==1?'s':''}`;
+    }
+    const hint = ch.hint ? `<div class="ch-hint">💡 ${escHtml(ch.hint)}</div>` : '';
+    const hasVideo = !!ch.video;
     const videoIcon = hasVideo ? '<span class="ch-video-ico" title="Demo video available">🎥</span>' : '';
-    const videoBtn = hasVideo ? `<div><button class="ch-video-btn" onclick="openChallengeVideo('${spotId}','${ch}')">🎥 Watch demo</button></div>` : '';
+    const videoBtn = hasVideo ? `<div><button class="ch-video-btn" onclick="openChallengeVideo('${spotId}','${escHtml(ch.id)}')">🎥 Watch demo</button></div>` : '';
 
     // WHO CLEARED IT — chips with team color dots, teammates highlighted
     const myTeam = athlete ? (athlete.team||'') : '';
@@ -1614,11 +1758,11 @@ function renderSheet(spotId) {
     const item = document.createElement('div');
     item.className = 'challenge-item' + (myDone?' done':'');
     item.innerHTML = `
-      <div class="ch-icon">${meta.emoji}</div>
+      <div class="ch-icon">🏆</div>
       <div class="ch-info">
-        <div class="ch-name"><span class="badge ${meta.badgeClass}">${meta.label}</span>${videoIcon}</div>
-        <div class="ch-pts">${myDone?'✅ Completed · ':''}${pts} pts each · ${completorsAll.length} completor${completorsAll.length!==1?'s':''}</div>
-        ${!myDone?`<div class="ch-completors">Complete to earn ~${projPts} pts</div>`:''}
+        <div class="ch-name">${escHtml(ch.name)} <span class="badge badge-pts">${fmtPts(ch.points)} pt${ch.points!==1?'s':''}</span>${videoIcon}</div>
+        <div class="ch-pts">${myDone?'✅ Completed · ':''}${ptsLine}</div>
+        ${!myDone?projLine:''}
         ${hint}
         ${videoBtn}
         ${chipsHtml}
@@ -1626,7 +1770,7 @@ function renderSheet(spotId) {
       <button class="btn-complete ${myDone?'done-btn':''}"
         ${myDone?'disabled':''}
         ${!inRange&&!myDone?'disabled title="Get closer to unlock"':''}
-        onclick="completeChallenge('${spotId}','${ch}',this)">
+        onclick="completeChallenge('${spotId}','${escHtml(ch.id)}',this)">
         ${myDone?'Done':(inRange?'Complete':'📍 '+(dist!==null?dist+'m away':'—'))}
       </button>
     `;
@@ -1664,15 +1808,15 @@ function toEmbedUrl(url) {
   return {type:'iframe', src:u};
 }
 
-function openChallengeVideo(spotId, challenge) {
+function openChallengeVideo(spotId, challengeId) {
   const spot = spots[spotId];
-  const url = spot && spot.videos && spot.videos[challenge];
+  const ch = findChallenge(spot, challengeId);
+  const url = ch && ch.video;
   if (!url) { showToast('No video for this challenge'); return; }
   const embed = toEmbedUrl(url);
   if (!embed) { showToast('No video for this challenge'); return; }
-  const meta = CHALLENGE_META[challenge] || {emoji:'🏆', label:challenge};
   document.getElementById('video-overlay-title').textContent =
-    (spot.emoji||'📍')+' '+spot.name+' — '+meta.emoji+' '+(meta.label||challenge);
+    (spot.emoji||'📍')+' '+spot.name+' — 🏆 '+ch.name;
   const wrap = document.getElementById('video-frame-wrap');
   if (embed.type === 'video') {
     wrap.innerHTML = `<video controls playsinline autoplay src="${escHtml(embed.src)}"></video>`;
@@ -1688,17 +1832,19 @@ function closeVideoOverlay() {
   document.getElementById('video-overlay').classList.remove('open');
 }
 
-async function completeChallenge(spotId, challenge, btn) {
+async function completeChallenge(spotId, challengeId, btn) {
   if (!athlete) { showToast('Set up your profile first'); return; }
   btn.disabled = true;
   const orig = btn.textContent;
   btn.innerHTML = '<span class="spinner"></span>';
+  const challenge = challengeId; // stored in the completion record
+  const chName = challengeDisplayName(spotId, challengeId);
 
   // 3-2-1 GO! micro-animation, then a single quick confirm
   await runCountdown();
 
   confirmAction(
-    `Complete ${challenge} at ${spots[spotId]?.name}?`,
+    `Complete "${chName}" at ${spots[spotId]?.name}?`,
     'This will record your completion and update scores.',
     async () => {
       const compId = 'comp-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
@@ -1852,7 +1998,7 @@ function renderFeed() {
   container.innerHTML = sorted.map(([compId, c]) => {
     const ath = athletes[c.athleteId] || {name:athlete&&c.athleteId===athlete?.id?athlete.name:'Unknown'};
     const spot = spots[c.spotId] || {name:'Unknown Spot'};
-    const meta = CHALLENGE_META[c.challenge]||{emoji:'🏆'};
+    const chName = challengeDisplayName(c.spotId, c.challenge);
     const ago = timeAgo(c.timestamp);
     const crewTag = crewInfo[compId] ? '<span class="crew-tag">🤝 Crew +2</span>' : '';
     const lvl = getLevelForAthlete(c.athleteId);
@@ -1864,8 +2010,8 @@ function renderFeed() {
     }).join('');
     return `<div class="feed-item">
       <div class="feed-main">
-        <span>${meta.emoji}</span>
-        <span><strong>${escHtml(ath.name)}</strong> <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span> completed <span class="badge badge-${c.challenge.toLowerCase()}">${c.challenge}</span> at <strong>${escHtml(spot.name)}</strong> ${crewTag}</span>
+        <span>🏆</span>
+        <span><strong>${escHtml(ath.name)}</strong> <span class="lvl-badge">L${lvl.lvl} ${lvl.title}</span> completed <span class="badge badge-ch">${escHtml(chName)}</span> at <strong>${escHtml(spot.name)}</strong> ${crewTag}</span>
         <span class="feed-time">${ago}</span>
       </div>
       <div class="feed-reactions">${reactBtns}</div>
@@ -1912,23 +2058,28 @@ function renderAdminSpots() {
     container.innerHTML = '<div class="empty-state">No spots yet. Add one!</div>';
     return;
   }
-  container.innerHTML = entries.map(([id,s]) => `
+  container.innerHTML = entries.map(([id,s]) => {
+    const chs = getSpotChallenges(s);
+    const totalPts = chs.reduce((sum,c)=>sum+(c.points||0),0);
+    const posChip = s.needsPosition ? ' <span class="badge badge-pos">📍 set position</span>' : '';
+    return `
     <div class="spot-row">
       <div class="spot-row-icon">${s.emoji||'📍'}</div>
       <div class="spot-row-info">
-        <div class="spot-row-name">${escHtml(s.name)}</div>
-        <div class="spot-row-sub">${(s.challenges||[]).map(c=>`<span class="badge badge-${c.toLowerCase()}">${c}</span>`).join(' ')} · ${s.lat?.toFixed(4)}, ${s.lng?.toFixed(4)}</div>
+        <div class="spot-row-name">${escHtml(s.name)}${posChip}</div>
+        <div class="spot-row-sub">${chs.length} challenge${chs.length!==1?'s':''} · ${totalPts} pt${totalPts!==1?'s':''} total · ${s.lat?.toFixed(4)}, ${s.lng?.toFixed(4)}</div>
       </div>
       <div class="spot-row-actions">
         <button class="btn btn-ghost btn-sm" onclick="openSpotModal('${id}')">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="confirmAction('Delete spot?','This cannot be undone.',()=>deleteSpot('${id}'))">🗑️</button>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function openSpotModal(spotId) {
   const modal = document.getElementById('spot-modal');
+  document.getElementById('challenge-rows').innerHTML = '';
   if (spotId && spots[spotId]) {
     const s = spots[spotId];
     document.getElementById('spot-modal-title').textContent = 'Edit Spot';
@@ -1939,15 +2090,7 @@ function openSpotModal(spotId) {
     document.getElementById('spot-lat').value = s.lat||'';
     document.getElementById('spot-lng').value = s.lng||'';
     document.getElementById('spot-radius').value = s.radius||50;
-    document.getElementById('ch-skill').checked = (s.challenges||[]).includes('SKILL');
-    document.getElementById('ch-style').checked = (s.challenges||[]).includes('STYLE');
-    document.getElementById('ch-speed').checked = (s.challenges||[]).includes('SPEED');
-    document.getElementById('hint-skill').value = (s.hints&&s.hints.SKILL)||'';
-    document.getElementById('hint-style').value = (s.hints&&s.hints.STYLE)||'';
-    document.getElementById('hint-speed').value = (s.hints&&s.hints.SPEED)||'';
-    document.getElementById('video-skill').value = (s.videos&&s.videos.SKILL)||'';
-    document.getElementById('video-style').value = (s.videos&&s.videos.STYLE)||'';
-    document.getElementById('video-speed').value = (s.videos&&s.videos.SPEED)||'';
+    getSpotChallenges(s).forEach(ch => addChallengeRow(ch));
   } else {
     document.getElementById('spot-modal-title').textContent = 'Add Spot';
     document.getElementById('spot-edit-id').value = '';
@@ -1957,17 +2100,49 @@ function openSpotModal(spotId) {
     document.getElementById('spot-lat').value = '';
     document.getElementById('spot-lng').value = '';
     document.getElementById('spot-radius').value = 50;
-    document.getElementById('ch-skill').checked = true;
-    document.getElementById('ch-style').checked = true;
-    document.getElementById('ch-speed').checked = true;
-    document.getElementById('hint-skill').value = '';
-    document.getElementById('hint-style').value = '';
-    document.getElementById('hint-speed').value = '';
-    document.getElementById('video-skill').value = '';
-    document.getElementById('video-style').value = '';
-    document.getElementById('video-speed').value = '';
+    addChallengeRow(); // start with one empty row
   }
   modal.classList.add('open');
+}
+
+// One editable challenge row: [name, points] / [video URL + 📚] / [hint]
+function addChallengeRow(ch) {
+  const wrap = document.getElementById('challenge-rows');
+  const row = document.createElement('div');
+  row.className = 'ch-edit-row';
+  if (ch && ch.id) row.dataset.chId = ch.id;
+  row.innerHTML = `
+    <div style="display:flex;gap:.4rem">
+      <input type="text" class="ch-row-name" placeholder="Challenge name — e.g. Tic tac step" value="${escHtml(ch?ch.name:'')}">
+      <input type="number" class="ch-row-pts" min="0" step="any" title="Points" value="${ch?(ch.points!=null?ch.points:1):1}" style="width:70px;flex-shrink:0">
+      <button type="button" class="btn btn-danger btn-sm" style="flex-shrink:0" title="Remove challenge" onclick="this.closest('.ch-edit-row').remove()">✕</button>
+    </div>
+    <div style="display:flex;gap:.4rem">
+      <input type="url" class="ch-row-video" placeholder="🎥 Video URL (Drive / YouTube, optional)" value="${escHtml(ch?ch.video||'':'')}">
+      <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPickerForRow(this)">📚</button>
+    </div>
+    <input type="text" class="ch-row-hint" placeholder="💡 Hint (optional)" value="${escHtml(ch?ch.hint||'':'')}">
+  `;
+  wrap.appendChild(row);
+}
+
+// Read the challenge rows back into the array model. Keeps existing ids
+// (dataset.chId) so completions stay attached; new rows get fresh ids.
+function collectChallengeRows() {
+  const out = [];
+  document.querySelectorAll('#challenge-rows .ch-edit-row').forEach((row, i) => {
+    const name = row.querySelector('.ch-row-name').value.trim();
+    if (!name) return;
+    const ptsRaw = parseFloat(row.querySelector('.ch-row-pts').value);
+    out.push({
+      id: row.dataset.chId || ('ch-'+Date.now().toString(36)+'-'+i+'-'+Math.random().toString(36).slice(2,6)),
+      name,
+      points: (isFinite(ptsRaw) && ptsRaw > 0) ? ptsRaw : 1,
+      video: row.querySelector('.ch-row-video').value.trim(),
+      hint: row.querySelector('.ch-row-hint').value.trim()
+    });
+  });
+  return out;
 }
 
 function closeSpotModal() {
@@ -1983,27 +2158,14 @@ async function saveSpot() {
   const lat   = parseFloat(document.getElementById('spot-lat').value);
   const lng   = parseFloat(document.getElementById('spot-lng').value);
   const radius= parseInt(document.getElementById('spot-radius').value)||50;
-  const challenges = ['SKILL','STYLE','SPEED'].filter(c=>document.getElementById('ch-'+c.toLowerCase()).checked);
+  const challenges = collectChallengeRows();
 
   if (!name) { showToast('Spot name required'); return; }
   if (isNaN(lat)||isNaN(lng)) { showToast('Valid lat/lng required'); return; }
-  if (challenges.length === 0) { showToast('Select at least one challenge'); return; }
+  if (challenges.length === 0) { showToast('Add at least one challenge'); return; }
 
-  const hints = {};
-  ['SKILL','STYLE','SPEED'].forEach(c => {
-    const v = document.getElementById('hint-'+c.toLowerCase()).value.trim();
-    if (v && challenges.includes(c)) hints[c] = v;
-  });
-
-  const videos = {};
-  ['SKILL','STYLE','SPEED'].forEach(c => {
-    const v = document.getElementById('video-'+c.toLowerCase()).value.trim();
-    if (v && challenges.includes(c)) videos[c] = v;
-  });
-
+  // Manual save always writes the normalized new shape and confirms position
   const spot = {name,emoji,description:desc,lat,lng,radius,challenges};
-  if (Object.keys(hints).length > 0) spot.hints = hints;
-  if (Object.keys(videos).length > 0) spot.videos = videos;
 
   if (db) {
     await db.ref('/spots/'+id).set(spot);
@@ -2134,30 +2296,79 @@ async function fetchDriveFolderHtml(folderId) {
   throw err;
 }
 
-// Parse embeddedfolderview HTML → [{id, name}]. DOMParser first, regex fallback.
+// Parse embeddedfolderview HTML → [{id, name, isFolder}]. DOMParser first,
+// regex fallback. Subfolder entries link to /drive/folders/… or
+// /embeddedfolderview?id=…, or carry the folder mime type
+// 'application/vnd.google-apps.folder' — any of those marks a folder.
 function parseDriveFolderHtml(html) {
   const out = [];
   const seen = {};
-  const push = (id, name) => {
+  const looksLikeFolder = (href, blob) =>
+    /\/(?:drive\/(?:u\/\d+\/)?)?folders\//i.test(href||'') ||
+    /embeddedfolderview/i.test(href||'') ||
+    /application\/vnd\.google-apps\.folder/i.test(blob||'');
+  const push = (id, name, isFolder) => {
     id = String(id||'').trim(); name = String(name||'').trim();
-    if (id && name && !seen[id]) { seen[id] = 1; out.push({id, name}); }
+    if (id && name && !seen[id]) { seen[id] = 1; out.push({id, name, isFolder:!!isFolder}); }
   };
   try {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     doc.querySelectorAll('.flip-entry').forEach(el => {
       const id = (el.id||'').replace(/^entry-/, '');
       const titleEl = el.querySelector('.flip-entry-title');
-      push(id, titleEl ? titleEl.textContent : '');
+      const a = el.querySelector('a');
+      const href = a ? (a.getAttribute('href')||'') : '';
+      push(id, titleEl ? titleEl.textContent : '', looksLikeFolder(href, el.outerHTML||''));
     });
   } catch(e) { /* fall through to regex */ }
   if (out.length === 0) {
-    const re = /id="entry-([\w-]+)"[\s\S]*?flip-entry-title[^>]*>([^<]+)</gi;
+    const re = /id="entry-([\w-]+)"([\s\S]*?)flip-entry-title[^>]*>([^<]+)</gi;
     let m;
-    while ((m = re.exec(html)) !== null) push(m[1], m[2]);
+    while ((m = re.exec(html)) !== null) {
+      const block = m[2];
+      const hrefM = block.match(/href="([^"]+)"/i);
+      push(m[1], m[3], looksLikeFolder(hrefM ? hrefM[1] : '', block));
+    }
   }
   return out;
 }
 
+// "1- Centro giovani zanca" → "Centro giovani zanca"
+function cleanSpotFolderName(name) {
+  return String(name||'').replace(/^\s*\d+\s*[-.]\s*/, '').trim();
+}
+
+// Parse a challenge video filename like "3-Tic tac step 2pt" / "5-Cat 1 2 pt" /
+// "10-Plio to cat 4PT" → {name, points}. Returns null for non-video files
+// (Google Docs "maps link" files, spreadsheets, etc.).
+function parseChallengeFilename(filename) {
+  const raw = String(filename||'').trim();
+  if (!raw) return null;
+  if (/maps\s*link/i.test(raw)) return null; // the per-spot Google-Doc map link
+  if (/\.(xlsx|xls|docx?|pdf|txt|csv|gdoc|gsheet|gslides|gdraw)$/i.test(raw)) return null;
+  let s = raw.replace(/\.(mp4|mov|webm|m4v|avi|mkv|3gp)$/i, ''); // drop video extension
+  s = s.replace(/^\s*\d+\s*[-.]\s*/, '');                        // strip leading "<order>-"
+  let points = 1;
+  const m = s.match(/(\d+)\s*pts?\.?\s*$/i);                     // trailing "2pt" / "2 pt" / "4PT"
+  if (m) {
+    points = parseInt(m[1], 10) || 1;
+    s = s.slice(0, m.index);
+  }
+  s = s.replace(/[\s\-–—(]+$/, '').trim();
+  if (!s) return null;
+  return {name: s, points};
+}
+
+function setImportStatus(msg) {
+  const el = document.getElementById('vl-import-status');
+  if (!el) return;
+  if (msg) { el.style.display = 'block'; el.innerHTML = '<span class="spinner"></span> ' + escHtml(msg); }
+  else { el.style.display = 'none'; el.innerHTML = ''; }
+}
+
+// SPOT IMPORTER: read the root folder; if it contains subfolders, each
+// subfolder becomes a spot (its videos become challenges) via a preview UI.
+// A flat folder of videos falls back to the plain video-library import.
 async function importDriveFolder() {
   const input = document.getElementById('vl-folder-input');
   const btn = document.getElementById('vl-import-btn');
@@ -2171,22 +2382,59 @@ async function importDriveFolder() {
   const orig = btn.innerHTML;
   btn.innerHTML = '<span class="spinner"></span> Importing…';
   try {
+    setImportStatus('Reading folder…');
     const html = await fetchDriveFolderHtml(folderId);
-    const files = parseDriveFolderHtml(html);
-    if (files.length === 0) {
+    const entries = parseDriveFolderHtml(html);
+    if (entries.length === 0) {
       showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? (Or the folder is empty.)');
       return;
     }
-    // merge into library, dedupe by fileId
-    const merged = {...videoLibrary};
-    let added = 0;
-    files.forEach(f => {
-      if (!merged[f.id]) added++;
-      merged[f.id] = {name: f.name, url: 'https://drive.google.com/file/d/'+f.id+'/view'};
-    });
-    await saveVideoLibrary(merged);
-    input.value = '';
-    showToast('🎬 Imported '+files.length+' video'+(files.length!==1?'s':'')+' ('+added+' new)');
+
+    const folders = entries.filter(e => e.isFolder && !/^old$/i.test(e.name.trim()));
+    if (folders.length === 0) {
+      // ── Flat folder → classic video-library import ──
+      const files = entries.filter(e => !e.isFolder);
+      if (files.length === 0) {
+        showVlError('Only an "OLD" folder found — nothing to import.');
+        return;
+      }
+      const merged = {...videoLibrary};
+      let added = 0;
+      files.forEach(f => {
+        if (!merged[f.id]) added++;
+        merged[f.id] = {name: f.name, url: 'https://drive.google.com/file/d/'+f.id+'/view'};
+      });
+      await saveVideoLibrary(merged);
+      input.value = '';
+      showToast('🎬 Imported '+files.length+' video'+(files.length!==1?'s':'')+' ('+added+' new)');
+      return;
+    }
+
+    // ── Subfolders → one spot each (skipping 'OLD'), fetched sequentially ──
+    const parsedSpots = [];
+    for (let i = 0; i < folders.length; i++) {
+      const f = folders[i];
+      const cleanName = cleanSpotFolderName(f.name);
+      setImportStatus('Reading '+cleanName+' ('+(i+1)+'/'+folders.length+')…');
+      let subEntries = [];
+      try {
+        const subHtml = await fetchDriveFolderHtml(f.id);
+        subEntries = parseDriveFolderHtml(subHtml);
+      } catch(e) {
+        console.warn('Could not read subfolder', f.name, e); // keep spot with 0 challenges
+      }
+      const challenges = [];
+      subEntries.forEach(en => {
+        if (en.isFolder) return; // no deeper recursion
+        const parsed = parseChallengeFilename(en.name);
+        if (!parsed) return;     // maps-link doc, spreadsheet, …
+        challenges.push({fileId: en.id, name: parsed.name, points: parsed.points});
+      });
+      parsedSpots.push({folderId: f.id, name: cleanName, checked: true, challenges});
+    }
+    pendingSpotImport = parsedSpots;
+    renderSpotImportPreview();
+    showToast('📦 Found '+parsedSpots.length+' spot folder'+(parsedSpots.length!==1?'s':'')+' — review & import below');
   } catch(e) {
     console.warn('Drive import failed', e);
     if (e && e.gotHtml) {
@@ -2197,8 +2445,134 @@ async function importDriveFolder() {
       showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? If yes, check your internet connection and try again.', null, true);
     }
   } finally {
+    setImportStatus('');
     btn.disabled = false;
     btn.innerHTML = orig;
+  }
+}
+
+// ── Import preview UI ──
+function renderSpotImportPreview() {
+  const box = document.getElementById('spot-import-preview');
+  if (!box) return;
+  if (!pendingSpotImport || pendingSpotImport.length === 0) {
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+  const selCount = pendingSpotImport.filter(s => s.checked).length;
+  box.style.display = 'block';
+  box.innerHTML =
+    '<div class="section-label">📦 Import preview — edit names & points, untick what you don\'t want</div>' +
+    pendingSpotImport.map((s, si) => `
+      <div class="import-spot-card">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <input type="checkbox" ${s.checked?'checked':''} onchange="setImportSpotChecked(${si},this)">
+          <input type="text" value="${escHtml(s.name)}" style="font-weight:700" onchange="setImportSpotName(${si},this)">
+          <span style="font-size:.7rem;color:var(--muted);flex-shrink:0">${s.challenges.length} challenge${s.challenges.length!==1?'s':''}</span>
+        </div>
+        ${s.challenges.length === 0 ? '<div style="padding-left:1.5rem;font-size:.72rem;color:var(--warn)">⚠️ No challenge videos found in this folder</div>' : ''}
+        ${s.challenges.map((c, ci) => `
+          <div class="import-ch-row">
+            <input type="text" value="${escHtml(c.name)}" onchange="setImportChName(${si},${ci},this)">
+            <input type="number" min="0" step="any" value="${c.points}" title="Points" style="width:64px;flex-shrink:0" onchange="setImportChPts(${si},${ci},this)">
+            <span style="font-size:.68rem;color:var(--muted);flex-shrink:0">pt</span>
+          </div>`).join('')}
+      </div>`).join('') +
+    `<div class="form-actions">
+      <button class="btn btn-success" onclick="importParsedSpots()">📥 Import ${selCount} spot${selCount!==1?'s':''}</button>
+      <button class="btn btn-ghost" onclick="cancelSpotImport()">Cancel</button>
+    </div>`;
+}
+
+function setImportSpotChecked(si, el) {
+  if (pendingSpotImport && pendingSpotImport[si]) { pendingSpotImport[si].checked = el.checked; renderSpotImportPreview(); }
+}
+function setImportSpotName(si, el) {
+  if (pendingSpotImport && pendingSpotImport[si]) pendingSpotImport[si].name = el.value;
+}
+function setImportChName(si, ci, el) {
+  if (pendingSpotImport && pendingSpotImport[si] && pendingSpotImport[si].challenges[ci]) pendingSpotImport[si].challenges[ci].name = el.value;
+}
+function setImportChPts(si, ci, el) {
+  if (pendingSpotImport && pendingSpotImport[si] && pendingSpotImport[si].challenges[ci]) {
+    const v = parseFloat(el.value);
+    pendingSpotImport[si].challenges[ci].points = (isFinite(v) && v > 0) ? v : 1;
+  }
+}
+function cancelSpotImport() {
+  pendingSpotImport = null;
+  renderSpotImportPreview();
+}
+
+function slugify(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+
+// Create/update spots from the reviewed preview. Existing spots (matched by
+// name, case-insensitive) keep their id, coordinates and radius; new spots are
+// dropped near Sacile city center with ~150m offsets and flagged needsPosition
+// until the organizer sets real coordinates.
+const IMPORT_CENTER = {lat:45.9540, lng:12.5030}; // Sacile
+async function importParsedSpots() {
+  const selected = (pendingSpotImport||[]).filter(s => s.checked && s.name.trim());
+  if (selected.length === 0) { showToast('No spots selected'); return; }
+
+  const byName = {};
+  Object.entries(spots).forEach(([id, s]) => { byName[String(s.name||'').trim().toLowerCase()] = id; });
+
+  const changed = {};
+  let created = 0, updatedN = 0, newIdx = 0;
+  selected.forEach(s => {
+    const nm = s.name.trim();
+    const challenges = s.challenges.map((c, i) => ({
+      // deterministic id: re-importing the same folder keeps completions attached
+      id: 'ch-' + (slugify(c.name) || 'challenge') + '-' + i,
+      name: c.name.trim() || ('Challenge ' + (i + 1)),
+      points: (isFinite(c.points) && c.points > 0) ? c.points : 1,
+      video: 'https://drive.google.com/file/d/' + c.fileId + '/view',
+      hint: ''
+    }));
+    const existingId = byName[nm.toLowerCase()];
+    if (existingId) {
+      const prev = spots[existingId];
+      const next = {...prev, name: nm, challenges};
+      delete next.hints; delete next.videos;
+      changed[existingId] = next;
+      updatedN++;
+    } else {
+      let id = 'spot-' + (slugify(nm) || Date.now().toString(36));
+      while (spots[id] || changed[id]) id += '-2';
+      // ~150m grid offsets around the city center so markers don't stack
+      const lat = IMPORT_CENTER.lat + (Math.floor(newIdx / 3)) * 0.00135;
+      const lng = IMPORT_CENTER.lng + ((newIdx % 3) - 1) * 0.0019;
+      changed[id] = {name: nm, emoji: '📍', description: '', lat, lng, radius: 60, challenges, needsPosition: true};
+      created++;
+      newIdx++;
+    }
+  });
+
+  try {
+    if (db) {
+      await db.ref('/spots').update(changed);
+    } else {
+      spots = {...spots, ...changed};
+      saveLocalSpots(spots);
+      renderSpotMarkers();
+      renderAdminSpots();
+      recalcScores();
+      renderLeaderboard();
+      renderMe();
+    }
+    pendingSpotImport = null;
+    renderSpotImportPreview();
+    document.getElementById('vl-folder-input').value = '';
+    showToast('📍 Imported ' + selected.length + ' spot' + (selected.length!==1?'s':'') +
+      (created ? ' — ' + created + ' new need a position 📍' : ''));
+  } catch(e) {
+    console.warn('Spot import failed', e);
+    showVlError('Couldn\'t save the imported spots: ' + ((e && e.message) || 'unknown error'));
   }
 }
 
@@ -2325,18 +2699,6 @@ async function saveVideoLibrary(lib) {
   }
 }
 
-// If a video name hints at a category, show the matching badge
-function vlCategoryBadge(name) {
-  const n = String(name||'').toLowerCase();
-  for (const ch of ['SKILL','STYLE','SPEED']) {
-    if (n.includes(ch.toLowerCase())) {
-      const meta = CHALLENGE_META[ch];
-      return `<span class="badge ${meta.badgeClass}">${meta.label}</span>`;
-    }
-  }
-  return '';
-}
-
 function renderVideoLibrary() {
   const container = document.getElementById('video-library-list');
   const countEl = document.getElementById('vl-count');
@@ -2350,7 +2712,7 @@ function renderVideoLibrary() {
   entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
   container.innerHTML = entries.map(([fileId, v]) => `
     <div class="vl-row">
-      <div class="vl-row-name">🎬 <span class="vl-name-text vl-name-editable" data-file-id="${fileId}" title="Tap to rename" onclick="startEditVideoName('${fileId}')">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
+      <div class="vl-row-name">🎬 <span class="vl-name-text vl-name-editable" data-file-id="${fileId}" title="Tap to rename" onclick="startEditVideoName('${fileId}')">${escHtml(v.name)}</span></div>
       <div class="spot-row-actions">
         <button class="btn btn-ghost btn-sm" title="Preview" onclick="previewLibraryVideo('${fileId}')">▶</button>
         <button class="btn btn-danger btn-sm" title="Remove from library" onclick="removeLibraryVideo('${fileId}')">🗑</button>
@@ -2378,12 +2740,16 @@ function removeLibraryVideo(fileId) {
   });
 }
 
-// ── Library picker (spot modal 📚 buttons) ──
-function openLibraryPicker(challenge) {
-  libraryPickTarget = challenge;
-  const meta = CHALLENGE_META[challenge] || {label:challenge, emoji:'🎥'};
+// ── Library picker (spot modal 📚 buttons in challenge rows) ──
+// btn is the 📚 button inside a .ch-edit-row; the picker fills that row's
+// video <input> (stored as an element reference in libraryPickTarget).
+function openLibraryPickerForRow(btn) {
+  const row = btn.closest('.ch-edit-row');
+  libraryPickTarget = row ? row.querySelector('.ch-row-video') : null;
+  const nameInput = row ? row.querySelector('.ch-row-name') : null;
+  const chName = nameInput && nameInput.value.trim();
   document.getElementById('library-picker-sub').innerHTML =
-    'Pick a video for the <span class="badge ' + (meta.badgeClass||'badge-skill') + '">' + meta.label + '</span> challenge.';
+    chName ? 'Pick a video for <b>' + escHtml(chName) + '</b>.' : 'Tap a video to use it.';
   const list = document.getElementById('library-picker-list');
   const entries = Object.entries(videoLibrary);
   if (entries.length === 0) {
@@ -2392,7 +2758,7 @@ function openLibraryPicker(challenge) {
     entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
     list.innerHTML = entries.map(([fileId, v]) => `
       <button type="button" class="vl-row vl-pick-row" onclick="pickLibraryVideo('${fileId}')">
-        <div class="vl-row-name">🎬 <span class="vl-name-text">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
+        <div class="vl-row-name">🎬 <span class="vl-name-text">${escHtml(v.name)}</span></div>
       </button>
     `).join('');
   }
@@ -2407,9 +2773,8 @@ function closeLibraryPicker() {
 function pickLibraryVideo(fileId) {
   const v = videoLibrary[fileId];
   if (v && libraryPickTarget) {
-    const input = document.getElementById('video-' + libraryPickTarget.toLowerCase());
-    if (input) input.value = v.url;
-    showToast('🎥 Video set for ' + libraryPickTarget);
+    libraryPickTarget.value = v.url;
+    showToast('🎥 Video attached');
   }
   closeLibraryPicker();
 }
