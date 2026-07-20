@@ -240,6 +240,25 @@ select option{background:var(--surface2)}
 }
 .spot-modal-title{font-size:1rem;font-weight:800;margin-bottom:1rem}
 
+/* VIDEO LIBRARY */
+#library-picker-modal{
+  position:fixed;inset:0;z-index:2650;background:rgba(0,0,0,.7);
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#library-picker-modal.open{display:flex}
+.vl-row{
+  background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;
+  padding:.6rem .8rem;display:flex;align-items:center;gap:.6rem;
+}
+.vl-row-name{
+  flex:1;min-width:0;font-size:.82rem;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  display:flex;align-items:center;gap:.4rem;
+}
+.vl-row-name .vl-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-pick-row{width:100%;cursor:pointer;text-align:left;color:var(--text);transition:border-color .15s}
+.vl-pick-row:active{border-color:var(--accent)}
+
 /* MAP PLACEMENT MODE */
 #map-placement-banner{
   position:absolute;top:0;left:0;right:0;z-index:500;
@@ -656,6 +675,25 @@ select option{background:var(--surface2)}
       <div id="spots-list" class="spots-list"><div class="empty-state">No spots yet</div></div>
     </div>
 
+    <!-- Video Library -->
+    <div class="card">
+      <div class="card-title" style="justify-content:space-between">
+        <span>🎬 Video Library</span>
+        <span id="vl-count" style="font-size:.72rem;font-weight:600;color:var(--muted)">0 videos</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.6rem">Import all challenge videos at once from a public Google Drive folder (shared as "Anyone with the link"). Then attach them to spots with the 📚 button in the spot editor.</p>
+      <div class="form-group full">
+        <label>Paste Google Drive folder link</label>
+        <input id="vl-folder-input" type="url" placeholder="https://drive.google.com/drive/folders/…">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" id="vl-import-btn" onclick="importDriveFolder()">📥 Import</button>
+      </div>
+      <div id="vl-error" style="display:none;font-size:.78rem;color:var(--danger);margin-top:.6rem;line-height:1.45"></div>
+      <div class="separator"></div>
+      <div id="video-library-list" class="spots-list"><div class="empty-state">No videos imported yet</div></div>
+    </div>
+
     <!-- Danger Zone -->
     <div class="card danger-zone">
       <div class="card-title danger-title">⚠️ Danger Zone</div>
@@ -808,9 +846,18 @@ select option{background:var(--surface2)}
       </div>
       <div class="form-group full">
         <label>🎥 Challenge Videos (optional)</label>
-        <input id="video-skill" type="url" placeholder="SKILL video URL — Google Drive or YouTube link" style="margin-bottom:.4rem">
-        <input id="video-style" type="url" placeholder="STYLE video URL — Google Drive or YouTube link" style="margin-bottom:.4rem">
-        <input id="video-speed" type="url" placeholder="SPEED video URL — Google Drive or YouTube link">
+        <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+          <input id="video-skill" type="url" placeholder="SKILL video URL — Google Drive or YouTube link">
+          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('SKILL')">📚</button>
+        </div>
+        <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+          <input id="video-style" type="url" placeholder="STYLE video URL — Google Drive or YouTube link">
+          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('STYLE')">📚</button>
+        </div>
+        <div style="display:flex;gap:.4rem">
+          <input id="video-speed" type="url" placeholder="SPEED video URL — Google Drive or YouTube link">
+          <button type="button" class="btn btn-ghost btn-sm" style="flex-shrink:0" title="Pick from Video Library" onclick="openLibraryPicker('SPEED')">📚</button>
+        </div>
       </div>
     </div>
     <div class="form-actions">
@@ -857,6 +904,18 @@ select option{background:var(--surface2)}
   </div>
 </div>
 
+<!-- VIDEO LIBRARY PICKER -->
+<div id="library-picker-modal" onclick="if(event.target===this)closeLibraryPicker()">
+  <div class="modal-box" style="max-height:75vh;overflow-y:auto">
+    <div class="modal-title">📚 Video Library</div>
+    <div class="modal-subtitle" id="library-picker-sub">Tap a video to use it.</div>
+    <div id="library-picker-list" class="spots-list"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="closeLibraryPicker()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- CHALLENGE VIDEO OVERLAY -->
 <div id="video-overlay" onclick="if(event.target===this)closeVideoOverlay()">
   <div class="video-overlay-inner">
@@ -893,6 +952,8 @@ let reactions = {};      // {completionId: {emoji: {athleteId: true}}}
 let crewInfo = {};       // {completionId: {partners:[names]}} — derived in recalcScores
 let crewBonusCount = {}; // {athleteId: number of crew bonuses} — derived
 let lastGpsFix = null;   // for distance tracking
+let videoLibrary = {};   // {fileId: {name, url}} — imported Drive videos
+let libraryPickTarget = null; // which challenge's video input the picker fills
 
 // ─── DEFAULT SPOTS (Milan) ────────────────────────────────────────────────────
 const DEFAULT_SPOTS = {
@@ -938,6 +999,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initMap();
   startGPS();
   renderAdminSpots();
+  renderVideoLibrary();
   renderLeaderboard();
   renderFeed();
   updateHeaderDistance();
@@ -1104,6 +1166,10 @@ function setupFirebaseListeners() {
     reactions = snap.val() || {};
     renderFeed();
   });
+  db.ref('/videoLibrary').on('value', snap => {
+    videoLibrary = snap.val() || {};
+    renderVideoLibrary();
+  });
   document.getElementById('sync-status').innerHTML = '🟢 Live';
 }
 
@@ -1121,6 +1187,8 @@ function useDemoMode() {
   athletes = getLocalAthletes();
   completions = getLocalCompletions();
   reactions = getLocalReactions();
+  videoLibrary = getLocalVideoLibrary();
+  renderVideoLibrary();
   recalcScores();
   renderSpotMarkers();
   renderAdminSpots();
@@ -1254,6 +1322,8 @@ function saveLocalCompletions(d){ localStorage.setItem('cc_completions',JSON.str
 function getLocalReactions()   { try{return JSON.parse(localStorage.getItem('cc_reactions')||'{}')}catch(e){return{}} }
 function saveLocalReactions(d) { localStorage.setItem('cc_reactions',JSON.stringify(d)) }
 function getVisitedSpots()     { try{return JSON.parse(localStorage.getItem('cc_visited')||'{}')}catch(e){return{}} }
+function getLocalVideoLibrary(){ try{return JSON.parse(localStorage.getItem('cc_video_library')||'{}')}catch(e){return{}} }
+function saveLocalVideoLibrary(d){ localStorage.setItem('cc_video_library',JSON.stringify(d)) }
 function saveVisitedSpots(d)   { localStorage.setItem('cc_visited',JSON.stringify(d)) }
 
 // ─── MAP ──────────────────────────────────────────────────────────────────────
@@ -1994,6 +2064,204 @@ async function clearAthletes() {
     renderLeaderboard();
   }
   showToast('Athletes cleared');
+}
+
+// ─── VIDEO LIBRARY (Google Drive folder import) ──────────────────────────────
+function extractDriveFolderId(url) {
+  const u = String(url||'').trim();
+  let m = u.match(/drive\.google\.com\/(?:drive\/(?:u\/\d+\/)?folders\/|embeddedfolderview\?(?:[^#]*&)?id=)([\w-]+)/i);
+  if (m) return m[1];
+  // bare folder id pasted directly
+  m = u.match(/^([\w-]{20,})$/);
+  return m ? m[1] : null;
+}
+
+// Fetch the public folder listing HTML, trying CORS proxies then direct.
+async function fetchDriveFolderHtml(folderId) {
+  const target = 'https://drive.google.com/embeddedfolderview?id='+folderId+'#list';
+  const attempts = [
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(target),
+    'https://corsproxy.io/?url='+encodeURIComponent(target),
+    target, // direct — currently CORS-blocked, kept as last resort
+  ];
+  let lastErr = null;
+  for (const attemptUrl of attempts) {
+    try {
+      const res = await withTimeout(fetch(attemptUrl), 15000);
+      if (!res.ok) throw new Error('HTTP '+res.status);
+      const html = await res.text();
+      if (html && html.indexOf('<') !== -1) return html;
+      throw new Error('Empty response');
+    } catch(e) { lastErr = e; }
+  }
+  throw lastErr || new Error('Could not fetch folder');
+}
+
+// Parse embeddedfolderview HTML → [{id, name}]. DOMParser first, regex fallback.
+function parseDriveFolderHtml(html) {
+  const out = [];
+  const seen = {};
+  const push = (id, name) => {
+    id = String(id||'').trim(); name = String(name||'').trim();
+    if (id && name && !seen[id]) { seen[id] = 1; out.push({id, name}); }
+  };
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('.flip-entry').forEach(el => {
+      const id = (el.id||'').replace(/^entry-/, '');
+      const titleEl = el.querySelector('.flip-entry-title');
+      push(id, titleEl ? titleEl.textContent : '');
+    });
+  } catch(e) { /* fall through to regex */ }
+  if (out.length === 0) {
+    const re = /id="entry-([\w-]+)"[\s\S]*?flip-entry-title[^>]*>([^<]+)</gi;
+    let m;
+    while ((m = re.exec(html)) !== null) push(m[1], m[2]);
+  }
+  return out;
+}
+
+async function importDriveFolder() {
+  const input = document.getElementById('vl-folder-input');
+  const btn = document.getElementById('vl-import-btn');
+  const errEl = document.getElementById('vl-error');
+  errEl.style.display = 'none';
+
+  const folderId = extractDriveFolderId(input.value);
+  if (!folderId) { showVlError('That doesn\'t look like a Google Drive folder link. It should contain /drive/folders/…'); return; }
+
+  btn.disabled = true;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Importing…';
+  try {
+    const html = await fetchDriveFolderHtml(folderId);
+    const files = parseDriveFolderHtml(html);
+    if (files.length === 0) {
+      showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? (Or the folder is empty.)');
+      return;
+    }
+    // merge into library, dedupe by fileId
+    const merged = {...videoLibrary};
+    let added = 0;
+    files.forEach(f => {
+      if (!merged[f.id]) added++;
+      merged[f.id] = {name: f.name, url: 'https://drive.google.com/file/d/'+f.id+'/view'};
+    });
+    await saveVideoLibrary(merged);
+    input.value = '';
+    showToast('🎬 Imported '+files.length+' video'+(files.length!==1?'s':'')+' ('+added+' new)');
+  } catch(e) {
+    console.warn('Drive import failed', e);
+    showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? If yes, check your internet connection and try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+}
+
+function showVlError(msg) {
+  const errEl = document.getElementById('vl-error');
+  errEl.textContent = '⚠️ ' + msg;
+  errEl.style.display = 'block';
+}
+
+async function saveVideoLibrary(lib) {
+  if (db) {
+    await db.ref('/videoLibrary').set(lib); // listener updates videoLibrary + re-renders
+  } else {
+    videoLibrary = lib;
+    saveLocalVideoLibrary(lib);
+    renderVideoLibrary();
+  }
+}
+
+// If a video name hints at a category, show the matching badge
+function vlCategoryBadge(name) {
+  const n = String(name||'').toLowerCase();
+  for (const ch of ['SKILL','STYLE','SPEED']) {
+    if (n.includes(ch.toLowerCase())) {
+      const meta = CHALLENGE_META[ch];
+      return `<span class="badge ${meta.badgeClass}">${meta.label}</span>`;
+    }
+  }
+  return '';
+}
+
+function renderVideoLibrary() {
+  const container = document.getElementById('video-library-list');
+  const countEl = document.getElementById('vl-count');
+  if (!container) return;
+  const entries = Object.entries(videoLibrary);
+  if (countEl) countEl.textContent = entries.length + ' video' + (entries.length!==1?'s':'');
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state">No videos imported yet</div>';
+    return;
+  }
+  entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
+  container.innerHTML = entries.map(([fileId, v]) => `
+    <div class="vl-row">
+      <div class="vl-row-name">🎬 <span class="vl-name-text" title="${escHtml(v.name)}">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
+      <div class="spot-row-actions">
+        <button class="btn btn-ghost btn-sm" title="Preview" onclick="previewLibraryVideo('${fileId}')">▶</button>
+        <button class="btn btn-danger btn-sm" title="Remove from library" onclick="removeLibraryVideo('${fileId}')">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function previewLibraryVideo(fileId) {
+  const v = videoLibrary[fileId];
+  if (!v) return;
+  document.getElementById('video-overlay-title').textContent = '🎬 ' + v.name;
+  document.getElementById('video-frame-wrap').innerHTML =
+    `<iframe src="${escHtml('https://drive.google.com/file/d/'+fileId+'/preview')}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  document.getElementById('video-overlay').classList.add('open');
+}
+
+function removeLibraryVideo(fileId) {
+  const v = videoLibrary[fileId];
+  confirmAction('Remove video from library?', v ? v.name : '', async () => {
+    const lib = {...videoLibrary};
+    delete lib[fileId];
+    await saveVideoLibrary(lib);
+    showToast('Video removed');
+  });
+}
+
+// ── Library picker (spot modal 📚 buttons) ──
+function openLibraryPicker(challenge) {
+  libraryPickTarget = challenge;
+  const meta = CHALLENGE_META[challenge] || {label:challenge, emoji:'🎥'};
+  document.getElementById('library-picker-sub').innerHTML =
+    'Pick a video for the <span class="badge ' + (meta.badgeClass||'badge-skill') + '">' + meta.label + '</span> challenge.';
+  const list = document.getElementById('library-picker-list');
+  const entries = Object.entries(videoLibrary);
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="empty-state">No videos imported yet — use Video Library in Admin</div>';
+  } else {
+    entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
+    list.innerHTML = entries.map(([fileId, v]) => `
+      <button type="button" class="vl-row vl-pick-row" onclick="pickLibraryVideo('${fileId}')">
+        <div class="vl-row-name">🎬 <span class="vl-name-text">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
+      </button>
+    `).join('');
+  }
+  document.getElementById('library-picker-modal').classList.add('open');
+}
+
+function closeLibraryPicker() {
+  document.getElementById('library-picker-modal').classList.remove('open');
+  libraryPickTarget = null;
+}
+
+function pickLibraryVideo(fileId) {
+  const v = videoLibrary[fileId];
+  if (v && libraryPickTarget) {
+    const input = document.getElementById('video-' + libraryPickTarget.toLowerCase());
+    if (input) input.value = v.url;
+    showToast('🎥 Video set for ' + libraryPickTarget);
+  }
+  closeLibraryPicker();
 }
 
 // ─── ORGANIZER MODE ───────────────────────────────────────────────────────────
