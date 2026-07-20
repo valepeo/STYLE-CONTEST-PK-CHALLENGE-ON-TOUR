@@ -981,32 +981,74 @@ let libraryPickTarget = null; // the video <input> element the library picker fi
 let scoringMode = 'fixed';   // 'fixed' | 'split' — admin setting (/config/scoring)
 let pendingSpotImport = null;// [{folderId, name, checked, challenges:[{fileId,name,points}]}]
 
-// ─── DEFAULT SPOTS (Milan demo) — challenges use the flexible model ──────────
+// ─── DEFAULT SPOTS (Sacile — PK Challenge Xtreme 26) ─────────────────────────
+// Imported from the Drive folder "VIDEO CHALLENGES": one subfolder per spot,
+// coordinates from each spot's "maps link" doc, one challenge per video
+// ("<n>-<name> <points>pt"). Challenge ids keep the original file numbering.
 const DEFAULT_SPOTS = {
-  'spot-duomo':   {name:'Piazza Duomo',      emoji:'🏛️', description:'Historic cathedral square', lat:45.4642,lng:9.1900,radius:50,challenges:[
-    {id:'duomo-ledge-prec', name:'Ledge precision', points:1, video:'', hint:'Precision jumps along the low marble ledges — stick every landing'},
-    {id:'duomo-step-flow',  name:'Step flow line',  points:2, video:'', hint:'Flow line across the steps: dash vault, spin, roll out clean'},
-    {id:'duomo-arcade-run', name:'Arcade sprint',   points:4, video:'', hint:'Sprint the arcade columns end to end, no stops'},
+  'spot-zanca': {name:'Centro Giovani Zanca', emoji:'🏢', description:'Centro giovani — challenges 1-13', lat:45.955142,lng:12.504551,radius:50,challenges:[
+    {id:'zanca-01',  name:'Step cancello',   points:1, video:'https://drive.google.com/file/d/1LixVkrWu1I4BmmfPqx1OBqW4GrPDi5rh/view', hint:''},
+    {id:'zanca-02',  name:'Tic tac step',    points:1, video:'https://drive.google.com/file/d/1Q_I54Ag60diK6czx62yrdNFsiRNDk2IN/view', hint:''},
+    {id:'zanca-03',  name:'Line 2',          points:1, video:'https://drive.google.com/file/d/1s4fMdsG1QVMyeYXfPyjLpbCstmrKPdv1/view', hint:''},
+    {id:'zanca-04',  name:'Line 3',          points:2, video:'https://drive.google.com/file/d/1sSQqfEv5tOcQ6HEOuqlazI8NjKxQTCKd/view', hint:''},
+    {id:'zanca-05',  name:'Cat 1',           points:2, video:'https://drive.google.com/file/d/1OFG9_3VQvZ4kGPn5Htc62YMqhwbkNTMW/view', hint:''},
+    {id:'zanca-06',  name:'Cat 2',           points:2, video:'https://drive.google.com/file/d/1UuHKCwdehrOfOMec4JFcg58XOozkaEXN/view', hint:''},
+    {id:'zanca-07',  name:'360 prec',        points:2, video:'https://drive.google.com/file/d/1pcGrmsic3wlu4lXptlHLdTxeQwl1jGBK/view', hint:''},
+    {id:'zanca-08',  name:'Prec davanzale',  points:2, video:'https://drive.google.com/file/d/1_3zXIE4viDZvxJO1rxW7izy-PtMSMlYj/view', hint:''},
+    {id:'zanca-09',  name:'Line 1',          points:4, video:'https://drive.google.com/file/d/17oeF7W7J8fVcSu691Ds8KXLzQHIxgChZ/view', hint:''},
+    {id:'zanca-10',  name:'Plio to cat',     points:4, video:'https://drive.google.com/file/d/1HynlwrTeY5p200kD-xrI_tGkAVXKxLQa/view', hint:''},
+    {id:'zanca-11',  name:'Cat 3',           points:4, video:'https://drive.google.com/file/d/1Mz9-_qdB99eGdcK3VuXYaL46gsHTh8wT/view', hint:''},
+    {id:'zanca-12',  name:'Prec stick',      points:4, video:'https://drive.google.com/file/d/1UO5hVuHuOohUzhk84wpWTx6LZ9ksILgM/view', hint:'Photo reference'},
+    {id:'zanca-13',  name:'Prec',            points:4, video:'https://drive.google.com/file/d/1j7wlS6QDrmAchBmhmy_uQwpsDgmrKzEs/view', hint:'Photo reference'},
   ]},
-  'spot-castello':{name:'Castello Sforzesco',emoji:'🏰', description:'Medieval fortress',          lat:45.4706,lng:9.1796,radius:50,challenges:[
-    {id:'castello-wall-up',  name:'Wall climb-up',  points:1, video:'', hint:'Climb-up on the old brick wall — quiet feet, solid top-out'},
-    {id:'castello-moat-run', name:'Moat lap',       points:2, video:'', hint:'Race the moat perimeter: vault the barriers, keep the rhythm'},
-    {id:'castello-cat-leap', name:'Tower cat leap', points:4, video:'', hint:'Cat leap to the low buttress — arms first, then feet'},
+  'spot-tallon': {name:'Parco Tallon', emoji:'🌳', description:'Parco — challenges 14-26', lat:45.951587,lng:12.500991,radius:50,challenges:[
+    {id:'tallon-14', name:'Double Kong',       points:1, video:'https://drive.google.com/file/d/1qIOvaPRqsYAYaHjWukj8ipQSI0Kpyf-H/view', hint:''},
+    {id:'tallon-15', name:'Prec',              points:1, video:'https://drive.google.com/file/d/17-K4DA-hwifISBlUvncBX7VUDd-m16Ti/view', hint:''},
+    {id:'tallon-16', name:'Prec to back',      points:2, video:'https://drive.google.com/file/d/1w65A8WJ0pHYoMLbAiSfzeooZAYTXs4uP/view', hint:''},
+    {id:'tallon-17', name:'Kong prec bars',    points:2, video:'https://drive.google.com/file/d/1v5O8mCa6MowXlSGjKZz6CG-swPxom_dp/view', hint:''},
+    {id:'tallon-18', name:'360 prec',          points:2, video:'https://drive.google.com/file/d/1JfTa3c7gkizmv5fXiNQ_DsDqls7jyzS0/view', hint:''},
+    {id:'tallon-19', name:'Jump over to prec', points:2, video:'https://drive.google.com/file/d/144_sZzyEVKsLkBRSiioYCQVmO8r8K3rb/view', hint:''},
+    {id:'tallon-20', name:'Line',              points:2, video:'https://drive.google.com/file/d/1tpBOhLp1_dOOxKP6bR0e1RoUA8gzGPJl/view', hint:''},
+    {id:'tallon-21', name:'Stryde to prec',    points:4, video:'https://drive.google.com/file/d/1esGzn6cDiuTkLosNeo5-X0WTmraj45pm/view', hint:''},
+    {id:'tallon-22', name:'Kong prec',         points:4, video:'https://drive.google.com/file/d/1V3c9eiv2MkfgT98tp0kWhpEchTCOBl7H/view', hint:''},
+    {id:'tallon-23', name:'Tic tac',           points:4, video:'https://drive.google.com/file/d/1rg6BNFdyyW32lmMrvccTdaxsrL0sIebN/view', hint:'Photo reference'},
+    {id:'tallon-24', name:'Kong prec to prec', points:4, video:'https://drive.google.com/file/d/1rb44GBLOD-0kV7zjR6n10pFbvvbbv1P_/view', hint:'Photo reference'},
+    {id:'tallon-25', name:'Running prec stick',points:4, video:'https://drive.google.com/file/d/19xlNQkmdxxODpm9KRGzmRJ49T7W_MStK/view', hint:'Photo reference'},
+    {id:'tallon-26', name:'Stride-stride pre', points:4, video:'https://drive.google.com/file/d/1hDrO9STdSGRePOmcn2oX-3mEBYI9LCGG/view', hint:''},
   ]},
-  'spot-navigli': {name:'Navigli',           emoji:'🌊', description:'Canal district',             lat:45.4509,lng:9.1736,radius:50,challenges:[
-    {id:'navigli-rail',   name:'Rail balance',        points:1, video:'', hint:'Rail balance along the canal edge into a smooth lazy vault'},
-    {id:'navigli-sprint', name:'Bridge sprint',       points:2, video:'', hint:'Bridge-to-bridge sprint — pick your line through the crowd gaps'},
-    {id:'navigli-line',   name:'Canal combo line',    points:4, video:'', hint:'Full line: rail, vault, precision — no touch-downs'},
+  'spot-rampa': {name:'Rampa Rotonda dietro Ospedale', emoji:'🏥', description:'Rampa della rotonda — challenges 27-42', lat:45.9584437,lng:12.5007788,radius:50,challenges:[
+    {id:'rampa-27', name:'Flip 2 steps',              points:2, video:'https://drive.google.com/file/d/196EpkF4R01us4L7J82pV99P4KfKefMD2/view', hint:''},
+    {id:'rampa-28', name:'Kong prec',                 points:4, video:'https://drive.google.com/file/d/1iT9wGyNVyYjlhHT3Qxvwg7B6IYVL4q-j/view', hint:''},
+    {id:'rampa-29', name:'Kong prec',                 points:2, video:'https://drive.google.com/file/d/1s4jbh9l4CyAyw7xU6lBiagD7jw_tvIxp/view', hint:''},
+    {id:'rampa-30', name:'Kong prec to Kong cat',     points:4, video:'https://drive.google.com/file/d/16QbqMfURbZdibNnaWH-FJn9CtpUSCUaL/view', hint:''},
+    {id:'rampa-31', name:'Kong prec to prec',         points:1, video:'https://drive.google.com/file/d/1aD01rp24JK2P3-JDDTlyGZgWmGUccNJw/view', hint:''},
+    {id:'rampa-32', name:'Kong-reverse',              points:1, video:'https://drive.google.com/file/d/1voHtw3itQmqq2-CoNBEUnL0dmavoS4Zv/view', hint:''},
+    {id:'rampa-34', name:'Prec',                      points:4, video:'https://drive.google.com/file/d/1comk_AWXXdOHEQdctT5tEHP6ofLh0yvO/view', hint:''},
+    {id:'rampa-35', name:'Prec stick',                points:2, video:'https://drive.google.com/file/d/1GRMhFmNkIAH7EQRouAH2Eh9YWoaP94ge/view', hint:''},
+    {id:'rampa-36', name:'Prec-kong cat',             points:2, video:'https://drive.google.com/file/d/1OkRXLyIdGLLyrHwJUm47jgwm3M8Bd-nc/view', hint:''},
+    {id:'rampa-37', name:'Tic tac stryde stick',      points:2, video:'https://drive.google.com/file/d/1m9ZP50p53iVyvHy-X_wLUhludDnvE581/view', hint:''},
+    {id:'rampa-38', name:'Line 1',                    points:1, video:'https://drive.google.com/file/d/1ts413pzjTk_Jb7ZOJUZZuRpodM4C1tDL/view', hint:''},
+    {id:'rampa-39', name:'Line 2 swing prec to prec', points:1, video:'https://drive.google.com/file/d/1FbZa42a5c6JO5Wc1obnwjCwoCOaJbKYL/view', hint:''},
+    {id:'rampa-40', name:'Line 3',                    points:2, video:'https://drive.google.com/file/d/1sBZuxqmDRGcB4K6v3leQijgaUop5-vJ5/view', hint:''},
+    {id:'rampa-41', name:'Line 4 Kong pre to divekong to flip', points:1, video:'https://drive.google.com/file/d/1absA5ZYmrN-RBsV2Q3mRVC_SzAVGoMT9/view', hint:''},
+    {id:'rampa-42', name:'Dive kong - prec - prec',   points:4, video:'https://drive.google.com/file/d/1v8r_5YZsE7EIZnPf039Rdb9UXy0Ugyij/view', hint:'Photo reference'},
   ]},
-  'spot-arco':    {name:'Arco della Pace',   emoji:'🏛️', description:'Neoclassical arch',          lat:45.4758,lng:9.1697,radius:50,challenges:[
-    {id:'arco-strides', name:'Bollard strides', points:1, video:'', hint:'Strides across the bollard line — commit to the last gap'},
-    {id:'arco-kong',    name:'Kong vault',      points:2, video:'', hint:'Kong vault the flat blocks, land in a controlled roll'},
-    {id:'arco-360',     name:'360 precision',   points:4, video:'', hint:'360 spin to precision on the low chain posts'},
-  ]},
-  'spot-sempione':{name:'Parco Sempione',    emoji:'🌳', description:'Large city park',            lat:45.4744,lng:9.1766,radius:50,challenges:[
-    {id:'sempione-cat',   name:'Pond cat leap',  points:1, video:'', hint:'Cat leap to the low wall by the pond — arms first, then feet'},
-    {id:'sempione-bench', name:'Bench freestyle',points:2, video:'', hint:'Freestyle flow on the benches: vault, cork, whatever feels good'},
-    {id:'sempione-cross', name:'Cross-park run', points:4, video:'', hint:'Cross-park route: fastest line from gate to bridge'},
+  'spot-comune': {name:'Comune (retro)', emoji:'🏛️', description:'Retro del municipio — challenges 43-58', lat:45.954692,lng:12.502661,radius:50,challenges:[
+    {id:'comune-43', name:'Cat + traverso giallo', points:2, video:'https://drive.google.com/file/d/1Joej_CFg3Ke3buZ-yiu-ggjQkPc9hy2x/view', hint:''},
+    {id:'comune-44', name:'Dive kong',             points:2, video:'https://drive.google.com/file/d/1nUWvataqLoPe0_niEZr0YLIlEaum5UTk/view', hint:''},
+    {id:'comune-45', name:'Kong prec 2',           points:2, video:'https://drive.google.com/file/d/1afkRGpN5lyxJAEpX1iFuCYN9p15kb2nm/view', hint:''},
+    {id:'comune-46', name:'Kong prec 1',           points:4, video:'https://drive.google.com/file/d/1otXvOw9V2zjmcGW_KshQQlfOS7n4AZ0C/view', hint:''},
+    {id:'comune-47', name:'Line 1',                points:2, video:'https://drive.google.com/file/d/1GsL45AYTzT9OD52kj0TCie34_agfCUaa/view', hint:''},
+    {id:'comune-48', name:'Line 2',                points:2, video:'https://drive.google.com/file/d/11cdRNn7HEbbS4HzEW3BmZ9kVEwvqSRAj/view', hint:''},
+    {id:'comune-49', name:'Prec',                  points:1, video:'https://drive.google.com/file/d/1G6X1FYiLpsoOE7XczAUbC80e2ChlBnXD/view', hint:''},
+    {id:'comune-50', name:'Prec',                  points:4, video:'https://drive.google.com/file/d/14oFr6y6hCXsEJz2-WyWX4Yzk_-0IJnDp/view', hint:''},
+    {id:'comune-51', name:'Running prec',          points:2, video:'https://drive.google.com/file/d/1E-nkJuzYrjzRt7h6UERbQZsPuFnz5reV/view', hint:''},
+    {id:'comune-52', name:'Prec',                  points:2, video:'https://drive.google.com/file/d/1TZufxEnAu8ezyz3JLyA1mE274jnF-C38/view', hint:''},
+    {id:'comune-53', name:'Kong prec',             points:4, video:'https://drive.google.com/file/d/1xzVXI1zeRaazts9XKGxKnC7u7AcIAPrj/view', hint:''},
+    {id:'comune-55', name:'180 cat pre',           points:4, video:'https://drive.google.com/file/d/1YotU202xXotym-2VA9RexdVJu7izisOO/view', hint:''},
+    {id:'comune-56', name:'Running to flip',       points:4, video:'https://drive.google.com/file/d/1tkM4YM6yDCftsCaWO8o9d2i8Pkcj1OVE/view', hint:'Photo reference'},
+    {id:'comune-57', name:'Cat to cat',            points:4, video:'https://drive.google.com/file/d/1PjNObybYftFhrutyG7EyBLCyDVoWrMek/view', hint:'Photo reference'},
+    {id:'comune-58', name:'Running prec',          points:4, video:'https://drive.google.com/file/d/12AxwSZFlchodXJDvaOlMz3FbqJnVrYkN/view', hint:'Photo reference'},
   ]},
 };
 
@@ -1115,7 +1157,7 @@ function maybeShowWelcome() {
 function welcomeDemo() {
   localStorage.setItem('cc_welcome_done','1');
   document.getElementById('welcome-screen').classList.remove('open');
-  if (!db) useDemoMode(); // ensure Milan sample spots are loaded
+  if (!db) useDemoMode(); // ensure Sacile default spots are loaded
   showToast('Demo mode — explore freely! 🎮');
 }
 
@@ -1436,7 +1478,7 @@ function saveVisitedSpots(d)   { localStorage.setItem('cc_visited',JSON.stringif
 
 // ─── MAP ──────────────────────────────────────────────────────────────────────
 function initMap() {
-  mapInstance = L.map('map', {zoomControl:true, attributionControl:false}).setView([45.4654,9.1859], 14);
+  mapInstance = L.map('map', {zoomControl:true, attributionControl:false}).setView([45.9550,12.5023], 15);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     maxZoom:19, subdomains:'abcd'
   }).addTo(mapInstance);
