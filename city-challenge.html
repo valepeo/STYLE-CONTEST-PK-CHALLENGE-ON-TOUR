@@ -256,6 +256,8 @@ select option{background:var(--surface2)}
   display:flex;align-items:center;gap:.4rem;
 }
 .vl-row-name .vl-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-name-editable{cursor:pointer;flex:1;min-width:0;border-bottom:1px dashed transparent}
+.vl-name-editable:hover{border-bottom-color:var(--muted)}
 .vl-pick-row{width:100%;cursor:pointer;text-align:left;color:var(--text);transition:border-color .15s}
 .vl-pick-row:active{border-color:var(--accent)}
 
@@ -691,6 +693,16 @@ select option{background:var(--surface2)}
       </div>
       <div id="vl-error" style="display:none;font-size:.78rem;color:var(--danger);margin-top:.6rem;line-height:1.45"></div>
       <div class="separator"></div>
+      <div class="form-group full">
+        <label>Or paste video links (one per line)</label>
+        <textarea id="vl-paste-input" rows="3" placeholder="https://drive.google.com/file/d/…/view&#10;https://drive.google.com/open?id=…"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary btn-sm" id="vl-paste-btn" onclick="addPastedVideoLinks()">➕ Add links</button>
+      </div>
+      <div id="vl-paste-error" style="display:none;font-size:.78rem;color:var(--danger);margin-top:.6rem;line-height:1.45"></div>
+      <div class="separator"></div>
+      <p style="font-size:.72rem;color:var(--muted);margin-bottom:.5rem">Tip: tap a video's name to rename it.</p>
       <div id="video-library-list" class="spots-list"><div class="empty-state">No videos imported yet</div></div>
     </div>
 
@@ -2076,25 +2088,50 @@ function extractDriveFolderId(url) {
   return m ? m[1] : null;
 }
 
-// Fetch the public folder listing HTML, trying CORS proxies then direct.
+// Fetch the public folder listing HTML, trying several CORS proxies then direct.
+// A route only counts as success if the HTML actually contains folder entries
+// ('flip-entry') — flaky proxies often return 200 with junk. On failure throws
+// an Error with .attempts = [{route, status}] and .gotHtml = true if at least
+// one route returned real HTML that just had no entries (empty/private folder).
 async function fetchDriveFolderHtml(folderId) {
   const target = 'https://drive.google.com/embeddedfolderview?id='+folderId+'#list';
-  const attempts = [
-    'https://api.allorigins.win/raw?url='+encodeURIComponent(target),
-    'https://corsproxy.io/?url='+encodeURIComponent(target),
-    target, // direct — currently CORS-blocked, kept as last resort
+  const enc = encodeURIComponent(target);
+  const routes = [
+    { label: 'allorigins (raw)', url: 'https://api.allorigins.win/raw?url='+enc },
+    { label: 'codetabs',         url: 'https://api.codetabs.com/v1/proxy?quest='+enc },
+    { label: 'corsproxy.io',     url: 'https://corsproxy.io/?url='+enc },
+    { label: 'allorigins (json)',url: 'https://api.allorigins.win/get?url='+enc, json: true },
+    { label: 'direct',           url: target },
   ];
-  let lastErr = null;
-  for (const attemptUrl of attempts) {
+  const attempts = [];
+  let gotHtml = false;
+  for (const route of routes) {
     try {
-      const res = await withTimeout(fetch(attemptUrl), 15000);
+      const res = await withTimeout(fetch(route.url), 12000);
       if (!res.ok) throw new Error('HTTP '+res.status);
-      const html = await res.text();
-      if (html && html.indexOf('<') !== -1) return html;
-      throw new Error('Empty response');
-    } catch(e) { lastErr = e; }
+      let html;
+      if (route.json) {
+        const data = await res.json();
+        html = data && data.contents;
+      } else {
+        html = await res.text();
+      }
+      if (!html || html.indexOf('<') === -1) throw new Error('empty response');
+      if (html.indexOf('flip-entry') === -1) {
+        gotHtml = true;
+        attempts.push({route: route.label, status: 'got HTML but no entries'});
+        continue;
+      }
+      attempts.push({route: route.label, status: 'OK'});
+      return html;
+    } catch(e) {
+      attempts.push({route: route.label, status: (e && e.message) || 'failed'});
+    }
   }
-  throw lastErr || new Error('Could not fetch folder');
+  const err = new Error(gotHtml ? 'no-entries' : 'all-routes-failed');
+  err.attempts = attempts;
+  err.gotHtml = gotHtml;
+  throw err;
 }
 
 // Parse embeddedfolderview HTML → [{id, name}]. DOMParser first, regex fallback.
@@ -2152,17 +2189,130 @@ async function importDriveFolder() {
     showToast('🎬 Imported '+files.length+' video'+(files.length!==1?'s':'')+' ('+added+' new)');
   } catch(e) {
     console.warn('Drive import failed', e);
-    showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? If yes, check your internet connection and try again.');
+    if (e && e.gotHtml) {
+      showVlError('The folder looks empty or not public — set it to "Anyone with the link" and retry.', e.attempts, true);
+    } else if (e && e.attempts) {
+      showVlError('Network/proxy problem (all '+e.attempts.length+' routes failed) — try again in a minute or use "Paste video links" below.', e.attempts, true);
+    } else {
+      showVlError('Couldn\'t read the folder — is it shared as "Anyone with the link"? If yes, check your internet connection and try again.', null, true);
+    }
   } finally {
     btn.disabled = false;
     btn.innerHTML = orig;
   }
 }
 
-function showVlError(msg) {
+function showVlError(msg, attempts, withRetry) {
   const errEl = document.getElementById('vl-error');
-  errEl.textContent = '⚠️ ' + msg;
+  let html = '⚠️ ' + escHtml(msg);
+  if (withRetry) {
+    html += ' <button type="button" class="btn btn-ghost btn-sm" style="margin-left:.3rem" onclick="importDriveFolder()">🔄 Retry</button>';
+  }
+  if (attempts && attempts.length) {
+    html += '<details style="margin-top:.4rem;color:var(--muted)"><summary style="cursor:pointer;font-size:.72rem">details</summary>'
+      + '<div style="font-size:.7rem;margin-top:.3rem;line-height:1.5">'
+      + attempts.map(a => escHtml(a.route) + ': ' + escHtml(a.status)).join('<br>')
+      + '</div></details>';
+  }
+  errEl.innerHTML = html;
   errEl.style.display = 'block';
+}
+
+// ── Bulk paste fallback: parse Drive links/IDs out of free text ──
+// Recognises /file/d/<ID>, open?id=<ID>, id=<ID> and bare IDs (25+ chars).
+function parsePastedVideoLinks(text) {
+  const out = [];
+  const seen = {};
+  const push = (id, name) => {
+    id = String(id||'').trim();
+    if (id && !seen[id]) { seen[id] = 1; out.push({id, name: String(name||'').trim()}); }
+  };
+  String(text||'').split(/\r?\n/).forEach(line => {
+    const l = line.trim();
+    if (!l) return;
+    let m = l.match(/\/file\/d\/([\w-]{10,})/i)
+         || l.match(/[?&]id=([\w-]{10,})/i)
+         || l.match(/\bid=([\w-]{10,})/i);
+    if (!m) m = l.match(/^([\w-]{25,})$/); // bare file id
+    if (!m) return;
+    // If the line has extra text besides the link/ID, use it as the name
+    const leftover = l.replace(/https?:\/\/\S+/gi, '').replace(/\bid=/gi, '').replace(m[1], '').replace(/[|\-–—:,]+/g, ' ').trim();
+    push(m[1], leftover);
+  });
+  return out;
+}
+
+async function addPastedVideoLinks() {
+  const input = document.getElementById('vl-paste-input');
+  const btn = document.getElementById('vl-paste-btn');
+  const errEl = document.getElementById('vl-paste-error');
+  errEl.style.display = 'none';
+  const found = parsePastedVideoLinks(input.value);
+  if (found.length === 0) {
+    errEl.textContent = '⚠️ No Google Drive video links found. Paste links like https://drive.google.com/file/d/…/view, one per line.';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  try {
+    const merged = {...videoLibrary};
+    let added = 0, n = Object.keys(merged).length;
+    found.forEach(f => {
+      if (merged[f.id]) return; // dedupe against library
+      n++; added++;
+      merged[f.id] = {
+        name: f.name || ('Video ' + n),
+        url: 'https://drive.google.com/file/d/'+f.id+'/view'
+      };
+    });
+    if (added === 0) {
+      errEl.textContent = 'ℹ️ All '+found.length+' link'+(found.length!==1?'s are':' is')+' already in the library.';
+      errEl.style.display = 'block';
+      return;
+    }
+    await saveVideoLibrary(merged);
+    input.value = '';
+    showToast('🎬 Added '+added+' video'+(added!==1?'s':'')+' — tap a name to rename');
+  } catch(e) {
+    console.warn('Add pasted links failed', e);
+    errEl.textContent = '⚠️ Couldn\'t save: ' + ((e && e.message) || 'unknown error');
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── Inline rename: tap a name in the library list to edit it ──
+function startEditVideoName(fileId) {
+  const v = videoLibrary[fileId];
+  const span = document.querySelector('.vl-name-text[data-file-id="'+fileId+'"]');
+  if (!v || !span || span.querySelector('input')) return;
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.value = v.name;
+  inp.style.cssText = 'width:100%;min-width:0;font-size:.82rem;font-weight:600;padding:.15rem .4rem';
+  let done = false;
+  const commit = async () => {
+    if (done) return; done = true;
+    const newName = inp.value.trim();
+    if (newName && newName !== v.name) {
+      const lib = {...videoLibrary};
+      lib[fileId] = {...lib[fileId], name: newName};
+      try { await saveVideoLibrary(lib); showToast('✏️ Renamed'); }
+      catch(e) { console.warn('Rename failed', e); showToast('⚠️ Rename failed'); renderVideoLibrary(); }
+    } else {
+      renderVideoLibrary(); // restore the plain label
+    }
+  };
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+    if (e.key === 'Escape') { done = true; renderVideoLibrary(); }
+  });
+  span.textContent = '';
+  span.appendChild(inp);
+  inp.focus();
+  inp.select();
 }
 
 async function saveVideoLibrary(lib) {
@@ -2200,7 +2350,7 @@ function renderVideoLibrary() {
   entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
   container.innerHTML = entries.map(([fileId, v]) => `
     <div class="vl-row">
-      <div class="vl-row-name">🎬 <span class="vl-name-text" title="${escHtml(v.name)}">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
+      <div class="vl-row-name">🎬 <span class="vl-name-text vl-name-editable" data-file-id="${fileId}" title="Tap to rename" onclick="startEditVideoName('${fileId}')">${escHtml(v.name)}</span>${vlCategoryBadge(v.name)}</div>
       <div class="spot-row-actions">
         <button class="btn btn-ghost btn-sm" title="Preview" onclick="previewLibraryVideo('${fileId}')">▶</button>
         <button class="btn btn-danger btn-sm" title="Remove from library" onclick="removeLibraryVideo('${fileId}')">🗑</button>
